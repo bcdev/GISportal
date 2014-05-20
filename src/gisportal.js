@@ -274,7 +274,7 @@ gisportal.createOpLayers = function() {
       typeof item.serverName !== "undefined" && 
       typeof item.options !== "undefined") {
          var providerTag = typeof item.options.providerShortTag !== "undefined" ? item.options.providerShortTag : '';
-         var positive = typeof item.options.positive !== "undefined" ? item.options.positive : 'up';       
+         var positive = typeof item.options.positive !== "undefined" ? item.options.positive : 'up';
          var wmsURL = item.wmsURL;
          var wcsURL = item.wcsURL;
          var serverName = item.serverName;
@@ -284,37 +284,37 @@ gisportal.createOpLayers = function() {
                // Go through each layer and load it
                $.each(item, function(i, item) {
                   if(item.Name && item.Name !== "") {
-                     var microLayer = new gisportal.MicroLayer(item.Name, item.Title, 
-                        item.Abstract, "opLayers", { 
-                           "firstDate": item.FirstDate, 
-                           "lastDate": item.LastDate, 
-                           "serverName": serverName, 
-                           "wmsURL": wmsURL, 
-                           "wcsURL": wcsURL, 
-                           "sensor": sensorName, 
-                           "exBoundingBox": item.EX_GeographicBoundingBox, 
+                     var microLayer = new gisportal.MicroLayer(item.Name, item.Title,
+                        item.Abstract, "opLayers", {
+                           "firstDate": item.FirstDate,
+                           "lastDate": item.LastDate,
+                           "serverName": serverName,
+                           "wmsURL": wmsURL,
+                           "wcsURL": wcsURL,
+                           "sensor": sensorName,
+                           "exBoundingBox": item.EX_GeographicBoundingBox,
                            "providerTag": providerTag,
-                           "positive" : positive, 
+                           "positive" : positive,
                            "tags": item.tags
                         }
                      );
-                               
-                     microLayer = gisportal.checkNameUnique(microLayer);   
+
+                     microLayer = gisportal.checkNameUnique(microLayer);
                      gisportal.microLayers[microLayer.id] = microLayer;
                      if (microLayer.tags)  {
                         var tags = [];
                         $.each(microLayer.tags, function(d, i) {
-                           if (microLayer.tags[d]) tags.push({ "tag" : d.toString(), "value" : microLayer.tags[d] }); 
+                           if (microLayer.tags[d]) tags.push({ "tag" : d.toString(), "value" : microLayer.tags[d] });
                         });
                      }
-                     
+
                      layers.push({
                         "meta" : {
                            'id': microLayer.id,
-                           'name': microLayer.name, 
+                           'name': microLayer.name,
                            'provider': providerTag,
-                           'positive': positive, 
-                           'title': microLayer.displayTitle, 
+                           'positive': positive,
+                           'title': microLayer.displayTitle,
                            'abstract': microLayer.productAbstract,
                            'tags': tags,
                            'bounds': microLayer.exBoundingBox,
@@ -322,7 +322,7 @@ gisportal.createOpLayers = function() {
                            'lastDate': microLayer.lastDate
                         },
                         "tags": microLayer.tags
-                     });                         
+                     });
                   }
                });
             }
@@ -362,7 +362,7 @@ gisportal.getLayerByID = function(id) {
  */
 gisportal.isSelected = function(name) {
    if(map)
-      return $.inArray(name, gisportal.sampleLayers) > -1 ? true : false;
+      return $.inArray(name, gisportal.sampleLayers) > -1;
 };
 
 /**
@@ -691,7 +691,7 @@ gisportal.saveState = function(state) {
 
    // Get quick regions
    state.map.regions = gisportal.quickRegion;
-   state.map.selectedRegion = $('#quickRegion option:selected').val();
+   state.map.selectedRegion = $('#quickRegion').find('option:selected').val();
 
    // Get timeline zoom
    state.timeline.minDate = gisportal.timeline.xScale.domain()[0];
@@ -863,6 +863,17 @@ gisportal.setState = function(state) {
    gisportal.rightPanel.loadState(state); 
 };
 
+gisportal.set_username = function() {
+    var on_success = function (data, opts) {
+        $('#userName').html(data.username);
+    };
+    var on_error = function (request, errorType, exception) {
+        $('#userName').html('guest');
+        console.log('Error: Failed to retrieved username. Ajax failed!');
+    };
+    gisportal.genericAsync('GET', gisportal.middlewarePath + "/user", null, on_success, on_error, 'json', {});
+};
+
 /*===========================================================================*/
 
 /**
@@ -886,7 +897,9 @@ gisportal.main = function() {
    gisportal.walkthrough = new gisportal.Walkthrough(); // uses templates.walkthrough so needs to run after
   
    $('#version').html('v' + gisportal.VERSION + ':' + gisportal.SVN_VERSION);
-    
+
+    gisportal.set_username();
+
    // Need to put this early so that tooltips work at the start to make the
    // page feel responsive.    
    //$(document).tooltip({
@@ -919,6 +932,19 @@ gisportal.main = function() {
       autoOpen: false,
       showMinimise: true,
       dblclick: "collapse"
+   });
+
+   // Same is true for user info balloon
+   $('#user-info-balloon').extendedDialog({
+      position: ['right', 'bottom'],
+      width: 245,
+      height: 220,
+      resizable: false,
+      showHelp: false,
+      autoOpen: false,
+      showMinimise: true,
+      dblclick: "collapse",
+      open: gisportal.set_username
    });
 
    // Show map info such as latlng

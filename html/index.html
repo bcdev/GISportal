@@ -438,7 +438,8 @@
             <input type="checkbox" id="shareMapToggleBtn" /><label class="gisportal-iconBigBtn" for="shareMapToggleBtn" title="Toggle Share Panel"></label>
             <input type="checkbox" id="layerPreloader" /><label class="gisportal-iconBigBtn" for="layerPreloader" title="Toggle Layer Selection Panel"></label>
             <!--<input type="checkbox" id="gisportal-button-3d" /><label class="gisportal-iconBigBtn" for="gisportal-button-3d" title="Toggle 3D Mode"></label>-->
-            <input type="checkbox" id="infoToggleBtn" /><label class="gisportal-iconBigBtn" for="infoToggleBtn" title="Toggle OPEC Information Box"></label>
+            <input type="checkbox" id="infoToggleBtn" /><label class="gisportal-iconBigBtn" for="infoToggleBtn" title="Toggle Information Box"></label>
+            <input type="checkbox" id="userInfoToggleBtn" /><label class="gisportal-iconBigBtn" for="userInfoToggleBtn" title="Show user information"></label>
          </li>
       </ul>
       <div class="togglePanel">
@@ -608,11 +609,19 @@
          <button id="gisportal-openid-logout">Log out</button>
       </div>
    </div>
-   
+   <!-- Walkthrough menu, appears after the info button has been clicked -->
    <div id="walkthrough-menu" class="unselectable" title="Help">
       <p id="version"></p>
       <p>Interactive guides:</p>
-		<ul></ul>   	
+		<ul></ul>
+   </div>
+
+   <!-- User info popup, appears after the user info button has been clicked -->
+   <div id="user-info-balloon" class="unselectable" title="User Info">
+       <p>User data</p>
+		<ul>
+            <li>Name:<span id="userName"></span></li>
+		</ul>
    </div>
    <!-- ====================================================================== -->
    

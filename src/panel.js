@@ -1270,6 +1270,7 @@ gisportal.topbar.setup = function() {
          }
       });
    $('#infoToggleBtn').button({ label: '', icons: { primary: 'ui-icon-gisportal-info'} });
+   $('#userInfoToggleBtn').button({ label: '', icons: { primary: 'ui-icon-gisportal-user-info'} });
 
    // Add toggle functionality for dialogs
    $('#shareMapToggleBtn').click(function() {
@@ -1278,11 +1279,15 @@ gisportal.topbar.setup = function() {
    addDialogClickHandler('mapInfoToggleBtn', $('#gisportal-historyWindow'));
    addDialogClickHandler('layerPreloader', $('#gisportal-layerSelection'));
    addDialogClickHandler('infoToggleBtn', $('#walkthrough-menu'));
+   addDialogClickHandler('userInfoToggleBtn', $('#user-info-balloon'));
 
      function addDialogClickHandler(idOne, idTwo) {
       $("label[for=" + idOne + "]").click(function(e) {
-         if ($(idTwo).extendedDialog("isOpen")) $(idTwo).extendedDialog("close");
-         else $(idTwo).extendedDialog("open");
+         if ($(idTwo).extendedDialog("isOpen")) {
+             $(idTwo).extendedDialog("close");
+         } else {
+             $(idTwo).extendedDialog("open");
+         }
       });
    }
 

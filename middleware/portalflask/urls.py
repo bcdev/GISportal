@@ -3,6 +3,7 @@ from views.state import portal_state, getState, setState
 from views.proxy import portal_proxy, proxy
 from views.wfs import portal_wfs, getWFSData
 from views.wcs import portal_wcs, getWcsData
+from views.portal_user_2 import portal_user_2
 
 routes = [
    ((portal_proxy, ''),
@@ -50,3 +51,4 @@ def setupBlueprints(app):
    app.register_blueprint(portal_proxy)
    app.register_blueprint(portal_wfs)
    app.register_blueprint(portal_wcs)
+   app.register_blueprint(portal_user_2)

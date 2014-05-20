@@ -95,7 +95,7 @@ ul li {
    overflow: hidden;
    padding: 0 10px 0 10px;
    height: 50px;
-   width: 540px;
+   width: 565px;
    left: 50%;
    margin-left: -275px;
    position: fixed;
@@ -1131,6 +1131,7 @@ div.olMapViewport {
 .ui-icon-gisportal-globe-link { background-image: url(../img/mapLink.png) !important; background-position: 0px; height: 32px; width: 32px;margin: -16px -4px !important; }
 .ui-icon-gisportal-layers { background-image: url(../img/layers32.png) !important; background-position: 0px; height: 32px; width: 32px;margin: -16px -2px !important; }
 .ui-icon-gisportal-info { background-image: url(../img/info32.png) !important; background-position: 0px; height: 32px; width: 32px;margin: -16px -2px !important; }
+.ui-icon-gisportal-user-info { background-image: url(../img/user_info32.png) !important; background-position: 0px; height: 32px; width: 32px;margin: -16px -2px !important; }
 
 /* Override some accordion styles */
 .ui-accordion-header-buttonpane .ui-state-hover .ui-icon,

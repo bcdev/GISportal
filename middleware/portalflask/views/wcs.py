@@ -7,7 +7,6 @@ import urllib2
 import tempfile
 import numpy as np
 import netCDF4 as netCDF
- 
 
 portal_wcs = Blueprint('portal_wcs', __name__)
 
@@ -19,7 +18,7 @@ on the received data, before jsonifying the output and returning it.
 def getWcsData():
    import random
    
-   g.graphError = "";
+   g.graphError = ""
 
    params = getParams() # Gets any parameters
    params = checkParams(params) # Checks what parameters where entered
