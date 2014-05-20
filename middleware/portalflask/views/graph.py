@@ -7,7 +7,7 @@ from portalflask.models.quickregions import QuickRegions
 from portalflask.models.roi import ROI
 from portalflask.models.layergroup import LayerGroup
 from portalflask.models.user import User
-from portalflask.core import short_url
+from portalflask.core import short_url, error_handler
 import datetime
 import sqlite3 as sqlite
 
@@ -38,11 +38,11 @@ def getGraph(graphUrl):
       else:
          output['error'] = "Failed to find a graph matching that id"
          output['status'] = '404'
-         error_handler.setError('2-07', state, g.user.id, "views/graph.py:getGraph - There was no graph found matching the id given, returning 404 to user.", request)
+         error_handler.setError('2-07', None, g.user.id, "views/graph.py:getGraph - There was no graph found matching the id given, returning 404 to user.", request)
    else:
       output['error'] = "You must enter a valid graph id"
       output['status'] = '400'
-      error_handler.setError('2-06', state, g.user.id, "views/graph.py:getGraph - The graph id is invalid, returning 400 to user.", request)
+      error_handler.setError('2-06', None, g.user.id, "views/graph.py:getGraph - The graph id is invalid, returning 400 to user.", request)
       
    try:
       jsonData = jsonify(output = output)
@@ -50,14 +50,14 @@ def getGraph(graphUrl):
       return jsonData
    except TypeError as e:
       g.error = "Request aborted, exception encountered: %s" % e 
-      error_handler.setError('2-06', state, g.user.id, "views/graph.py:getGraph - Type Error exception, returning 400 to user. Exception %s" % e, request)
+      error_handler.setError('2-06', None, g.user.id, "views/graph.py:getGraph - Type Error exception, returning 400 to user. Exception %s" % e, request)
       abort(400) # If we fail to jsonify the data return 500
    
 @portal_graph.route('/graph', methods = ['GET'])
 def getGraphs():
    # Check if the user is logged in.
    if g.user is None:
-      error_handler.setError('2-01', state, g.user.id, "views/graphs.py:getGraphs - The user is no t logged in, returning 401 to user.", request)
+      error_handler.setError('2-01', None, None, "views/graphs.py:getGraphs - The user is not logged in, returning 401 to user.", request)
       abort(401)
       
    #TODO: Return available states filtered by email or other provided parameters.
@@ -83,31 +83,31 @@ def getGraphs():
       return jsonData
    except TypeError as e:
       g.error = "Request aborted, exception encountered: %s" % e
-      error_handler.setError('2-06', state, g.user.id, "views/graph.py:getGraphs - Type Error exception, returning 400 to user. Exception %s" % e, request)
+      error_handler.setError('2-06', None, g.user.id, "views/graph.py:getGraphs - Type Error exception, returning 400 to user. Exception %s" % e, request)
       abort(400) # If we fail to jsonify the data return 400
    
 @portal_graph.route('/graph', methods = ['POST'])
 def setGraph():
    # Check if the user is logged in.
    if g.user is None:
-      error_handler.setError('2-01', state, g.user.id, "views/graphs.py:setGraph - The user is no t logged in, returning 401 to user.", request)
+      error_handler.setError('2-01', None, None, "views/graphs.py:setGraph - The user is not logged in, returning 401 to user.", request)
       abort(401)
-   
+
    email = g.user.email
    graphJSON = request.values.get('graph', None)
-   
+
    output = {}
-   
+
    if email is None or graphJSON is None:
       output['message'] = 'failed to store graph'
       output['email'] = email
       output['graph'] = graphJSON
       output['status'] = '404'
-      error_handler.setError('2-04', state, g.user.id, "views/graphs.py:setGraph - Failed to store the graph, email or graphJSON were empty, returning 404 to user.", request)
+      error_handler.setError('2-04', None, g.user.id, "views/graphs.py:setGraph - Failed to store the graph, email or graphJSON were empty, returning 404 to user.", request)
    else:
       user = User.query.filter(User.email == email).first()
-      
-      if user is None: 
+
+      if user is None:
          # Create new user
          user = User(email)
          db_session.add(user)
@@ -116,7 +116,7 @@ def setGraph():
       graph = Graph(user.id, graphJSON)
       db_session.add(graph)
       db_session.commit()
-   
+
       output['url'] = short_url.encode_url(graph.id)
       output['status'] = 'graph stored'
    
@@ -126,7 +126,7 @@ def setGraph():
       return jsonData
    except TypeError as e:
       g.error = "Request aborted, exception encountered: %s" % e
-      error_handler.setError('2-06', state, g.user.id, "views/graph.py:setGraph - Type Error exception, returning 400 to user. Exception %s" % e, request)
+      error_handler.setError('2-06', None, g.user.id, "views/graph.py:setGraph - Type Error exception, returning 400 to user. Exception %s" % e, request)
       abort(400) # If we fail to jsonify the data return 500
    
 def graphToJSON(graph):
