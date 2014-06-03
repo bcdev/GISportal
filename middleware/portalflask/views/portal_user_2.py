@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, g, current_app
+from flask import Blueprint, request, jsonify, g, current_app, session
 from sqlalchemy import desc
 from portalflask.models.database import db_session
 from portalflask.models.state import State
@@ -15,17 +15,7 @@ portal_user_2 = Blueprint('portal_user_2', __name__)
 
 @portal_user_2.route('/user', methods = ['GET'])
 def get_user():
-    current_app.logger.debug("starting to log request")
-    current_app.logger.debug(str(request.args))
-    current_app.logger.debug("end logging request")
-
-    import random
-
-    rand = random.random()
-    if rand > 0.7:
-        return jsonify(username='a')
-    if rand > 0.5:
-        return jsonify(username='b')
-    if rand > 0.3:
-        return jsonify(username='c')
-    return jsonify(username='d')
+    if 'username' in session:
+        username = session['username']
+        return jsonify(username=username)
+    return jsonify(username='guest')

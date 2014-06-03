@@ -15,13 +15,15 @@ portal_user = Blueprint('portal_user', __name__)
 COMMON_PROVIDERS = {'google': 'https://www.google.com/accounts/o8/id',
                     'yahoo': 'https://yahoo.com/',
                     'aol': 'http://aol.com/',
+                    'bc': 'http://opec-portal-test:8585/openid-server/provider/discovery/gis-portal',
                     'steam': 'https://steamcommunity.com/openid/'
 }
 
 @portal_user.route('/')
 def index():
    return render_template('index.html')
-   
+
+
 @portal_user.route('/login')
 @oid.loginhandler
 def login_with_google():
@@ -30,6 +32,7 @@ def login_with_google():
    if g.user is not None:
       return redirect(url_for('state_user.getStates'))
    return oid.try_login(COMMON_PROVIDERS['google'], ask_for=['email'])
+
 
 @portal_user.route('/login/<provider>', methods=['GET', 'POST'])
 @oid.loginhandler
@@ -42,11 +45,14 @@ def login(provider):
       #openid = request.form.get('openid')
       #if openid:
          #return oid.try_login(openid, ask_for=['email'])
-         
+
    if provider is not None and provider in COMMON_PROVIDERS:
+      print(provider)
+      print(COMMON_PROVIDERS[provider])
       return oid.try_login(COMMON_PROVIDERS[provider], ask_for=['email'])
+
    return redirect(url_for('portal_user.index'))
-                          
+
 @oid.after_login
 def create_or_login(resp):
    print('in create or login')

@@ -83,7 +83,12 @@ gisportal.openid.setup = function(containerID) {
    $('#' + gisportal.openid.loginForm + ' .gisportal-login-with-yahoo').click(function() {
       var $this = $(this);     
       gisportal.openid.openPopup($this.attr('data-url'));
-   })
+   });
+
+   $('#' + gisportal.openid.loginForm + ' .gisportal-login-with-bc').click(function() {
+      var $this = $(this);
+      gisportal.openid.openPopup($this.attr('data-url'));
+   });
    
 
    gisportal.openid.$saveButton.click(function() {
@@ -193,7 +198,8 @@ gisportal.openid.isPopupClosed = function() {
 
 gisportal.openid.providers = [
    {name: 'google', title:'login with Google', url:'/service/login/google', imagePath:'img/Red-signin_Long_base_20dp.png', x:'0', y:'0', width:'147px', height:'30px'},
-   {name: 'yahoo', title:'login with Yahoo', url:'/service/login/yahoo', imagePath:'img/yahoo_signin_btn.png', x:'0', y:'0', width:'161px', height:'22px'}
+//   {name: 'yahoo', title:'login with Yahoo', url:'/service/login/yahoo', imagePath:'img/yahoo_signin_btn.png', x:'0', y:'0', width:'161px', height:'22px'},
+   {name: 'bc', title:'login with BC', url:'/service/login/bc', imagePath:'img/bc_signin_btn.png', x:'0', y:'0', width:'161px', height:'22px'}
    //{name: 'myOpenID', title:'login with myOpenID', url:'/service/login/myopenid', imagePath:'0', x:'0', y:'0'},
    //{name: 'OpenID', title:'login with OpenID', url:'/service/login', imagePath:'', x:'0', y:'0'}
 ];

@@ -667,6 +667,12 @@ div .sensor-accordion {
    background: url(../img/yahoo_signin_btn.png);
 }
 
+.gisportal-login-with-bc {
+   width: 161px;
+   height: 22px;
+   background: url(../img/bc_signin_btn.png);
+}
+
 /* ======== Scalebar ======== */
 
 .scalebar img {
