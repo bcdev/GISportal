@@ -4,6 +4,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,21 +24,22 @@ public class DiscoveryService extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        URI uri = null;
+        URI uri;
         try {
             uri = getClass().getResource("xrds.xml").toURI();
         } catch (URISyntaxException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Cannot find resource 'xrds.xml'");
             return;
         }
         resp.setStatus(HttpServletResponse.SC_OK);
-        final File file = new File(uri);
-        final char[] buffer = new char[1024];
-        try (FileReader reader = new FileReader(file)) {
-            while (reader.read(buffer) != -1) {
-                resp.getWriter().write(buffer);
+        File file = new File(uri);
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while((line = reader.readLine()) != null) {
+                line = line.replace("${endpointURI}", Config.getEndpointUrl());
+                resp.getWriter().write(line);
             }
-
         }
     }
 

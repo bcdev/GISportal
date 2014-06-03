@@ -10,7 +10,7 @@
             <Type>http://openid.net/extensions/sreg/1.1</Type>
             <Type>http://schemas.openid.net/pape/policies/2007/06/phishing-resistant</Type>
             <Type>http://openid.net/srv/ax/1.0</Type>
-            <URI>http://opec-portal-test:8585/openid-server/provider/server/o2</URI>
+            <URI>${endpointURI}</URI>
         </Service>
     </XRD>
 </xrds:XRDS>

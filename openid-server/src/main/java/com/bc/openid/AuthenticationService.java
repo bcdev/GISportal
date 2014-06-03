@@ -43,7 +43,6 @@ import java.util.Map;
  */
 public class AuthenticationService extends HttpServlet {
 
-    private static final String SERVER_ENDPOINT = "http://opec-portal-test:8585/openid-server/provider/server/o2";
     private static final String SESSION_KEY_USER_MODEL = "userModel";
 
     private static String SAMPLE_PASSWORD = "bond007";
@@ -51,7 +50,7 @@ public class AuthenticationService extends HttpServlet {
 
     static {
         manager = new ServerManager();
-        manager.setOPEndpointUrl(SERVER_ENDPOINT);
+        manager.setOPEndpointUrl(Config.getEndpointUrl());
         manager.getRealmVerifier().setEnforceRpId(false);
     }
 
@@ -201,7 +200,7 @@ public class AuthenticationService extends HttpServlet {
     private void redirectToLogin(String identifier, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/login.jsp");
         httpRequest.setAttribute("identifier", identifier);
-        httpRequest.setAttribute("destinationUrl", SERVER_ENDPOINT);
+        httpRequest.setAttribute("destinationUrl", Config.getEndpointUrl());
         dispatcher.forward(httpRequest, httpResponse);
     }
 
