@@ -16,7 +16,7 @@ public class AuthenticationServiceTest {
 
     @Test
     public void testSetEmail() throws Exception {
-        final AuthenticationService.UserModel registrationModel = new AuthenticationService.UserModel();
+        final UserModel registrationModel = new UserModel();
         registrationModel.setEmailAddress(EXPECTED_MAIL_ADDRESS);
 
         final ParameterList authParams = new ParameterList();

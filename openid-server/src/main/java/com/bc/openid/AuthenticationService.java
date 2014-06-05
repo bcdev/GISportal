@@ -27,8 +27,6 @@ import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +43,6 @@ public class AuthenticationService extends HttpServlet {
 
     private static final String SESSION_KEY_USER_MODEL = "userModel";
 
-    private static String SAMPLE_PASSWORD = "bond007";
     private static ServerManager manager = null;
 
     static {
@@ -127,7 +124,7 @@ public class AuthenticationService extends HttpServlet {
                         if (extensionRequestObject instanceof SRegRequest) {
                             Map<String, String> registrationData = new HashMap<>();
                             registrationData.put("fullname", registrationModel.getFullName());
-                            registrationData.put("dob", Long.toString(registrationModel.getDateOfBirth().getTime()));
+                            registrationData.put("dob", registrationModel.getDateOfBirth().toString());
 
                             SRegRequest sregReq = (SRegRequest) extensionRequestObject;
                             SRegResponse sregResp = SRegResponse.createSRegResponse(sregReq, registrationData);
@@ -188,9 +185,11 @@ public class AuthenticationService extends HttpServlet {
     }
 
     private boolean authenticate(String password, String identifier, HttpServletRequest request) throws ServletException, IOException {
-        if (identifier != null && password != null && SAMPLE_PASSWORD.equalsIgnoreCase(password)) {
+        AuthenticationHandler authenticationHandler = Config.getAuthenticationHandler();
+        if (authenticationHandler.authenticate(identifier, password)) {
             HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(SESSION_KEY_USER_MODEL, getUserModel(identifier));
+            UserModel userModel = authenticationHandler.getUserModel(identifier);
+            httpSession.setAttribute(SESSION_KEY_USER_MODEL, userModel);
             httpSession.setAttribute("isAuthenticated", "true");
             return true;
         }
@@ -222,58 +221,4 @@ public class AuthenticationService extends HttpServlet {
         return map;
     }
 
-    /**
-     * This method serves as the "database"
-     */
-    private UserModel getUserModel(String userSelectedId) {
-        //UserModel - Simple Java Class with user properties in it.
-        UserModel ret = new UserModel();
-        Calendar cad = Calendar.getInstance();
-        cad.set(1990, 01, 01);
-        ret.setDateOfBirth(cad.getTime());
-        ret.setEmailAddress("jamesbond@mi6.com");
-        ret.setFullName("James Bond");
-        ret.setOpenId(userSelectedId);
-        return ret;
-    }
-
-    static class UserModel {
-
-        private Date dateOfBirth;
-        private String emailAddress;
-        private String fullName;
-        private String openId;
-
-        public void setDateOfBirth(Date dateOfBirth) {
-            this.dateOfBirth = dateOfBirth;
-        }
-
-        public Date getDateOfBirth() {
-            return dateOfBirth;
-        }
-
-        public void setEmailAddress(String emailAddress) {
-            this.emailAddress = emailAddress;
-        }
-
-        public String getEmailAddress() {
-            return emailAddress;
-        }
-
-        public void setFullName(String fullName) {
-            this.fullName = fullName;
-        }
-
-        public String getFullName() {
-            return fullName;
-        }
-
-        public void setOpenId(String openId) {
-            this.openId = openId;
-        }
-
-        public String getOpenId() {
-            return openId;
-        }
-    }
 }

@@ -18,6 +18,8 @@ package com.bc.openid;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -25,6 +27,7 @@ import java.util.Properties;
  */
 class Config {
 
+    public static final String ATTRIBUTE_AUTHENTICATION_HANDLER = "authenticationHandler";
     private static Properties properties;
     private static final String PROPERTY_KEY_ENDPOINTURI = "com.bc.openid.endpointuri";
 
@@ -41,4 +44,21 @@ class Config {
         return properties.getProperty(PROPERTY_KEY_ENDPOINTURI);
     }
 
+    static AuthenticationHandler getAuthenticationHandler() {
+        AuthenticationHandler handler;
+        String authClass = properties.getProperty("com.bc.openid.authenticationHandlerClass");
+        try {
+            Class handlerClass = Config.class.getClassLoader().loadClass(authClass);
+            handler = (AuthenticationHandler) handlerClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | ClassCastException e) {
+            throw new IllegalStateException("Cannot create AuthenticationHandler implementation '" + authClass + "'. Reason:", e);
+        }
+        Map<String, String> parameters = new HashMap<>();
+        properties.entrySet().parallelStream()
+                .filter(entry -> entry.getKey().toString().startsWith("com.bc.openid.authentication.param"))
+                .map(entry -> parameters.put(entry.getKey().toString(), entry.getValue().toString()));
+
+        handler.configure(parameters);
+        return handler;
+    }
 }

@@ -11,6 +11,10 @@
         <welcome-file>default.jsp</welcome-file>
     </welcome-file-list>
 
+    <listener>
+        <listener-class>com.bc.openid.ContextInitialiser</listener-class>
+    </listener>
+
     <servlet>
         <servlet-name>openid-server</servlet-name>
         <servlet-class>com.bc.openid.AuthenticationService</servlet-class>
