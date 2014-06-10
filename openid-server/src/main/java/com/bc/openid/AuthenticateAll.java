@@ -23,18 +23,23 @@ import java.time.Instant;
  *
  * @author thomas
  */
-// todo -- test this class!
 public class AuthenticateAll extends AuthenticationHandler {
 
     @Override
-    public boolean authenticateImpl(String username, String password) {
-        return username != null && password != null && password.equalsIgnoreCase("miau");
+    protected void authenticateImpl(String username, String password) throws AuthenticationException {
+        if (username == null) {
+            throw new AuthenticationException(null, "Username must not be null");
+        }
+        boolean authenticated = password != null && password.equalsIgnoreCase("miau");
+        if (!authenticated) {
+            throw new AuthenticationException(username);
+        }
     }
 
     @Override
-    public UserModel getUserModelImpl(String username) {
+    protected UserModel getUserModelImpl(String username) {
         UserModel userModel = new UserModel();
-        userModel.setDateOfBirth(Instant.parse("195-11-03T00:00:00.00Z"));
+        userModel.setDateOfBirth(Instant.parse("1952-11-03T00:00:00.00Z"));
         userModel.setEmailAddress("jamesbond@mi6.com");
         userModel.setFullName("James Bond");
         userModel.setOpenId(username);

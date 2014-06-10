@@ -28,8 +28,9 @@ import java.util.Properties;
 class Config {
 
     public static final String ATTRIBUTE_AUTHENTICATION_HANDLER = "authenticationHandler";
+    public static final String PROPERTY_KEY_ENDPOINTURI = "com.bc.openid.endpointuri";
+
     private static Properties properties;
-    private static final String PROPERTY_KEY_ENDPOINTURI = "com.bc.openid.endpointuri";
 
     static {
         try (InputStream propertyStream = Config.class.getResourceAsStream("openid.properties")) {

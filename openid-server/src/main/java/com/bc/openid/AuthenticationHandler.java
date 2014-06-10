@@ -16,8 +16,9 @@
 
 package com.bc.openid;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Responsible for authenticating the user and providing information about him.
@@ -26,7 +27,7 @@ import java.util.Map;
  */
 public abstract class AuthenticationHandler {
 
-    private Map<String, Boolean> authInformation = new HashMap<>();
+    private Set<String> authenticatedUsers = new HashSet<>();
 
     protected AuthenticationHandler() {
         // necessary for instantiation via reflection
@@ -37,13 +38,10 @@ public abstract class AuthenticationHandler {
      *
      * @param username The user's username.
      * @param password The user's password.
-     *
-     * @return <code>true</code> if user can be logged in with the given credentials.
      */
-    public final boolean authenticate(String username, String password) {
-        boolean authenticated = authenticateImpl(username, password);
-        authInformation.put(username, authenticated);
-        return authenticated;
+    public final void authenticate(String username, String password) throws AuthenticationException {
+        authenticateImpl(username, password);
+        authenticatedUsers.add(username);
     }
 
     /**
@@ -63,7 +61,7 @@ public abstract class AuthenticationHandler {
         return getUserModelImpl(username);
     }
 
-    protected abstract boolean authenticateImpl(String username, String password);
+    protected abstract void authenticateImpl(String username, String password) throws AuthenticationException;
 
     protected abstract UserModel getUserModelImpl(String username);
 
@@ -72,6 +70,6 @@ public abstract class AuthenticationHandler {
     }
 
     private boolean isAuthenticated(String username) {
-        return authInformation.containsKey(username) && authInformation.get(username);
+        return authenticatedUsers.contains(username);
     }
 }

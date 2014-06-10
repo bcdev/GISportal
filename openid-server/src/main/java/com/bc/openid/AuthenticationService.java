@@ -75,7 +75,14 @@ public class AuthenticationService extends HttpServlet {
         boolean isLoginAction = paramsMap.containsKey("_loginAction");
         if (isLoginAction) {
             String loginIdentifier = paramsMap.get("identifier");
-            boolean successfullyAuthenticated = authenticate(paramsMap.get("password"), loginIdentifier, request);
+            boolean successfullyAuthenticated;
+            try {
+                authenticate(paramsMap.get("password"), loginIdentifier, request);
+                successfullyAuthenticated = true;
+            } catch (AuthenticationException e) {
+                log("Unsuccessful authentication attempt by username '" + e.getUserName() + "'", e);
+                successfullyAuthenticated = false;
+            }
             if (successfullyAuthenticated) {
                 HttpSession session = request.getSession();
                 paramsMap = (Map<String, String>) session.getAttribute("paramsMap");
@@ -184,16 +191,13 @@ public class AuthenticationService extends HttpServlet {
         return required.containsKey("email");
     }
 
-    private boolean authenticate(String password, String identifier, HttpServletRequest request) throws ServletException, IOException {
+    private void authenticate(String password, String identifier, HttpServletRequest request) throws ServletException, IOException, AuthenticationException {
         AuthenticationHandler authenticationHandler = Config.getAuthenticationHandler();
-        if (authenticationHandler.authenticate(identifier, password)) {
-            HttpSession httpSession = request.getSession();
-            UserModel userModel = authenticationHandler.getUserModel(identifier);
-            httpSession.setAttribute(SESSION_KEY_USER_MODEL, userModel);
-            httpSession.setAttribute("isAuthenticated", "true");
-            return true;
-        }
-        return false;
+        authenticationHandler.authenticate(identifier, password);
+        HttpSession httpSession = request.getSession();
+        UserModel userModel = authenticationHandler.getUserModel(identifier);
+        httpSession.setAttribute(SESSION_KEY_USER_MODEL, userModel);
+        httpSession.setAttribute("isAuthenticated", "true");
     }
 
     private void redirectToLogin(String identifier, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
