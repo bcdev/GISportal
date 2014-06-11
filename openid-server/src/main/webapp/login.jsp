@@ -8,7 +8,7 @@
 <form name="openid-login-form" action="${destinationUrl}" method="post">
     <table>
         <tr>
-            <td>OpenId :</td>
+            <td>OpenId endpoint:</td>
             <td>
                 ${identifier}
                 <input type="hidden" name="identifier" value="${identifier}"/>
@@ -16,8 +16,13 @@
             </td>
         </tr>
         <tr>
+            <td>Username:</td>
+            <td><input type="text" name="username"/>
+            </td>
+        </tr>
+        <tr>
             <td>Password :</td>
-            <td><input type="password" name="password" value="bond007"/>
+            <td><input type="password" name="password"/>
             </td>
         </tr>
         <tr>

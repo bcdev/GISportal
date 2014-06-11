@@ -20,11 +20,14 @@ import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,32 +51,72 @@ public class LdapAuth extends AuthenticationHandler {
     protected void authenticateImpl(String username, String password) throws AuthenticationException {
         Hashtable<String, String> env = new Hashtable<>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, ldapUrl(host, port) + "/ou=users,dc=opec,dc=bc,dc=com");
+        env.put(Context.PROVIDER_URL, ldapUrl(host, port));
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
 
         try (MyInitialLdapContext context = new MyInitialLdapContext(env)) {
-            SearchControls searchControls = new SearchControls();
-            NamingEnumeration<SearchResult> results = context.search("", "(uid=" + username + ")", searchControls);
-            SearchResult searchResult = null;
-            if(results.hasMoreElements()) {
-                searchResult = results.nextElement();
-                if(results.hasMoreElements()) {
-                    throw new AuthenticationException(username, "Matched multiple users for username: '" + username + "'");
-                }
-            }
-            setUserModel(searchResult);
+            SearchResult userEntry = getUserEntry(username, context);
+            setUserModel(userEntry);
+
+            List<String> groupNames = getGroupNames(userEntry, context);
+            userModel.setGroupNames(groupNames.toArray(new String[groupNames.size()]));
         } catch (NamingException e) {
             throw new AuthenticationException(username, e);
         }
     }
 
-    private void setUserModel(SearchResult searchResult) throws NamingException {
-        NamingEnumeration<String> iDs = searchResult.getAttributes().getIDs();
-        while (iDs.hasMore()) {
-            Attribute attribute = searchResult.getAttributes().get(iDs.next());
-            System.out.println("LdapAuth.setUserModel");
-//        userModel.setEmailAddress();
+    private static List<String> getGroupNames(SearchResult userEntry, MyInitialLdapContext context) throws NamingException, AuthenticationException {
+        Object uidNumber = userEntry.getAttributes().get("uidNumber").get(0);
+        SearchControls groupSearch = new SearchControls();
+        groupSearch.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        NamingEnumeration groups = context.search("ou=groups,dc=opec,dc=bc,dc=com", "(objectClass=posixGroup)", groupSearch);
+
+        List<String> groupNames = new ArrayList<>();
+
+        while (groups.hasMore()) {
+            SearchResult group = (SearchResult) groups.next();
+            Attributes groupAttributes = group.getAttributes();
+            String groupName = groupAttributes.get("cn").get(0).toString();
+            Attribute memberUids = groupAttributes.get("memberUid");
+            for (int i = 0; i < memberUids.size(); i++) {
+                if (memberUids.get(i).equals(uidNumber)) {
+                    groupNames.add(groupName);
+                }
+            }
         }
+        return groupNames;
+    }
+
+    private static SearchResult getUserEntry(String username, MyInitialLdapContext context) throws NamingException, AuthenticationException {
+        SearchControls searchControls = new SearchControls();
+        NamingEnumeration<SearchResult> results = context.search("ou=users,dc=opec,dc=bc,dc=com", "(uid=" + username + ")", searchControls);
+        SearchResult userEntry = null;
+        if (results.hasMoreElements()) {
+            userEntry = results.nextElement();
+            if (results.hasMoreElements()) {
+                throw new AuthenticationException(username, "Matched multiple users for username: '" + username + "'");
+            }
+        }
+        return userEntry;
+    }
+
+    private void setUserModel(SearchResult userEntry) throws NamingException {
+        userModel = new UserModel();
+        Attribute mailAttribute = userEntry.getAttributes().get("mail");
+        if (mailAttribute != null) {
+            userModel.setEmailAddress(mailAttribute.get().toString());
+        }
+        String fullName = "";
+        Attribute givenNameAttribute = userEntry.getAttributes().get("givenName");
+        Attribute surnameAttribute = userEntry.getAttributes().get("sn");
+        if (givenNameAttribute != null) {
+            fullName += givenNameAttribute.get().toString();
+        }
+        if (surnameAttribute != null) {
+            fullName += givenNameAttribute != null ? " " : "";
+            fullName += surnameAttribute.get().toString();
+        }
+        userModel.setFullName(fullName);
     }
 
     @Override
@@ -101,7 +144,6 @@ public class LdapAuth extends AuthenticationHandler {
             super(env, new Control[0]);
         }
     }
-
 
 
     // this allows logging in, too

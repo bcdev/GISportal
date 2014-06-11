@@ -52,14 +52,16 @@ class Config {
             Class handlerClass = Config.class.getClassLoader().loadClass(authClass);
             handler = (AuthenticationHandler) handlerClass.newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | ClassCastException e) {
-            throw new IllegalStateException("Cannot create AuthenticationHandler implementation '" + authClass + "'. Reason:", e);
+            throw new IllegalStateException(
+                    "Cannot create AuthenticationHandler implementation '" + authClass + "'. Reason:", e);
         }
         Map<String, String> parameters = new HashMap<>();
-        properties.entrySet().parallelStream()
+        properties.entrySet().stream()
                 .filter(entry -> entry.getKey().toString().startsWith("com.bc.openid.authentication.param"))
-                .map(entry -> parameters.put(entry.getKey().toString(), entry.getValue().toString()));
+                .forEach(entry -> parameters.put(entry.getKey().toString(), entry.getValue().toString()));
 
         handler.configure(parameters);
         return handler;
     }
+
 }

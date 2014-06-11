@@ -74,10 +74,11 @@ public class AuthenticationService extends HttpServlet {
 
         boolean isLoginAction = paramsMap.containsKey("_loginAction");
         if (isLoginAction) {
-            String loginIdentifier = paramsMap.get("identifier");
+            String username = paramsMap.get("username");
+//            String username = paramsMap.get("identifier");
             boolean successfullyAuthenticated;
             try {
-                authenticate(paramsMap.get("password"), loginIdentifier, request);
+                authenticate(username, paramsMap.get("password"), request);
                 successfullyAuthenticated = true;
             } catch (AuthenticationException e) {
                 log("Unsuccessful authentication attempt by username '" + e.getUserName() + "'", e);
@@ -88,7 +89,7 @@ public class AuthenticationService extends HttpServlet {
                 paramsMap = (Map<String, String>) session.getAttribute("paramsMap");
                 parameterList = new ParameterList(paramsMap);
             } else {
-                redirectToLogin(loginIdentifier, request, response);
+                redirectToLogin(username, request, response);
                 return;
             }
         }
@@ -191,11 +192,11 @@ public class AuthenticationService extends HttpServlet {
         return required.containsKey("email");
     }
 
-    private void authenticate(String password, String identifier, HttpServletRequest request) throws ServletException, IOException, AuthenticationException {
+    private void authenticate(String username, String password, HttpServletRequest request) throws ServletException, IOException, AuthenticationException {
         AuthenticationHandler authenticationHandler = Config.getAuthenticationHandler();
-        authenticationHandler.authenticate(identifier, password);
+        authenticationHandler.authenticate(username, password);
         HttpSession httpSession = request.getSession();
-        UserModel userModel = authenticationHandler.getUserModel(identifier);
+        UserModel userModel = authenticationHandler.getUserModel(username);
         httpSession.setAttribute(SESSION_KEY_USER_MODEL, userModel);
         httpSession.setAttribute("isAuthenticated", "true");
     }
