@@ -9,6 +9,7 @@ from portalflask.models.user import User
 from portalflask.core import error_handler
 from portalflask import oid
 import sqlite3 as sqlite
+import hashlib
 
 portal_user = Blueprint('portal_user', __name__)
 
@@ -56,7 +57,11 @@ def login(provider):
 @oid.after_login
 def create_or_login(resp):
    print('in create or login')
-   session['openid'] = resp.identity_url
+
+   generic_identity = resp.identity_url
+   email = resp.email
+   user_identity = generic_identity + '?id=' + hashlib.md5(email).hexdigest()
+   session['openid'] = user_identity
    user = User.query.filter_by(openid=resp.identity_url).first()
    if user is not None:
       flash(u'Successfully signed in')
