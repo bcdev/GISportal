@@ -47,4 +47,24 @@ public class LdapAuthTest {
         assertNull(userModel.getDateOfBirth());
         assertArrayEquals(new String[] {"cc_users"}, userModel.getGroupNames());
     }
+
+    @Test
+    public void testWrongPassword() throws Exception {
+        try {
+            auth.authenticate("tstorm", "kaputt");
+            fail();
+        } catch (AuthenticationException expected) {
+            assertEquals("Wrong combination of username and password", expected.getMessage());
+        }
+    }
+
+    @Test
+    public void testNotExistingUser() throws Exception {
+        try {
+            auth.authenticate("Godot", "any");
+            fail();
+        } catch (AuthenticationException expected) {
+            assertEquals("Wrong combination of username and password", expected.getMessage());
+        }
+    }
 }

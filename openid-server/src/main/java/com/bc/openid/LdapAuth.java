@@ -58,15 +58,32 @@ public class LdapAuth extends AuthenticationHandler {
             SearchResult userEntry = getUserEntry(username, context);
             setUserModel(userEntry);
 
-            List<String> groupNames = getGroupNames(userEntry, context);
+            try {
+                checkUsernameAndPassword(password, userEntry);
+            } catch (NamingException e) {
+                throw new AuthenticationException(username, "Wrong combination of username and password", e);
+            }
+
+            Object uidNumber = userEntry.getAttributes().get("uidNumber").get(0);
+            List<String> groupNames = getGroupNames(context, uidNumber);
             userModel.setGroupNames(groupNames.toArray(new String[groupNames.size()]));
         } catch (NamingException e) {
             throw new AuthenticationException(username, e);
         }
     }
 
-    private static List<String> getGroupNames(SearchResult userEntry, MyInitialLdapContext context) throws NamingException, AuthenticationException {
-        Object uidNumber = userEntry.getAttributes().get("uidNumber").get(0);
+    private void checkUsernameAndPassword(String password, SearchResult userEntry) throws NamingException {
+        Hashtable<String, String> env = new Hashtable<>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, ldapUrl(host, port));
+        env.put(Context.SECURITY_AUTHENTICATION, "simple");
+        env.put(Context.SECURITY_CREDENTIALS, password);
+        String dn = "cn=" + userEntry.getAttributes().get("cn").get(0).toString() + ",ou=users,dc=opec,dc=bc,dc=com";
+        env.put(Context.SECURITY_PRINCIPAL, dn);
+        new InitialLdapContext(env, new Control[0]);
+    }
+
+    private static List<String> getGroupNames(MyInitialLdapContext context, Object uidNumber) throws NamingException, AuthenticationException {
         SearchControls groupSearch = new SearchControls();
         groupSearch.setSearchScope(SearchControls.SUBTREE_SCOPE);
         NamingEnumeration groups = context.search("ou=groups,dc=opec,dc=bc,dc=com", "(objectClass=posixGroup)", groupSearch);
@@ -89,13 +106,18 @@ public class LdapAuth extends AuthenticationHandler {
 
     private static SearchResult getUserEntry(String username, MyInitialLdapContext context) throws NamingException, AuthenticationException {
         SearchControls searchControls = new SearchControls();
-        NamingEnumeration<SearchResult> results = context.search("ou=users,dc=opec,dc=bc,dc=com", "(uid=" + username + ")", searchControls);
-        SearchResult userEntry = null;
+        searchControls.setReturningAttributes(new String [] {"givenName", "sn", "mail", "cn", "uidNumber"});
+        String filter = "(uid=" + username + ")";
+
+        NamingEnumeration<SearchResult> results = context.search("ou=users,dc=opec,dc=bc,dc=com", filter, searchControls);
+        SearchResult userEntry;
         if (results.hasMoreElements()) {
             userEntry = results.nextElement();
             if (results.hasMoreElements()) {
                 throw new AuthenticationException(username, "Matched multiple users for username: '" + username + "'");
             }
+        } else {
+            throw new AuthenticationException(username, "Wrong combination of username and password");
         }
         return userEntry;
     }

@@ -6,12 +6,12 @@
 </head>
 <body>
 <form name="openid-login-form" action="${destinationUrl}" method="post">
+    <c:if test="${redirectionMessage != null}">
+        Error: ${redirectionMessage}
+    </c:if>
     <table>
         <tr>
-            <td>OpenId endpoint:</td>
             <td>
-                ${identifier}
-                <input type="hidden" name="identifier" value="${identifier}"/>
                 <input type="hidden" name="_loginAction" value="true"/>
             </td>
         </tr>

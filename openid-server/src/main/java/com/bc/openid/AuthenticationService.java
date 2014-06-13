@@ -75,21 +75,14 @@ public class AuthenticationService extends HttpServlet {
         boolean isLoginAction = paramsMap.containsKey("_loginAction");
         if (isLoginAction) {
             String username = paramsMap.get("username");
-//            String username = paramsMap.get("identifier");
-            boolean successfullyAuthenticated;
             try {
                 authenticate(username, paramsMap.get("password"), request);
-                successfullyAuthenticated = true;
-            } catch (AuthenticationException e) {
-                log("Unsuccessful authentication attempt by username '" + e.getUserName() + "'", e);
-                successfullyAuthenticated = false;
-            }
-            if (successfullyAuthenticated) {
                 HttpSession session = request.getSession();
                 paramsMap = (Map<String, String>) session.getAttribute("paramsMap");
                 parameterList = new ParameterList(paramsMap);
-            } else {
-                redirectToLogin(username, request, response);
+            } catch (AuthenticationException e) {
+                String redirectionMessage = e.getMessage();
+                redirectToLogin(request, response, redirectionMessage);
                 return;
             }
         }
@@ -110,7 +103,7 @@ public class AuthenticationService extends HttpServlet {
                 Boolean isAuthenticated = Boolean.parseBoolean((String) session.getAttribute("isAuthenticated"));
                 if (!isAuthenticated) {
                     session.setAttribute("paramsMap", paramsMap);
-                    redirectToLogin(userSelectedId, request, response);
+                    redirectToLogin(request, response);
                     return;
                 }
 
@@ -201,11 +194,15 @@ public class AuthenticationService extends HttpServlet {
         httpSession.setAttribute("isAuthenticated", "true");
     }
 
-    private void redirectToLogin(String identifier, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws ServletException, IOException {
+    private void redirectToLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        redirectToLogin(request, response, null);
+    }
+
+    private void redirectToLogin(HttpServletRequest request, HttpServletResponse response, String redirectionMessage) throws ServletException, IOException {
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/login.jsp");
-        httpRequest.setAttribute("identifier", identifier);
-        httpRequest.setAttribute("destinationUrl", Config.getEndpointUrl());
-        dispatcher.forward(httpRequest, httpResponse);
+        request.setAttribute("destinationUrl", Config.getEndpointUrl());
+        request.setAttribute("redirectionMessage", redirectionMessage);
+        dispatcher.forward(request, response);
     }
 
     private static Map<String, String> flattenParameters(Map parameters) {
