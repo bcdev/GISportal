@@ -48,8 +48,7 @@ def login(provider):
          #return oid.try_login(openid, ask_for=['email'])
 
    if provider is not None and provider in COMMON_PROVIDERS:
-      print(provider)
-      print(COMMON_PROVIDERS[provider])
+      session['provider'] = provider
       return oid.try_login(COMMON_PROVIDERS[provider], ask_for=['email'])
 
    return redirect(url_for('portal_user.index'))
@@ -58,15 +57,21 @@ def login(provider):
 def create_or_login(resp):
    print('in create or login')
 
-   generic_identity = resp.identity_url
-   email = resp.email
-   user_identity = generic_identity + '?id=' + hashlib.md5(email).hexdigest()
+   if session['provider'] == 'bc':
+      generic_identity = resp.identity_url
+      email = resp.email
+      user_identity = generic_identity + '?id=' + hashlib.md5(email).hexdigest()
+   else:
+      user_identity = resp.identity_url
+
    session['openid'] = user_identity
-   user = User.query.filter_by(openid=resp.identity_url).first()
+   user = User.query.filter_by(openid=user_identity).first()
+
    if user is not None:
-      flash(u'Successfully signed in')
-      g.user = user
-      return redirect(url_for('portal_user.index'))
+       g.user = user
+       print('logged in user ' + user.openid)
+       flash(u'Successfully signed in')
+       return redirect(url_for('portal_user.index'))
    return redirect(url_for('portal_user.create_user', next=oid.get_next_url(),
                            email=resp.email))
                            
@@ -79,9 +84,9 @@ def create_user():
       print ('in post')
       email = request.form['email']
       if '@' not in email:
-         flash(u'Error: you have to enter a valid email address')
+         print('Error: invalid email address')
       else:
-         flash(u'Profile successfully created')
+         print('Profile successfully created')
          db_session.add(User(email, session['openid']))
          db_session.commit()
          return redirect(oid.get_next_url())
@@ -89,9 +94,9 @@ def create_user():
       print('in get')
       email = request.args.get('email', None)
       if '@' not in email:
-         flash(u'Error: you have to enter a valid email address')
+          print(u'Error: you have to enter a valid email address')
       else:
-         flash(u'Profile successfully created')
+         print('Profile successfully created')
          db_session.add(User(email, session['openid']))
          db_session.commit()
          # The index has a script that closes popup when logged in
@@ -120,6 +125,7 @@ def create_user():
    
 @portal_user.route('/logout', methods=['GET','POST'])
 def logout():
+   print('signing out user ' + session['openid'])
    session.pop('openid', None)
-   #flash(u'You have been signed out')
+   g.user = None
    return "200", 200

@@ -29,12 +29,7 @@ gisportal.openid.setup = function(containerID) {
    };
    
    gisportal.openid.onCloseHandler = function() {
-      if (gisportal.openid.loggedIn === true)  {
-         gisportal.openid.hideLogin();
-      }
-      else  {
-         console.log('User did not log in');
-      }
+      gisportal.openid.hideLogin();
    };
    
    gisportal.openid.darkCoverStyle = [
