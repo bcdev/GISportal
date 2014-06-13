@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * ProviderService - OpenID provider
  * NOTE: Some part of the code has been adopted from `OpenID4Java` library wiki.
- * <p/>
+ * <p>
  * Copied from https://gist.github.com/jdkanani/4303956,
  * turned into standard Java Servlet
  *
@@ -42,6 +42,7 @@ import java.util.Map;
 public class AuthenticationService extends HttpServlet {
 
     private static final String SESSION_KEY_USER_MODEL = "userModel";
+    private static final String SESSION_KEY_IS_AUTHENTICATED = "isAuthenticated";
 
     private static ServerManager manager = null;
 
@@ -72,6 +73,15 @@ public class AuthenticationService extends HttpServlet {
         Map<String, String> paramsMap = flattenParameters(request.getParameterMap());
         ParameterList parameterList = new ParameterList(paramsMap);
 
+        boolean isLogOutAction = paramsMap.containsKey("_logoutAction");
+        if (isLogOutAction) {
+            HttpSession session = request.getSession();
+            session.removeAttribute(SESSION_KEY_USER_MODEL);
+            session.removeAttribute(SESSION_KEY_IS_AUTHENTICATED);
+            redirectToLogin(request, response, "Successfully logged out.");
+            return;
+        }
+
         boolean isLoginAction = paramsMap.containsKey("_loginAction");
         if (isLoginAction) {
             String username = paramsMap.get("username");
@@ -81,7 +91,7 @@ public class AuthenticationService extends HttpServlet {
                 paramsMap = (Map<String, String>) session.getAttribute("paramsMap");
                 parameterList = new ParameterList(paramsMap);
             } catch (AuthenticationException e) {
-                String redirectionMessage = e.getMessage();
+                String redirectionMessage = "Error: " + e.getMessage();
                 redirectToLogin(request, response, redirectionMessage);
                 return;
             }
@@ -100,7 +110,7 @@ public class AuthenticationService extends HttpServlet {
                 // obtain user data needed to continue
                 String userSelectedId = paramsMap.get("openid.identity");
                 HttpSession session = request.getSession();
-                Boolean isAuthenticated = Boolean.parseBoolean((String) session.getAttribute("isAuthenticated"));
+                Boolean isAuthenticated = Boolean.parseBoolean((String) session.getAttribute(SESSION_KEY_IS_AUTHENTICATED));
                 if (!isAuthenticated) {
                     session.setAttribute("paramsMap", paramsMap);
                     redirectToLogin(request, response);
@@ -140,6 +150,7 @@ public class AuthenticationService extends HttpServlet {
                     RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/consumer-redirection.jsp");
                     request.setAttribute("parameterMap", messageResponse.getParameterMap());
                     request.setAttribute("destinationUrl", messageResponse.getDestinationUrl(true));
+                    request.setAttribute("logoutUrl", request.getRequestURL().toString());
                     dispatcher.forward(request, response);
                     return;
                 }
@@ -191,7 +202,7 @@ public class AuthenticationService extends HttpServlet {
         HttpSession httpSession = request.getSession();
         UserModel userModel = authenticationHandler.getUserModel(username);
         httpSession.setAttribute(SESSION_KEY_USER_MODEL, userModel);
-        httpSession.setAttribute("isAuthenticated", "true");
+        httpSession.setAttribute(SESSION_KEY_IS_AUTHENTICATED, "true");
     }
 
     private void redirectToLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -208,7 +219,7 @@ public class AuthenticationService extends HttpServlet {
     private static Map<String, String> flattenParameters(Map parameters) {
         Map<String, String> map = new HashMap<>();
         for (Object key : parameters.keySet()) {
-            String name = (String)key;
+            String name = (String) key;
             String[] values = (String[]) parameters.get(name);
             if (values != null) {
                 for (String value : values) {

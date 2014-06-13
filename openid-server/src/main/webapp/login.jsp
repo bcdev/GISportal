@@ -7,7 +7,7 @@
 <body>
 <form name="openid-login-form" action="${destinationUrl}" method="post">
     <c:if test="${redirectionMessage != null}">
-        Error: ${redirectionMessage}
+        ${redirectionMessage}
     </c:if>
     <table>
         <tr>
