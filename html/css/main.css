@@ -99,7 +99,8 @@ ul li {
    left: 50%;
    margin-left: -275px;
    position: fixed;
-   background: rgba(32, 32, 32, 0.8);
+   /*background: rgba(32, 32, 32, 0.8);*/
+   background: rgba(183, 79, 27, 0.8); /*B74F1B*/
    border:1px solid #666666;
    /*filter: alpha(opacity=80);
    opacity: .80;*/
@@ -260,7 +261,8 @@ ul li {
    top: 5px;
    display: none;
    height: auto;
-   background: #333333;
+   /*background: #333333;*/
+   background: #B74F1B;
    border:2px solid #666666;
    max-width:350px;
 }
@@ -378,7 +380,8 @@ ul li {
 }
 
 .lPanel .selectedLayer {
-   background: #333333;
+   /*background: #333333;*/
+   background: #B74F1B;
    color: #cccccc;
 } 
 
@@ -402,7 +405,8 @@ a.triggerL {
    -webkit-border-bottom-right-radius: 15px;
    border-top-right-radius: 15px;
    border-bottom-right-radius: 15px;
-   background:#333333 url(../img/Right_icn.png) 90% 50% no-repeat;
+   /*background:#333333 url(../img/Right_icn.png) 90% 50% no-repeat;*/
+   background:#B74F1B url(../img/Right_icn.png) 90% 50% no-repeat;
 }
 
 a.triggerR {
@@ -414,23 +418,28 @@ a.triggerR {
    -webkit-border-bottom-left-radius: 15px;
    border-top-left-radius: 15px;
    border-bottom-left-radius: 15px;
-   background:#333333 url(../img/Left_icn.png) 10% 50% no-repeat;
+   /*background:#333333 url(../img/Left_icn.png) 10% 50% no-repeat;*/
+    background:#B74F1B url(../img/Left_icn.png) 10% 50% no-repeat;
 }
 
 a.triggerL:hover {
-   background:#222222 url(../img/Right_icn.png) 95% 50% no-repeat;
+   /*background:#222222 url(../img/Right_icn.png) 95% 50% no-repeat;*/
+   background:#E55C22 url(../img/Right_icn.png) 95% 50% no-repeat;
 }
 
 a.triggerR:hover {
-   background:#222222 url(../img/Left_icn.png) 5% 50% no-repeat;
+   /*background:#222222 url(../img/Left_icn.png) 5% 50% no-repeat;*/
+   background:#E55C22 url(../img/Left_icn.png) 5% 50% no-repeat;
 }
 
 a.active.triggerL {
-   background:#222222 url(../img/Left_icn.png) 90% 50% no-repeat;
+   /*background:#222222 url(../img/Left_icn.png) 90% 50% no-repeat;*/
+   background:#E55C22 url(../img/Left_icn.png) 90% 50% no-repeat;
 }
 
 a.active.triggerR {
-   background:#222222 url(../img/Right_icn.png) 10% 50% no-repeat;
+   /*background:#222222 url(../img/Right_icn.png) 10% 50% no-repeat;*/
+   background:#E55C22 url(../img/Right_icn.png) 10% 50% no-repeat;
 }
 
 .panel-button {
@@ -439,10 +448,12 @@ a.active.triggerR {
 }
 
 .panel-toolbar {
-   color: #CCCCCC;
-   background: #333333;
-   border: #333333;
-   overflow: hidden;
+    color: #CCCCCC;
+   /*background: #333333;*/
+    background:#B74F1B;
+    /*border: #333333;*/
+    border: #B74F1B;
+    overflow: hidden;
 }
 
 .panel-toolbar fieldset {
