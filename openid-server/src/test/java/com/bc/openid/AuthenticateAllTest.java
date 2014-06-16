@@ -17,7 +17,7 @@ public class AuthenticateAllTest {
     @Test
     public void testAuthenticateSuccess_1() throws Exception {
         try {
-            authenticateAll.authenticate("anything", "miau");
+            authenticateAll.authenticate("anything", "anything");
         } catch (AuthenticationException e) {
             fail(e.getMessage());
         }
@@ -26,21 +26,11 @@ public class AuthenticateAllTest {
     @Test
     public void testAuthenticateFails_1() throws Exception {
         try {
-            authenticateAll.authenticate(null, "miau");
+            authenticateAll.authenticate(null, "anything");
             fail();
         } catch (AuthenticationException expected) {
             assertNull(expected.getUserName());
             assertTrue(expected.getMessage().equals("Username must not be null"));
-        }
-    }
-
-    @Test
-    public void testAuthenticateFails_2() throws Exception {
-        try {
-            authenticateAll.authenticate("anything", "wuff");
-            fail();
-        } catch (AuthenticationException expected) {
-            assertTrue(expected.getUserName().equals("anything"));
         }
     }
 
@@ -53,7 +43,7 @@ public class AuthenticateAllTest {
             // ok
         }
 
-        authenticateAll.authenticate("schnabbelewoppski", "miau");
+        authenticateAll.authenticate("schnabbelewoppski", "anything");
         UserModel userModel = authenticateAll.getUserModel("schnabbelewoppski");
         assertNotNull(userModel);
 

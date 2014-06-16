@@ -16,10 +16,8 @@
 
 package com.bc.openid;
 
-import java.time.Instant;
-
 /**
- * Default implementation; authenticates always if default password is given.
+ * Default implementation; authenticates always.
  *
  * @author thomas
  */
@@ -30,19 +28,12 @@ public class AuthenticateAll extends AuthenticationHandler {
         if (username == null) {
             throw new AuthenticationException(null, "Username must not be null");
         }
-        boolean authenticated = password != null && password.equalsIgnoreCase("miau");
-        if (!authenticated) {
-            throw new AuthenticationException(username);
-        }
     }
 
     @Override
     protected UserModel getUserModelImpl(String username) {
         UserModel userModel = new UserModel();
-        userModel.setDateOfBirth(Instant.parse("1952-11-03T00:00:00.00Z"));
-        userModel.setEmailAddress("jamesbond@mi6.com");
-        userModel.setFullName("James Bond");
-        userModel.setOpenId(username);
+        userModel.setUsername(username);
         return userModel;
     }
 
