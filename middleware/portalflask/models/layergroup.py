@@ -1,7 +1,9 @@
+import datetime
+
 from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey
 from database import Base
 from portalflask import app
-import datetime
+
 
 class LayerGroup(Base):
    __tablename__ = 'layer_group'
@@ -18,4 +20,4 @@ class LayerGroup(Base):
       self.last_used = datetime.datetime.now()
 
    def __repr__(self):
-      return '<State ID %r>' % (self.id)
+      return '<Layer Group ID %r>' % self.id

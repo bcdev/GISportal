@@ -1,12 +1,12 @@
-from flask import Flask, abort, make_response, g, session
 try:
    from flask_openid import OpenID
 except:
    from flaskext.openid import OpenID
-   
-from flask_sqlalchemy import SQLAlchemy
-import settings as settings
+
 import sys
+
+import settings as settings
+
 
 def create_app(path):
    app = Flask(__name__)
@@ -48,12 +48,14 @@ def create_app(path):
          return resp
    
    return app
-   
+
+
 def setup_version(app):
    app.config['MAJOR_VERSION'] = '0'
    app.config['MINOR_VERSION'] = '3'
    app.config['API_VERSION'] = '0.1'
    app.config['SVN_VERSION'] = filter(lambda x: x.isdigit(), "$Rev: 554 $")
+
 
 """
 Setup logging for the application. If no path is provided, is empty, or does
@@ -88,7 +90,8 @@ def setup_logging(app, path):
 def setup_config(app):
    app.config.from_object(settings)
    app.logger.debug("In debug mode: %s" % app.debug)
-   
+
+
 # Alternative method to using 'setup_routing' above
 def setup_blueprints(app):
    from views.user import portal_user
