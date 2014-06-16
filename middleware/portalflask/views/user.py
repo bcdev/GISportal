@@ -122,7 +122,16 @@ def create_user():
          #db_session.commit()
          #return redirect(url_for('portal_user.edit_profile'))
    #return render_template('edit_profile.html', form=form)
-   
+
+@portal_user.route('/get_user', methods=['POST'])
+def get_user():
+    print('in get user')
+    if g.user is not None:
+        print('return ' + g.user.openid)
+        return jsonify(username=g.user.openid)
+    return jsonify(username=None)
+
+
 @portal_user.route('/logout', methods=['GET','POST'])
 def logout():
    print('signing out user ' + session['openid'])

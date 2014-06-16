@@ -6,5 +6,5 @@ com.bc.openid.endpointuri = http://host:port/<application context>/
 com.bc.openid.authenticationHandlerClass = com.bc.openid.AuthenticateAll
 
 # authentication parameters
-#com.bc.openid.authentication.param.host =
-#com.bc.openid.authentication.param.port =
+com.bc.openid.authentication.param.host = localhost
+com.bc.openid.authentication.param.port = 389

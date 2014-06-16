@@ -27,9 +27,14 @@ gisportal.openid.setup = function(containerID) {
    gisportal.openid.onOpenHandler = function() {
       gisportal.openid.darkscreen(gisportal.openid.darkCoverID);
    };
-   
-   gisportal.openid.onCloseHandler = function() {
-      gisportal.openid.hideLogin();
+
+   gisportal.openid.onCloseHandler = function () {
+       gisportal.openid.set_username_to_html();
+       if (gisportal.openid.is_logged_in()) {
+           gisportal.openid.hideLogin();
+       } else {
+           gisportal.openid.showLogin();
+       }
    };
    
    gisportal.openid.darkCoverStyle = [
@@ -96,6 +101,17 @@ gisportal.openid.setup = function(containerID) {
 
 };
 
+gisportal.openid.set_username_to_html = function() {
+    var on_success = function (data, opts) {
+        $('#user_name').html(data.username);
+    };
+    var on_error = function (request, errorType, exception) {
+        $('#user_name').html('null');
+        console.log('Error: Failed to retrieved username. Ajax failed!');
+    };
+    gisportal.genericSync('POST', gisportal.middlewarePath + "/user", null, on_success, on_error, 'json', {});
+};
+
 // getLink to state
 gisportal.openid.getLink = function()  {
    gisportal.genericAsync('POST', gisportal.stateLocation, { state: JSON.stringify(gisportal.getState())}, function(data, opts) { 
@@ -113,7 +129,7 @@ gisportal.openid.getLink = function()  {
 gisportal.openid.logout = function() { gisportal.genericAsync('GET', gisportal.openid.logoutLocation, null, function(data, opts) {
       console.log(data); 
       if (data == '200')  {
-         gisportal.openid.loggedIn = false;
+         gisportal.openid.set_username_to_html();
          gisportal.openid.showLogin();
       }
    }, 
@@ -123,14 +139,17 @@ gisportal.openid.logout = function() { gisportal.genericAsync('GET', gisportal.o
    }, 'json', {});
 };
 
-
+gisportal.openid.is_logged_in = function() {
+    var userName = $('#user_name').text();
+    return userName != "" && userName != 'null' && userName != undefined;
+};
 
 gisportal.openid.openPopup = function(urlToOpen) {
    var windowWidth = '870px';
    var windowHeight = '600px';
       
    var dataObject = gisportal.utils.openPopup(windowWidth, windowHeight, urlToOpen, gisportal.openid.onOpenHandler, gisportal.openid.waitForPopupClose);  
-    gisportal.openid.popupWindow = dataObject.popupWindow;
+   gisportal.openid.popupWindow = dataObject.popupWindow;
    gisportal.openid.interval = dataObject.interval;
 };
 

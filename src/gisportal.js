@@ -158,7 +158,7 @@ gisportal.getFeature = function(layer, olLayer, time) {
 };
 
 /**
- * Generic Asyc Ajax to save having lots of different ones all over the place.
+ * Generic Async Ajax
  * 
  * @param {string} url - The url to use as part of the ajax call
  * @param {Object} data - The data to be sent
@@ -174,7 +174,30 @@ gisportal.genericAsync = function(type, url, data, success, error, dataType, opt
       url: url, 
       data: data,
       dataType: dataType,
-      async: true,
+      cache: false,
+      success: function(data) { success(data, opts); },
+      error: error
+   });
+};
+
+/**
+ * Generic Sync Ajax
+ *
+ * @param {string} url - The url to use as part of the ajax call
+ * @param {Object} data - The data to be sent
+ * @param {Function} success - Called if everything goes ok.
+ * @param {Function} error - Called if problems arise from the ajax call.
+ * @param {string} dataType - What data type will be returned, xml, json, etc
+ * @param {object} opts - Object to pass to success function
+ */
+gisportal.genericSync = function(type, url, data, success, error, dataType, opts) {
+   //var map = this;
+   $.ajax({
+      type: type,
+      url: url,
+      data: data,
+      dataType: dataType,
+      async: false,
       cache: false,
       success: function(data) { success(data, opts); },
       error: error
@@ -863,16 +886,6 @@ gisportal.setState = function(state) {
    gisportal.rightPanel.loadState(state); 
 };
 
-gisportal.set_username = function() {
-    var on_success = function (data, opts) {
-        $('#userName').html(data.username);
-    };
-    var on_error = function (request, errorType, exception) {
-        $('#userName').html('guest');
-        console.log('Error: Failed to retrieved username. Ajax failed!');
-    };
-    gisportal.genericAsync('GET', gisportal.middlewarePath + "/user", null, on_success, on_error, 'json', {});
-};
 
 /*===========================================================================*/
 
@@ -897,8 +910,6 @@ gisportal.main = function() {
    gisportal.walkthrough = new gisportal.Walkthrough(); // uses templates.walkthrough so needs to run after
   
    $('#version').html('v' + gisportal.VERSION + ':' + gisportal.SVN_VERSION);
-
-    gisportal.set_username();
 
    // Need to put this early so that tooltips work at the start to make the
    // page feel responsive.    
@@ -944,7 +955,7 @@ gisportal.main = function() {
       autoOpen: false,
       showMinimise: true,
       dblclick: "collapse",
-      open: gisportal.set_username
+      open: gisportal.openid.set_username_to_html
    });
 
    // Show map info such as latlng

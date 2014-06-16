@@ -123,7 +123,7 @@ gisportal.window.history = function() {
    
    /* States */
    gisportal.window.history.loadStateHistory = function() {
-      if (gisportal.openid.loggedIn === true) {
+      if (gisportal.openid.is_logged_in()) {
          gisportal.genericAsync(
             'GET',
             '/service/state',
