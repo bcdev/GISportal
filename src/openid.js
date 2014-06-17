@@ -109,7 +109,7 @@ gisportal.openid.set_username_to_html = function() {
         $('#user_name').html('null');
         console.log('Error: Failed to retrieved username. Ajax failed!');
     };
-    gisportal.genericSync('POST', gisportal.middlewarePath + "/user", null, on_success, on_error, 'json', {});
+    gisportal.genericSync('POST', gisportal.middlewarePath + "/get_user", null, on_success, on_error, 'json', {});
 };
 
 // getLink to state

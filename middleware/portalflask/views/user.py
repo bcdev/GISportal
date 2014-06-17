@@ -1,15 +1,9 @@
-from flask import Blueprint, abort, request, jsonify, g, current_app, render_template, session, flash, url_for, redirect
-from portalflask.models.database import db_session
-from portalflask.models.state import State
-from portalflask.models.graph import Graph
-from portalflask.models.quickregions import QuickRegions
-from portalflask.models.roi import ROI
-from portalflask.models.layergroup import LayerGroup
-from portalflask.models.user import User
-from portalflask.core import error_handler
-from portalflask import oid
-import sqlite3 as sqlite
 import hashlib
+
+from portalflask.models.database import db_session
+from portalflask.models.user import User
+from portalflask import oid
+
 
 portal_user = Blueprint('portal_user', __name__)
 
@@ -32,7 +26,7 @@ def login_with_google():
    # if we are already logged in, go back to were we came from
    if g.user is not None:
       return redirect(url_for('state_user.getStates'))
-   return oid.try_login(COMMON_PROVIDERS['google'], ask_for=['email'])
+   return oid.try_login(COMMON_PROVIDERS['google'], ask_for=['email', 'fullname', 'nickname'])
 
 
 @portal_user.route('/login/<provider>', methods=['GET', 'POST'])
@@ -49,13 +43,15 @@ def login(provider):
 
    if provider is not None and provider in COMMON_PROVIDERS:
       session['provider'] = provider
-      return oid.try_login(COMMON_PROVIDERS[provider], ask_for=['email'])
+      return oid.try_login(COMMON_PROVIDERS[provider], ask_for=['email', 'fullname', 'nickname'])
 
    return redirect(url_for('portal_user.index'))
 
 @oid.after_login
 def create_or_login(resp):
    print('in create or login')
+
+   print(str(resp))
 
    if session['provider'] == 'bc':
       generic_identity = resp.identity_url
@@ -87,7 +83,7 @@ def create_user():
          print('Error: invalid email address')
       else:
          print('Profile successfully created')
-         db_session.add(User(email, session['openid']))
+         db_session.add(User(email, session['openid'], 'username')) # todo!
          db_session.commit()
          return redirect(oid.get_next_url())
    elif request.method == 'GET':
@@ -97,7 +93,7 @@ def create_user():
           print(u'Error: you have to enter a valid email address')
       else:
          print('Profile successfully created')
-         db_session.add(User(email, session['openid']))
+         db_session.add(User(email, session['openid'], 'username')) # todo!
          db_session.commit()
          # The index has a script that closes popup when logged in
          #return redirect(oid.get_next_url()) 

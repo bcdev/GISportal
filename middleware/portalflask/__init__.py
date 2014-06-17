@@ -1,3 +1,4 @@
+from flask import Flask, g, session, make_response
 try:
    from flask_openid import OpenID
 except:
@@ -103,7 +104,6 @@ def setup_blueprints(app):
    from views.proxy import portal_proxy
    from views.wfs import portal_wfs
    from views.wcs import portal_wcs
-   from views.portal_user_2 import portal_user_2
 
    app.register_blueprint(portal_user)
    app.register_blueprint(portal_state)
@@ -111,7 +111,6 @@ def setup_blueprints(app):
    app.register_blueprint(portal_proxy)
    app.register_blueprint(portal_wfs)
    app.register_blueprint(portal_wcs)
-   app.register_blueprint(portal_user_2)
 
 path = sys.path[0]
 app = create_app(path)

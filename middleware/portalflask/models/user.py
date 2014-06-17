@@ -1,6 +1,8 @@
 import datetime
 
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship, backref
+
 from database import Base
 
 

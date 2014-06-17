@@ -3,7 +3,6 @@ from views.state import portal_state, getState, setState
 from views.proxy import portal_proxy, proxy
 from views.wfs import portal_wfs, getWFSData
 from views.wcs import portal_wcs, getWcsData
-from views.portal_user_2 import portal_user_2
 
 routes = [
    ((portal_proxy, ''),
@@ -42,6 +41,7 @@ def setup_routing(app, routes):
                 endpoint[0].add_url_rule(pattern, view_func=view)
         if endpoint is not None:
             app.register_blueprint(endpoint[0], url_prefix=endpoint[1])
+
 
 # Alternative method to using 'setup_routing' above
 def setupBlueprints(app):
