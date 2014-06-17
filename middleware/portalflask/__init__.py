@@ -5,7 +5,6 @@ except:
    from flaskext.openid import OpenID
 
 import sys
-
 import settings as settings
 
 
@@ -115,7 +114,8 @@ def setup_blueprints(app):
 path = sys.path[0]
 app = create_app(path)
 
-oid = OpenID(app, settings.OPENID_FOLDER)
+from core.group_extension import GroupExtension
+oid = OpenID(app, settings.OPENID_FOLDER, extension_responses=[GroupExtension])
 print path
 
 # register application views and blueprints  

@@ -7,6 +7,8 @@ import org.openid4java.message.DirectError;
 import org.openid4java.message.Message;
 import org.openid4java.message.MessageException;
 import org.openid4java.message.MessageExtension;
+import org.openid4java.message.MessageExtensionFactory;
+import org.openid4java.message.Parameter;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
@@ -52,13 +54,22 @@ public class AuthenticationService extends HttpServlet {
         manager.getRealmVerifier().setEnforceRpId(false);
     }
 
+    public AuthenticationService() {
+        try {
+            Message.addExtensionFactory(BcGroupsExtensionFactory.class);
+        } catch (MessageException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             associateOrAuthenticate(req, resp);
         } catch (URISyntaxException | ServerException | AssociationException | MessageException e) {
-            // todo -- add correct exception handling
             e.printStackTrace();
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            e.printStackTrace(resp.getWriter());
         }
     }
 
@@ -119,6 +130,7 @@ public class AuthenticationService extends HttpServlet {
 
                 String userSelectedClaimedId = parameterList.getParameterValue("openid.claimed_id");
                 AuthRequest authReq = AuthRequest.createAuthRequest(parameterList, manager.getRealmVerifier());
+
                 boolean signNow = false; // Sign after we added extensions.
                 messageResponse = manager.authResponse(parameterList, userSelectedId, userSelectedClaimedId, true, signNow);
 
@@ -126,16 +138,16 @@ public class AuthenticationService extends HttpServlet {
                     response.setStatus(Status.INTERNAL_SERVER_ERROR.getStatusCode());
                     return;
                 } else {
-                    UserModel registrationModel = (UserModel) session.getAttribute(SESSION_KEY_USER_MODEL);
+                    UserModel userModel = (UserModel) session.getAttribute(SESSION_KEY_USER_MODEL);
 
-                    setEmail(authReq, registrationModel, messageResponse);
+                    setEmail(authReq, userModel, messageResponse);
+                    setUserGroups(authReq, userModel, messageResponse);
 
                     if (authReq.hasExtension(SRegMessage.OPENID_NS_SREG)) {
                         MessageExtension extensionRequestObject = authReq.getExtension(SRegMessage.OPENID_NS_SREG);
                         if (extensionRequestObject instanceof SRegRequest) {
                             Map<String, String> registrationData = new HashMap<>();
-                            registrationData.put("fullname", registrationModel.getFullName());
-                            registrationData.put("dob", registrationModel.getDateOfBirth().toString());
+                            registrationData.put("fullname", userModel.getFullName());
 
                             SRegRequest sregReq = (SRegRequest) extensionRequestObject;
                             SRegResponse sregResp = SRegResponse.createSRegResponse(sregReq, registrationData);
@@ -166,7 +178,7 @@ public class AuthenticationService extends HttpServlet {
         response.getWriter().write(messageResponse.keyValueFormEncoding());
     }
 
-    static void setEmail(Message authReq, UserModel registrationModel, Message messageResponse) throws MessageException {
+    static void setEmail(Message authReq, UserModel userModel, Message messageResponse) throws MessageException {
         if (authReq.hasExtension(AxMessage.OPENID_NS_AX)) {
             Map<String, String> axData = new HashMap<>();
             MessageExtension extensionRequestObject = authReq.getExtension(AxMessage.OPENID_NS_AX);
@@ -175,15 +187,23 @@ public class AuthenticationService extends HttpServlet {
                 Map required = fetchReq.getAttributes(true);
                 if (required != null && required.size() > 0) {
                     if (isAskingForMail(required)) {
-                        axData.put("email", registrationModel.getEmailAddress());
+                        axData.put("email", userModel.getEmailAddress());
 
                         FetchResponse fetchResp = FetchResponse.createFetchResponse(fetchReq, axData);
-                        fetchResp.addAttribute("email", "http://schema.openid.net/contact/email", registrationModel.getEmailAddress());
+                        fetchResp.addAttribute("email", "http://schema.openid.net/contact/email", userModel.getEmailAddress());
                         messageResponse.addExtension(fetchResp);
                     }
                 }
             }
         }
+    }
+
+    static void setUserGroups(Message authReq, UserModel userModel, Message messageResponse) throws MessageException {
+        String namespace = BcGroupsExtensionFactory.TYPE_URI;
+        GroupExtension extension = (GroupExtension) authReq.getExtension(namespace);
+        String groupNames = Arrays.toString(userModel.getGroupNames()).replace(",", " ").replace("[", "").replace("]", "");
+        extension.parameterList.set(new Parameter("groups", groupNames));
+        messageResponse.addExtension(extension, "bcgroups");
     }
 
     private static boolean isAskingForMail(Map required) {
@@ -234,4 +254,52 @@ public class AuthenticationService extends HttpServlet {
         return map;
     }
 
+    public static class BcGroupsExtensionFactory implements MessageExtensionFactory {
+
+        public static final String TYPE_URI = "http://openid.brockmann-consult.de/bcgroups";
+
+        @Override
+        public String getTypeUri() {
+            return TYPE_URI;
+        }
+
+        @Override
+        public MessageExtension getExtension(ParameterList parameterList, boolean isRequest) throws MessageException {
+            return new GroupExtension(parameterList);
+        }
+    }
+
+    public static class GroupExtension implements MessageExtension {
+
+        private ParameterList parameterList;
+
+        public GroupExtension(ParameterList parameterList) {
+            this.parameterList = parameterList;
+        }
+
+        @Override
+        public String getTypeUri() {
+            return BcGroupsExtensionFactory.TYPE_URI;
+        }
+
+        @Override
+        public ParameterList getParameters() {
+            return parameterList;
+        }
+
+        @Override
+        public void setParameters(ParameterList params) {
+            this.parameterList = params;
+        }
+
+        @Override
+        public boolean providesIdentifier() {
+            return false;
+        }
+
+        @Override
+        public boolean signRequired() {
+            return false;
+        }
+    }
 }

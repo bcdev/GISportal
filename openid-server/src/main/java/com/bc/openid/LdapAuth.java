@@ -56,7 +56,7 @@ public class LdapAuth extends AuthenticationHandler {
 
         try (MyInitialLdapContext context = new MyInitialLdapContext(env)) {
             SearchResult userEntry = getUserEntry(username, context);
-            setUserModel(userEntry);
+            setUserModel(username, userEntry);
 
             try {
                 checkUsernameAndPassword(password, userEntry);
@@ -122,7 +122,7 @@ public class LdapAuth extends AuthenticationHandler {
         return userEntry;
     }
 
-    private void setUserModel(SearchResult userEntry) throws NamingException {
+    private void setUserModel(String username, SearchResult userEntry) throws NamingException {
         userModel = new UserModel();
         Attribute mailAttribute = userEntry.getAttributes().get("mail");
         if (mailAttribute != null) {
@@ -139,6 +139,7 @@ public class LdapAuth extends AuthenticationHandler {
             fullName += surnameAttribute.get().toString();
         }
         userModel.setFullName(fullName);
+        userModel.setUsername(username);
     }
 
     @Override
@@ -166,36 +167,4 @@ public class LdapAuth extends AuthenticationHandler {
             super(env, new Control[0]);
         }
     }
-
-
-    // this allows logging in, too
-    // but I had difficulties retrieving the user data
-
-    /*
-
-        LdapLoginModule loginModule = new LdapLoginModule();
-        HashSet<Principal> principals = new HashSet<>();
-        Subject subject = new Subject(false, principals, new HashSet<>(), new HashSet<>());
-        HashMap<String, Object> options = new HashMap<>();
-        options.put("userProvider", ldapUrl(host, port) + "/ou=users,dc=opec,dc=bc,dc=com");
-        options.put("userFilter", "(uid=" + username + ")");
-        options.put("useSSL", "false");
-        options.put("debug", "true");
-        loginModule.initialize(subject, callbacks -> {
-            for (Callback callback : callbacks) {
-                if (callback instanceof NameCallback) {
-                    ((NameCallback)callback).setName(username);
-                } else if (callback instanceof PasswordCallback) {
-                    ((PasswordCallback)callback).setPassword(password.toCharArray());
-                }
-            }
-        }, null, options);
-
-        try {
-            loginModule.login();
-            loginModule.commit();
-        } catch (LoginException e) {
-            throw new AuthenticationException(username, e);
-        }
-     */
 }

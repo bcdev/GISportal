@@ -1,10 +1,14 @@
 import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Table, Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref
 
 from database import Base
 
+association_table = Table('association', Base.metadata,
+                          Column('user_id', Integer, ForeignKey('user.id')),
+                          Column('user_group_id', Integer, ForeignKey('user_group.id'))
+)
 
 class User(Base):
    __tablename__ = 'user'
@@ -19,9 +23,11 @@ class User(Base):
    quickregions = relationship('QuickRegions', uselist=False, backref=backref('user', lazy='joined'))
    roi = relationship('ROI', backref=backref('user', lazy='joined'), lazy='dynamic')
    layergroups = relationship('LayerGroup', backref=backref('user', lazy='joined'), lazy='dynamic')
-   groups = relationship('UserGroup')
+   groups = relationship('UserGroup', secondary=association_table)
 
-   def __init__(self, email=None, openid=None, username=None):
+
+   def __init__(self, email=None, openid=None, username=None, groups=None):
+      self.groups = groups
       self.email = email
       self.openid = openid
       self.username = username

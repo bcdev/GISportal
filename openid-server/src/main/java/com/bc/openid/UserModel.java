@@ -16,8 +16,6 @@
 
 package com.bc.openid;
 
-import java.time.Instant;
-
 /**
  * Internal user representation.
  *
@@ -25,19 +23,10 @@ import java.time.Instant;
  */
 class UserModel {
 
-    private Instant dateOfBirth;
     private String emailAddress;
     private String fullName;
-    private String openId;
+    private String username;
     private String[] groupNames;
-
-    public void setDateOfBirth(Instant dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public Instant getDateOfBirth() {
-        return dateOfBirth;
-    }
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
@@ -55,19 +44,19 @@ class UserModel {
         return fullName;
     }
 
-    public void setOpenId(String openId) {
-        this.openId = openId;
-    }
-
-    public String getOpenId() {
-        return openId;
-    }
-
     public String[] getGroupNames() {
         return groupNames;
     }
 
     public void setGroupNames(String[] groupNames) {
         this.groupNames = groupNames;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

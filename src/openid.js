@@ -29,7 +29,7 @@ gisportal.openid.setup = function(containerID) {
    };
 
    gisportal.openid.onCloseHandler = function () {
-       gisportal.openid.set_username_to_html();
+       gisportal.openid.set_userinfo_to_html();
        if (gisportal.openid.is_logged_in()) {
            gisportal.openid.hideLogin();
        } else {
@@ -101,12 +101,14 @@ gisportal.openid.setup = function(containerID) {
 
 };
 
-gisportal.openid.set_username_to_html = function() {
+gisportal.openid.set_userinfo_to_html = function() {
     var on_success = function (data, opts) {
         $('#user_name').html(data.username);
+        $('#user_groups').html(data.usergroups);
     };
     var on_error = function (request, errorType, exception) {
         $('#user_name').html('null');
+        $('#user_groups').html('null');
         console.log('Error: Failed to retrieved username. Ajax failed!');
     };
     gisportal.genericSync('POST', gisportal.middlewarePath + "/get_user", null, on_success, on_error, 'json', {});
@@ -129,7 +131,7 @@ gisportal.openid.getLink = function()  {
 gisportal.openid.logout = function() { gisportal.genericAsync('GET', gisportal.openid.logoutLocation, null, function(data, opts) {
       console.log(data); 
       if (data == '200')  {
-         gisportal.openid.set_username_to_html();
+         gisportal.openid.set_userinfo_to_html();
          gisportal.openid.showLogin();
       }
    }, 

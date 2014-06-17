@@ -31,7 +31,7 @@ public class LdapAuthTest {
         assertNotNull(userModel);
         assertEquals("thomas.storm@brockmann-consult.de", userModel.getEmailAddress());
         assertEquals("Thomas Storm", userModel.getFullName());
-        assertNull(userModel.getDateOfBirth());
+        assertEquals("tstorm", userModel.getUsername());
         String[] groupNames = userModel.getGroupNames();
         Arrays.sort(groupNames);
         assertArrayEquals(new String[]{"admins", "cc_users"}, groupNames);
@@ -44,7 +44,7 @@ public class LdapAuthTest {
         assertNotNull(userModel);
         assertEquals("cc@host.com", userModel.getEmailAddress());
         assertEquals("Coasti Colourinho", userModel.getFullName());
-        assertNull(userModel.getDateOfBirth());
+        assertEquals("ccolourinho", userModel.getUsername());
         assertArrayEquals(new String[] {"cc_users"}, userModel.getGroupNames());
     }
 

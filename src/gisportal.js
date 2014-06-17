@@ -955,7 +955,7 @@ gisportal.main = function() {
       autoOpen: false,
       showMinimise: true,
       dblclick: "collapse",
-      open: gisportal.openid.set_username_to_html
+      open: gisportal.openid.set_userinfo_to_html
    });
 
    // Show map info such as latlng

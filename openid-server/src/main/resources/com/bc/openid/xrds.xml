@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xrds:XRDS
         xmlns:xrds="xri://$xrds"
-        xmlns:openid="http://openid.net/xmlns/1.0"
         xmlns="xri://$xrd*($v*2.0)">
     <XRD version="2.0">
         <Service priority="10">
@@ -10,6 +9,7 @@
             <Type>http://openid.net/extensions/sreg/1.1</Type>
             <Type>http://schemas.openid.net/pape/policies/2007/06/phishing-resistant</Type>
             <Type>http://openid.net/srv/ax/1.0</Type>
+            <Type>http://www.brockmann-consult.de/openid/groups</Type>
             <URI>${endpointURI}</URI>
         </Service>
     </XRD>
