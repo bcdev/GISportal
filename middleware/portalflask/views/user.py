@@ -93,7 +93,7 @@ def get_user():
             if i < len(g.user.groups) - 1:
                 groupstring += ','
         return jsonify(username=g.user.username, usergroups=groupstring, fullname=g.user.full_name, email=g.user.email, openid=g.user.openid)
-    return jsonify(username=None, usergroups=None)
+    return jsonify(username=None, usergroups=None, fullname=None, email=None, openid=None)
 
 
 @portal_user.route('/logout', methods=['GET','POST'])
