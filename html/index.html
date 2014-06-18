@@ -334,8 +334,7 @@
       <input type="hidden" name="action" value="verify">
       <fieldset>
          <legend>Sign-in or Create New Account</legend>
-         <div id="gisportal-openid-choice" style="display:block;">
-            <p>Please click your account provider:</p>
+          <div id="gisportal-openid-choice" style="display:block;">
             <div id="gisportal-openid-btns">
                {{#providers}} {{#provider}} {{/provider}} {{/providers}}
             </div>
@@ -620,7 +619,10 @@
    <div id="user-info-balloon" class="unselectable" title="User Info">
        <p>User data</p>
 		<ul>
-            <li>Name:<span id="user_name"></span></li>
+            <li>Name:<span id="user_full_name"></span></li>
+            <li>Username:<span id="user_name"></span></li>
+            <li>OpenId:<span id="user_openid"></span></li>
+            <li>E-Mail:<span id="user_mail"></span></li>
             <li>Groups:<span id="user_groups"></span></li>
 		</ul>
    </div>

@@ -14,6 +14,7 @@ class User(Base):
    __tablename__ = 'user'
    id = Column(Integer, index=True, primary_key=True)
    username = Column(String(60), index=True, unique=True)
+   full_name = Column(String(120), index=True, unique=True)
    email = Column(String(120), index=True, unique=True)
    openid = Column(String(200), index=True, unique=True)
    last_login = Column(DateTime, unique=False)
@@ -26,11 +27,12 @@ class User(Base):
    groups = relationship('UserGroup', secondary=association_table)
 
 
-   def __init__(self, email=None, openid=None, username=None, groups=None):
-      self.groups = groups
+   def __init__(self, email=None, openid=None, username=None, full_name=None, groups=None):
+      self.username = username
+      self.full_name = full_name
       self.email = email
       self.openid = openid
-      self.username = username
+      self.groups = groups
       self.last_login = datetime.datetime.now()
 
    def __repr__(self):

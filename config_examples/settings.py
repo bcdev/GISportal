@@ -17,3 +17,6 @@ LOG_PATH = ''
 # The error level of logging into the database
 # E for errors only or W for warnings too
 ERROR_LEVEL = "W"
+
+# The URL of the openID relying party
+OPENID_RP_URL = 'http://opec-portal-test:8585/openid-server/provider/discovery/gis-portal'

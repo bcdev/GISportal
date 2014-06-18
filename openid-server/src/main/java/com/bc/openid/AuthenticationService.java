@@ -143,11 +143,12 @@ public class AuthenticationService extends HttpServlet {
                     setEmail(authReq, userModel, messageResponse);
                     setUserGroups(authReq, userModel, messageResponse);
 
-                    if (authReq.hasExtension(SRegMessage.OPENID_NS_SREG)) {
-                        MessageExtension extensionRequestObject = authReq.getExtension(SRegMessage.OPENID_NS_SREG);
+                    if (authReq.hasExtension(SRegMessage.OPENID_NS_SREG11)) {
+                        MessageExtension extensionRequestObject = authReq.getExtension(SRegMessage.OPENID_NS_SREG11);
                         if (extensionRequestObject instanceof SRegRequest) {
                             Map<String, String> registrationData = new HashMap<>();
                             registrationData.put("fullname", userModel.getFullName());
+                            registrationData.put("nickname", userModel.getUsername());
 
                             SRegRequest sregReq = (SRegRequest) extensionRequestObject;
                             SRegResponse sregResp = SRegResponse.createSRegResponse(sregReq, registrationData);
@@ -201,7 +202,7 @@ public class AuthenticationService extends HttpServlet {
     static void setUserGroups(Message authReq, UserModel userModel, Message messageResponse) throws MessageException {
         String namespace = BcGroupsExtensionFactory.TYPE_URI;
         GroupExtension extension = (GroupExtension) authReq.getExtension(namespace);
-        String groupNames = Arrays.toString(userModel.getGroupNames()).replace(",", " ").replace("[", "").replace("]", "");
+        String groupNames = Arrays.toString(userModel.getGroupNames()).replace(",", "").replace("[", "").replace("]", "");
         extension.parameterList.set(new Parameter("groups", groupNames));
         messageResponse.addExtension(extension, "bcgroups");
     }

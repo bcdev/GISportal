@@ -51,4 +51,3 @@ def setupBlueprints(app):
    app.register_blueprint(portal_proxy)
    app.register_blueprint(portal_wfs)
    app.register_blueprint(portal_wcs)
-   app.register_blueprint(portal_user_2)

@@ -10,7 +10,7 @@ import settings as settings
 
 def create_app(path):
    app = Flask(__name__)
-   app.config.update(SECRET_KEY = 'p7i0-22@0eheas^kzw3=1qfug_x+5)5)8u4v=2iyiwwx1eh)37', DEBUG = True)
+   app.config.update(SECRET_KEY=settings.SECRET_KEY, DEBUG=settings.DEBUG)
    print path
    
    setup_version(app)
@@ -54,7 +54,6 @@ def setup_version(app):
    app.config['MAJOR_VERSION'] = '0'
    app.config['MINOR_VERSION'] = '3'
    app.config['API_VERSION'] = '0.1'
-   app.config['SVN_VERSION'] = filter(lambda x: x.isdigit(), "$Rev: 554 $")
 
 
 """
@@ -115,7 +114,8 @@ path = sys.path[0]
 app = create_app(path)
 
 from core.group_extension import GroupExtension
-oid = OpenID(app, settings.OPENID_FOLDER, extension_responses=[GroupExtension])
+from openid.extensions.sreg import SRegResponse
+oid = OpenID(app, settings.OPENID_FOLDER, extension_responses=[GroupExtension, SRegResponse])
 print path
 
 # register application views and blueprints  

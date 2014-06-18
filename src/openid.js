@@ -104,11 +104,17 @@ gisportal.openid.setup = function(containerID) {
 gisportal.openid.set_userinfo_to_html = function() {
     var on_success = function (data, opts) {
         $('#user_name').html(data.username);
+        $('#user_full_name').html(data.fullname);
+        $('#user_openid').html(data.openid);
+        $('#user_mail').html(data.email);
         $('#user_groups').html(data.usergroups);
     };
     var on_error = function (request, errorType, exception) {
-        $('#user_name').html('null');
-        $('#user_groups').html('null');
+        $('#user_name').html(null);
+        $('#user_full_name').html(null);
+        $('#user_openid').html(null);
+        $('#user_mail').html(null);
+        $('#user_groups').html(null);
         console.log('Error: Failed to retrieved username. Ajax failed!');
     };
     gisportal.genericSync('POST', gisportal.middlewarePath + "/get_user", null, on_success, on_error, 'json', {});
@@ -213,9 +219,5 @@ gisportal.openid.isPopupClosed = function() {
 //======== ENDOF POPUP MANAGEMENT ========//
 
 gisportal.openid.providers = [
-   {name: 'google', title:'login with Google', url:'/service/login/google', imagePath:'img/Red-signin_Long_base_20dp.png', x:'0', y:'0', width:'147px', height:'30px'},
-//   {name: 'yahoo', title:'login with Yahoo', url:'/service/login/yahoo', imagePath:'img/yahoo_signin_btn.png', x:'0', y:'0', width:'161px', height:'22px'},
-   {name: 'bc', title:'login with BC', url:'/service/login/bc', imagePath:'img/bc_signin_btn.png', x:'0', y:'0', width:'161px', height:'22px'}
-   //{name: 'myOpenID', title:'login with myOpenID', url:'/service/login/myopenid', imagePath:'0', x:'0', y:'0'},
-   //{name: 'OpenID', title:'login with OpenID', url:'/service/login', imagePath:'', x:'0', y:'0'}
+   {name: 'bc', title:'Login at Brockmann Consult', url:'/service/login', imagePath:'img/bc_signin_btn.png', x:'0', y:'0', width:'161px', height:'22px'}
 ];
