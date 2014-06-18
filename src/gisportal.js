@@ -1010,7 +1010,7 @@ gisportal.ajaxState = function(id) {
       }, function(request, errorType, exception) {
          console.log('Error: Failed to retrieved state. Ajax failed!');
       }, 'json', {});
-   } 
+   };
 
 gisportal.getTopLayer = function() {
 	var layer = null;
