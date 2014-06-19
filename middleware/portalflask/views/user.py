@@ -117,8 +117,8 @@ def logout():
 def add_user_to_db(email, username, full_name, group_names):
     db_groups = UserGroup.query.all()
     for group_name in group_names:
-        if not group_name in [db_group.group_name for db_group in db_groups]:
-            print('adding ' + group_name)
+        group_is_already_in_db = group_name in [db_group.group_name for db_group in db_groups]
+        if not group_is_already_in_db:
             db_session.add(UserGroup(group_name))
     db_session.commit()
     user_groups = UserGroup.query.filter(UserGroup.group_name in group_names)
