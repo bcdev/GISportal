@@ -60,10 +60,10 @@ def create_user():
       if '@' not in email:
          print('Error: invalid email address')
       else:
-         groups = request.form['groups'].split()
+         group_names = request.form['groups'].split()
          username = request.form['username'].split()
          full_name = request.args.get('full_name', None)
-         add_user_to_db(email, username, full_name, groups)
+         add_user_to_db(email, username, full_name, group_names)
          db_session.commit()
          print('Profile successfully created')
          return redirect(oid.get_next_url())
@@ -73,10 +73,10 @@ def create_user():
       if '@' not in email:
           print(u'Error: you have to enter a valid email address')
       else:
-         groups = request.args.get('groups', None).split()
+         group_names = request.args.get('groups', None).split()
          username = request.args.get('username', None)
          full_name = request.args.get('full_name', None)
-         add_user_to_db(email, username, full_name, groups)
+         add_user_to_db(email, username, full_name, group_names)
          db_session.commit()
          print('Profile successfully created')
          return redirect(url_for('portal_user.index'))
@@ -96,6 +96,17 @@ def get_user():
     return jsonify(username=None, usergroups=None, fullname=None, email=None, openid=None)
 
 
+@portal_user.route('/permissions/<allowed_user_groups>', methods=['POST'])
+def permissions(allowed_user_groups):
+    if g.user is not None:
+        for group in g.user.groups:
+            if group.group_name in allowed_user_groups:
+                print('granted')
+                return jsonify(is_accessible=True)
+    print('declined')
+    return jsonify(is_accessible=False)
+
+
 @portal_user.route('/logout', methods=['GET','POST'])
 def logout():
    session.pop('openid', None)
@@ -103,11 +114,12 @@ def logout():
    return "200", 200
 
 
-def add_user_to_db(email, username, full_name, groups):
+def add_user_to_db(email, username, full_name, group_names):
     db_groups = UserGroup.query.all()
-    for group in groups:
-        if not group in db_groups:
-            db_session.add(UserGroup(group))
+    for group_name in group_names:
+        if not group_name in [db_group.group_name for db_group in db_groups]:
+            print('adding ' + group_name)
+            db_session.add(UserGroup(group_name))
     db_session.commit()
-    user_groups = UserGroup.query.all()
+    user_groups = UserGroup.query.filter(UserGroup.group_name in group_names)
     db_session.add(User(email=email, openid=session['openid'], username=username, full_name=full_name, groups=user_groups))

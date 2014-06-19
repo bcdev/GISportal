@@ -333,7 +333,7 @@
    <form action="/service/login" method="get" id="{{id}}">
       <input type="hidden" name="action" value="verify">
       <fieldset>
-         <legend>Sign-in or Create New Account</legend>
+         <legend>Sign-in</legend>
           <div id="gisportal-openid-choice" style="display:block;">
             <div id="gisportal-openid-btns">
                {{#providers}} {{#provider}} {{/provider}} {{/providers}}
@@ -438,7 +438,7 @@
             <input type="checkbox" id="layerPreloader" /><label class="gisportal-iconBigBtn" for="layerPreloader" title="Toggle Layer Selection Panel"></label>
             <!--<input type="checkbox" id="gisportal-button-3d" /><label class="gisportal-iconBigBtn" for="gisportal-button-3d" title="Toggle 3D Mode"></label>-->
             <input type="checkbox" id="infoToggleBtn" /><label class="gisportal-iconBigBtn" for="infoToggleBtn" title="Toggle Information Box"></label>
-            <input type="checkbox" id="userInfoToggleBtn" /><label class="gisportal-iconBigBtn" for="userInfoToggleBtn" title="Show user information"></label>
+            <input type="checkbox" id="userInfoToggleBtn" /><label class="gisportal-iconBigBtn" for="userInfoToggleBtn" title="Show user information" style="display: none"></label>
          </li>
       </ul>
       <div class="togglePanel">
