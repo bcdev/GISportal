@@ -837,10 +837,34 @@ gisportal.checkIfLayerFromState = function(layer) {
 /*===========================================================================*/
 
 gisportal.updateActions = function() {
-    for (var i = 0; i < gisportal.actionRegistry.length; i++) {
-        var action = gisportal.actionRegistry[i];
-        var actionIdentifier = action['actionIdentifier'][0];
-        var cssTarget = action['cssTarget'][0];
+    var actions = [];
+    Action = function() {
+    };
+
+    function findCssTarget(jQueryCriteria) {
+        // todo!
+        return "label[for='userInfoToggleBtn']";
+    }
+
+    var onSuccess = function(data, opt) {
+        for (var i = 0; i < data.action_registry.length; i++) {
+            var action = data.action_registry[i];
+            var localAction = new Action();
+            localAction.actionIdentifier = action.actionIdentifier;
+            localAction.actionDescription = action.actionDescription;
+            localAction.jQueryCritera = action.jQueryCriteria;
+            localAction.allowedUserGroups = action.allowedUserGroups;
+            actions.push(localAction)
+        }
+    };
+    var onError = function(data, opt) {
+        console.log('Unable to retrieve defined actions; AJAX failed');
+    };
+    gisportal.genericSync('GET', gisportal.middlewarePath + '/retrieve_actions', null, onSuccess, onError, 'json', {});
+
+    for (var i = 0; i < actions.length; i++) {
+        var action = actions[i];
+        var cssTarget = findCssTarget(action['jQueryCritera']);
         var allowedUserGroups = '';
         for (var j = 0; j < action['allowedUserGroups'].length; j++) {
             allowedUserGroups += action['allowedUserGroups'][j];
@@ -1035,16 +1059,6 @@ gisportal.main = function() {
    else {
       console.log('Loading Default State...');
    }
-
-   gisportal.actionRegistry = [];
-   var userInfoAction = {
-       actionIdentifier: $('#userInfoToggleBtn'),
-       cssTarget: $("label[for='userInfoToggleBtn']"),
-       allowedUserGroups: ['admins']
-   };
-
-   gisportal.actionRegistry.push(userInfoAction);
-
 };
 
 

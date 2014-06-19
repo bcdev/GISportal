@@ -113,6 +113,13 @@ def logout():
    g.user = None
    return "200", 200
 
+# todo - move this elsewhere
+@portal_user.route('/retrieve_actions', methods=['GET'])
+def retrieve_actions():
+    print('retrieving actions')
+    action_registry = current_app.config.get('ACTION_REGISTRY')
+    return jsonify(action_registry=action_registry)
+
 
 def add_user_to_db(email, username, full_name, group_names):
     db_groups = UserGroup.query.all()
