@@ -24,8 +24,7 @@ OPENID_RP_URL = 'http://opec-portal-test:8585/openid-server/provider/discovery/g
 ACTION_REGISTRY = [
     {   'actionIdentifier' : 'userInfoAction',
         'actionDescription' : 'display user info',
-        'jQueryCriteria' : {'tag': 'label', 'attributes' : {'for' : 'userInfoToggleBtn'}},
-        # 'cssTarget' : "$(\"label[for='userInfoToggleBtn']\")",
+        'jQueryCriteria' : {'tag': 'label', 'attributes' : {'for' : 'userInfoToggleBtn'}}, # --> label[for='userInfoToggleBtn']
         'allowedUserGroups' : ['admins']
     }
 ]

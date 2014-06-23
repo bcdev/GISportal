@@ -3,6 +3,7 @@
  * @namespace
  */ 
 var gisportal = gisportal || (gisportal = {});
+var actionManager = actionManager || (actionManager = {});
 
 gisportal.VERSION = "0.4.0";
 gisportal.SVN_VERSION = "$Rev$".replace(/[^\d.]/g, ""); // Return only version number
@@ -836,76 +837,13 @@ gisportal.checkIfLayerFromState = function(layer) {
 
 /*===========================================================================*/
 
-gisportal.updateActions = function() {
-    var actions = [];
-    Action = function() {
-    };
-
-    function findCssTarget(jQueryCriteria) {
-        // todo!
-        return "label[for='userInfoToggleBtn']";
-    }
-
-    var onSuccess = function(data, opt) {
-        for (var i = 0; i < data.action_registry.length; i++) {
-            var action = data.action_registry[i];
-            var localAction = new Action();
-            localAction.actionIdentifier = action.actionIdentifier;
-            localAction.actionDescription = action.actionDescription;
-            localAction.jQueryCritera = action.jQueryCriteria;
-            localAction.allowedUserGroups = action.allowedUserGroups;
-            actions.push(localAction)
-        }
-    };
-    var onError = function(data, opt) {
-        console.log('Unable to retrieve defined actions; AJAX failed');
-    };
-    gisportal.genericSync('GET', gisportal.middlewarePath + '/retrieve_actions', null, onSuccess, onError, 'json', {});
-
-    for (var i = 0; i < actions.length; i++) {
-        var action = actions[i];
-        var cssTarget = findCssTarget(action['jQueryCritera']);
-        var allowedUserGroups = '';
-        for (var j = 0; j < action['allowedUserGroups'].length; j++) {
-            allowedUserGroups += action['allowedUserGroups'][j];
-            if (j < action['allowedUserGroups'].length - 1) {
-                allowedUserGroups += ',';
-            }
-        }
-        var isAccessible = false;
-        var on_success = function (data, opts) {
-            isAccessible = data.is_accessible;
-        };
-        var on_error = function () {
-            console.log('Ajax error -- inquiring permissions failed')
-        };
-        gisportal.genericSync('POST', gisportal.middlewarePath +
-                                             '/permissions/' + allowedUserGroups, null, on_success, on_error, 'json', {});
-        var styleAttribute;
-        var newStyle;
-        if (isAccessible) {
-            styleAttribute = $(cssTarget).attr('style');
-            newStyle = styleAttribute.replace(/display:.*none/i, '');
-        } else {
-            styleAttribute = $(cssTarget).attr('style');
-            if (styleAttribute.indexOf('display') == -1) {
-                newStyle = styleAttribute += ';display:none';
-            } else {
-                newStyle = styleAttribute.replace(/display:.*/i, 'display:none');
-            }
-        }
-        $(cssTarget).attr('style', newStyle);
-
-    }
-};
-
 /**
  * Any code that should be run when user logs in
  */
 gisportal.login = function() {
    $('#mapInfoToggleBtn').button("enable");
    gisportal.window.history.loadStateHistory();
-   gisportal.updateActions();
+   actionManager.updateActions();
 };
 
 /**
@@ -914,7 +852,7 @@ gisportal.login = function() {
 gisportal.logout = function() {
    $('#mapInfoToggleBtn').button("disable").prop("checked", false);
    $('#gisportal-historyWindow').extendedDialog("close");
-   gisportal.updateActions();
+   actionManager.updateActions();
 };
 
 
