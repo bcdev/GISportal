@@ -4,9 +4,11 @@ try:
 except:
    from flaskext.openid import OpenID
 
+from core.group_extension import GroupExtension
+from openid.extensions.sreg import SRegResponse
+
 import sys
 import settings as settings
-
 
 def create_app(path):
    app = Flask(__name__)
@@ -102,6 +104,7 @@ def setup_blueprints(app):
    from views.proxy import portal_proxy
    from views.wfs import portal_wfs
    from views.wcs import portal_wcs
+   from views.actions import portal_actions
 
    app.register_blueprint(portal_user)
    app.register_blueprint(portal_state)
@@ -109,12 +112,11 @@ def setup_blueprints(app):
    app.register_blueprint(portal_proxy)
    app.register_blueprint(portal_wfs)
    app.register_blueprint(portal_wcs)
+   app.register_blueprint(portal_actions)
 
 path = sys.path[0]
 app = create_app(path)
 
-from core.group_extension import GroupExtension
-from openid.extensions.sreg import SRegResponse
 oid = OpenID(app, settings.OPENID_FOLDER, extension_responses=[GroupExtension, SRegResponse])
 print path
 
