@@ -886,11 +886,25 @@ div .sensor-accordion {
 
 /* Class for when layers are selected or unselected on the layer selector */
 .gisportal-unselected {
+    cursor: default;
 }
 
-.gisportal-selected {  
+.gisportal-selected {
+    cursor: default;
 }
 /*---------------------------------------------------------------------------*/
+
+/* Class for variable name in layer selection window */
+#gisportal-layerSelection .variable-name {
+    font-weight: bold;
+    padding-right: 10px;
+}
+
+/* Class for tiny provider label below variable name in layer selection window */
+#gisportal-layerSelection .provider-label {
+    font-size: 70%;
+    text-align: left;
+}
 
 #gisportal-layerSelection .gisportal-tagMenu {
    color: black;
