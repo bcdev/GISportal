@@ -1,10 +1,13 @@
 import hashlib
+import hashlib
 
 from portalflask.models.database import db_session
 from portalflask.models.user import User
 from portalflask.models.usergroup import UserGroup
 from portalflask import oid
 from portalflask.core.group_extension import GroupExtension, GROUPS_KEY
+
+from actions import check_for_permission
 from flask import Blueprint, render_template, redirect, url_for, g, session, request, jsonify, current_app
 
 from openid.extensions.sreg import SRegResponse
@@ -85,6 +88,7 @@ def create_user():
 
 
 @portal_user.route('/get_user', methods=['POST'])
+@check_for_permission(['admins'])
 def get_user():
     if g.user is not None:
         groupstring = ''
@@ -101,9 +105,7 @@ def permissions(allowed_user_groups):
     if g.user is not None:
         for group in g.user.groups:
             if group.group_name in allowed_user_groups:
-                print('granted')
                 return jsonify(is_accessible=True)
-    print('declined')
     return jsonify(is_accessible=False)
 
 
