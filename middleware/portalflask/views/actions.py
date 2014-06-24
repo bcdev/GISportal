@@ -1,6 +1,5 @@
 from functools import wraps
 from flask import Blueprint, jsonify, current_app, g
-from portalflask import app
 
 portal_actions = Blueprint('portal_actions', __name__)
 
