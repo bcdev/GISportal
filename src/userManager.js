@@ -2,7 +2,7 @@ var actions = [];
 var Action = function () {
 };
 
-userManager.updateActions = function() {
+gisportal.userManager.updateActions = function() {
 
     setActions();
 
@@ -10,13 +10,13 @@ userManager.updateActions = function() {
         var action = actions[i];
         var cssTarget = findCssTarget(action['jQueryCritera']);
         var allowedUserGroups = getAllowedUserGroups(action);
-        var isAllowed = isAllowed(allowedUserGroups);
+        var isAllowed = isUserAllowed(allowedUserGroups);
         $(cssTarget).attr('style', getStyleAttribute(isAllowed, cssTarget));
     }
 };
 
-userManager.isUserAllowedToView = function (userGroups) {
-    return isAllowed(userGroups);
+gisportal.userManager.isUserAllowedToView = function (userGroups) {
+    return isUserAllowed(userGroups);
 };
 
 function findCssTarget(jQueryCriteria) {
@@ -84,7 +84,7 @@ function setActions() {
                                  '/retrieve_actions', null, onRetrieveActionsSuccess, onAjaxError, 'json', {});
 }
 
-function isAllowed(allowedUserGroups) {
+function isUserAllowed(allowedUserGroups) {
     var localData;
     var onRetrievePermissionsSuccess = function(data, opts) {
         localData = data;

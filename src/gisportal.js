@@ -3,7 +3,7 @@
  * @namespace
  */ 
 var gisportal = gisportal || (gisportal = {});
-gisportal.userManager = userManager || (userManager = {});
+gisportal.userManager = gisportal.userManager || (gisportal.userManager = {});
 
 gisportal.VERSION = "0.4.0";
 gisportal.SVN_VERSION = "$Rev$".replace(/[^\d.]/g, ""); // Return only version number
@@ -26,11 +26,13 @@ OpenLayers.ProxyHost = gisportal.middlewarePath + '/proxy?url=';   // Flask (Pyt
 // Stores the data provided by the master cache file on the server. This
 // includes layer names, titles, abstracts, etc.
 gisportal.cache = {};
-gisportal.cache.wmsLayers = [];
+gisportal.cache.wmsServers = [];
 gisportal.cache.wfsLayers = [];
 
 // Temporary version of microLayer and layer storage.
 gisportal.layerStore = {}; // NOT IN USE!
+
+gisportal.activeWmsServers = [];
 
 gisportal.microLayers = {};
 gisportal.layers = {};
@@ -284,99 +286,165 @@ gisportal.createRefLayers = function() {
    gisportal.numRefLayers = map.getLayersBy('controlID', 'refLayers').length;
 };
 
-/** 
+function isUserAllowedToView(item) {
+    if (typeof item.userGroups !== "undefined") {
+        var userGroups = item.userGroups;
+        return gisportal.userManager.isUserAllowedToView(userGroups);
+    }
+    return true;
+}
+
+
+/**
+ * creates all MicroLayers from the given serverDescriptor, which is typically read from the master cache file.
+ * @returns a list of micro layers
+ */
+gisportal.createMicroLayers = function (serverDescriptor) {
+    var layers = [];
+    // Make sure important data is not missing...
+    if (typeof serverDescriptor.server !== "undefined" &&
+        typeof serverDescriptor.wmsURL !== "undefined" &&
+        typeof serverDescriptor.wcsURL !== "undefined" &&
+        typeof serverDescriptor.serverName !== "undefined" &&
+        typeof serverDescriptor.options !== "undefined") {
+        if (!isUserAllowedToView(serverDescriptor)) {
+            return layers;
+        }
+
+        var providerTag = typeof serverDescriptor.options.providerShortTag !== "undefined" ? serverDescriptor.options.providerShortTag : '';
+        var positive = typeof serverDescriptor.options.positive !== "undefined" ? serverDescriptor.options.positive : 'up';
+        var wmsURL = serverDescriptor.wmsURL;
+        var wcsURL = serverDescriptor.wcsURL;
+        var serverName = serverDescriptor.serverName;
+        $.each(serverDescriptor.server, function (key, variableMetadata) {
+            if (variableMetadata.length) {
+                var sensorName = key;
+                // Go through each layer and load it
+                $.each(variableMetadata, function (i, metadata) {
+                    if (metadata.Name && metadata.Name !== "") {
+                        var microLayer = new gisportal.MicroLayer(
+                            metadata.Name,
+                            metadata.Title,
+                            metadata.Abstract,
+                            "opLayers",
+                            {
+                                "firstDate": metadata.FirstDate,
+                                "lastDate": metadata.LastDate,
+                                "serverName": serverName,
+                                "wmsURL": wmsURL,
+                                "wcsURL": wcsURL,
+                                "sensor": sensorName,
+                                "exBoundingBox": metadata.EX_GeographicBoundingBox,
+                                "providerTag": providerTag,
+                                "positive": positive,
+                                "tags": metadata.tags
+                            }
+                        );
+
+                        microLayer = gisportal.checkNameUnique(microLayer);
+                        gisportal.microLayers[microLayer.id] = microLayer;
+                        if (microLayer.tags) {
+                            var tags = [];
+                            $.each(microLayer.tags, function (d, i) {
+                                if (microLayer.tags[d]) {
+                                    tags.push({ "tag": d.toString(), "value": microLayer.tags[d] });
+                                }
+                            });
+                        }
+
+                        layers.push({
+                                        "meta": {
+                                            'id': microLayer.id,
+                                            'name': microLayer.name,
+                                            'provider': providerTag,
+                                            'positive': positive,
+                                            'title': microLayer.displayTitle,
+                                            'abstract': microLayer.productAbstract,
+                                            'tags': tags,
+                                            'bounds': microLayer.exBoundingBox,
+                                            'firstDate': microLayer.firstDate,
+                                            'lastDate': microLayer.lastDate
+                                        },
+                                        "tags": microLayer.tags
+                                    });
+                    }
+                });
+            }
+        });
+    }
+    return layers;
+};
+
+/**
  * Create MicroLayers from the getCapabilities request to 
  * be used in the layer selector.
  */
 gisportal.createOpLayers = function() {
    var layers = [];
-   $.each(gisportal.cache.wmsLayers, function(i, item) {
-      // Make sure important data is not missing...
-      if(typeof item.server !== "undefined" &&
-      typeof item.wmsURL !== "undefined" && 
-      typeof item.wcsURL !== "undefined" && 
-      typeof item.serverName !== "undefined" && 
-      typeof item.options !== "undefined") {
-          if (typeof item.userGroups !== "undefined") {
-              var userGroups = item.userGroups;
-              if (!gisportal.userManager.isUserAllowedToView(userGroups)) {
-                  return true; // continue to next list element
-              }
-          }
-
-         var providerTag = typeof item.options.providerShortTag !== "undefined" ? item.options.providerShortTag : '';
-         var positive = typeof item.options.positive !== "undefined" ? item.options.positive : 'up';
-         var wmsURL = item.wmsURL;
-         var wcsURL = item.wcsURL;
-         var serverName = item.serverName;
-         $.each(item.server, function(index, item) {
-            if(item.length) {
-               var sensorName = index;
-               // Go through each layer and load it
-               $.each(item, function(i, item) {
-                  if(item.Name && item.Name !== "") {
-                     var microLayer = new gisportal.MicroLayer(item.Name, item.Title,
-                        item.Abstract, "opLayers", {
-                           "firstDate": item.FirstDate,
-                           "lastDate": item.LastDate,
-                           "serverName": serverName,
-                           "wmsURL": wmsURL,
-                           "wcsURL": wcsURL,
-                           "sensor": sensorName,
-                           "exBoundingBox": item.EX_GeographicBoundingBox,
-                           "providerTag": providerTag,
-                           "positive" : positive,
-                           "tags": item.tags
-                        }
-                     );
-
-                     microLayer = gisportal.checkNameUnique(microLayer);
-                     gisportal.microLayers[microLayer.id] = microLayer;
-                     if (microLayer.tags)  {
-                        var tags = [];
-                        $.each(microLayer.tags, function(d, i) {
-                           if (microLayer.tags[d]) tags.push({ "tag" : d.toString(), "value" : microLayer.tags[d] });
-                        });
-                     }
-
-                     layers.push({
-                        "meta" : {
-                           'id': microLayer.id,
-                           'name': microLayer.name,
-                           'provider': providerTag,
-                           'positive': positive,
-                           'title': microLayer.displayTitle,
-                           'abstract': microLayer.productAbstract,
-                           'tags': tags,
-                           'bounds': microLayer.exBoundingBox,
-                           'firstDate': microLayer.firstDate,
-                           'lastDate': microLayer.lastDate
-                        },
-                        "tags": microLayer.tags
-                     });
-                  }
-               });
-            }
-         });
-      }
+   $.each(gisportal.cache.wmsServers, function(i, serverDescriptor) {
+       var layersToAdd = gisportal.createMicroLayers(serverDescriptor);
+       if (layersToAdd.length > 0) {
+           gisportal.activeWmsServers.push(serverDescriptor.serverName);
+           layers = layers.concat(layersToAdd);
+       }
    });
   
    if (layers.length > 0)  {
       layers.sort(function(a,b)  {
-         var a = a.meta.name.toLowerCase();
-         var b = b.meta.name.toLowerCase();
-         if (a > b) return 1;
-         if (a < b) return -1;
+          if (a.meta.name.toLowerCase() > b.meta.name.toLowerCase()) return 1;
+          if (a.meta.name.toLowerCase() < b.meta.name.toLowerCase()) return -1;
          return 0;
       });
 
-      $.each(layers, function(i, item) {
-         gisportal.layerSelector.addLayer(gisportal.templates.selectionItem(item.meta), { "tags" : item.tags} );
+      $.each(layers, function(i, microLayer) {
+         gisportal.layerSelector.addLayer(gisportal.templates.selectionItem(microLayer.meta), { "tags" : microLayer.tags} );
       });
    }
    gisportal.layerSelector.refresh();
    // Batch add here in future.
 };
+
+gisportal.refreshOpLayers = function() {
+    for (var i = 0; i < gisportal.cache.wmsServers.length; i++) {
+        var serverDescriptor = gisportal.cache.wmsServers[i];
+        if (isUserAllowedToView(serverDescriptor)) {
+            if ($.inArray(serverDescriptor.serverName, gisportal.activeWmsServers) == -1) {
+                gisportal.genericAddLayers(serverDescriptor);
+                gisportal.activeWmsServers.push(serverDescriptor);
+            }
+        } else {
+            // remove
+            if ($.inArray(serverDescriptor.serverName, gisportal.activeWmsServers) > -1) {
+                gisportal.genericRemoveLayers(serverDescriptor);
+                gisportal.utils.removeFromArray(gisportal.activeWmsServers, serverDescriptor);
+            }
+
+        }
+
+    }
+};
+
+gisportal.genericAddLayers = function(serverDescriptor) {
+   var microLayers = gisportal.createMicroLayers(serverDescriptor);
+   $.each(microLayers, function(i, microLayer) {
+      if ($.inArray(microLayer.id, gisportal.microLayers) == -1) {
+         gisportal.layerSelector.addLayer(gisportal.templates.selectionItem(microLayer.meta), {"tags" : microLayer.tags});
+      }
+   })
+};
+
+gisportal.genericRemoveLayers = function(serverDescriptor) {
+    var toRemove = [];
+    $.each(gisportal.microLayers, function(id, microLayer) {
+        if (microLayer.serverName === serverDescriptor.serverName) {
+            microLayer = gisportal.checkNameUnique(microLayer);
+            toRemove.push(microLayer.id);
+            gisportal.layerSelector.removeLayer(id);
+        }
+    });
+    gisportal.microLayers = gisportal.utils.setDifference(gisportal.microLayers, toRemove);
+};
+
 
 /**
  * Get a layer that has been added to the map by its id.
@@ -541,7 +609,7 @@ gisportal.mapInit = function() {
  */ 
 gisportal.initWMSlayers = function(data, opts) {
    if (data !== null)  {
-      gisportal.cache.wmsLayers = data;
+      gisportal.cache.wmsServers = data;
       // Create WMS layers from the data
       gisportal.createOpLayers();
       
@@ -851,6 +919,7 @@ gisportal.login = function() {
    $('#mapInfoToggleBtn').button("enable");
    gisportal.window.history.loadStateHistory();
    gisportal.userManager.updateActions();
+   gisportal.refreshOpLayers();
 };
 
 /**
@@ -860,6 +929,7 @@ gisportal.logout = function() {
    $('#mapInfoToggleBtn').button("disable").prop("checked", false);
    $('#gisportal-historyWindow').extendedDialog("close");
    gisportal.userManager.updateActions();
+   gisportal.refreshOpLayers();
 };
 
 
