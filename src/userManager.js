@@ -2,9 +2,7 @@ var actions = [];
 var Action = function () {
 };
 
-var isAccessible = false;
-
-actionManager.updateActions = function() {
+userManager.updateActions = function() {
 
     setActions();
 
@@ -12,9 +10,13 @@ actionManager.updateActions = function() {
         var action = actions[i];
         var cssTarget = findCssTarget(action['jQueryCritera']);
         var allowedUserGroups = getAllowedUserGroups(action);
-        setPermission(allowedUserGroups);
-        $(cssTarget).attr('style', getStyleAttribute(cssTarget));
+        var isAllowed = isAllowed(allowedUserGroups);
+        $(cssTarget).attr('style', getStyleAttribute(isAllowed, cssTarget));
     }
+};
+
+userManager.isUserAllowedToView = function (userGroups) {
+    return isAllowed(userGroups);
 };
 
 function findCssTarget(jQueryCriteria) {
@@ -45,18 +47,14 @@ function onRetrieveActionsSuccess(data, opt) {
     }
 }
 
-function onRetrievePermissionsSuccess(data, opts) {
-    isAccessible = data.is_accessible;
-}
-
 function onAjaxError(data, opt) {
     console.log('AJAX failed');
 }
 
-function getStyleAttribute(cssTarget) {
+function getStyleAttribute(is_accessible, cssTarget) {
     var styleAttribute;
     var newStyle;
-    if (isAccessible) {
+    if (is_accessible) {
         styleAttribute = $(cssTarget).attr('style');
         newStyle = styleAttribute.replace(/display:.*none/i, '');
     } else {
@@ -86,8 +84,12 @@ function setActions() {
                                  '/retrieve_actions', null, onRetrieveActionsSuccess, onAjaxError, 'json', {});
 }
 
-function setPermission(allowedUserGroups) {
+function isAllowed(allowedUserGroups) {
+    var localData;
+    var onRetrievePermissionsSuccess = function(data, opts) {
+        localData = data;
+    };
     gisportal.genericSync('POST', gisportal.middlewarePath + '/permissions/' +
-
                                   allowedUserGroups, null, onRetrievePermissionsSuccess, onAjaxError, 'json', {});
+    return localData.is_accessible;
 }

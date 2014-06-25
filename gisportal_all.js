@@ -14,7 +14,7 @@
       "src/windows/history.js",
       "src/windows/metadata.js",
       "src/windows/layerselector.js",
-      "src/actionManager.js",
+      "src/userManager.js",
       "src/graphing.js",
       "src/gritter.js",
       "src/layer.js",

@@ -149,6 +149,7 @@ def csvToList(file):
          
    return data
 
+
 def checkCacheValid(file, life):
    import os.path, time
    try:
@@ -163,25 +164,29 @@ def checkCacheValid(file, life):
       print 'Failed to open %s' % file
       print e
       return False
-   
+
+
 def getFile(filepath):
    data = None
    with open(filepath) as file:
       data = file.read()
 
    return data
-   
+
+
 def saveFile(path, data):
    with open(path, 'wb') as file:
       file.write(data)
    
    return data
 
+
 def replaceAll(text, dic):
     for i, j in dic.iteritems():
         text = text.replace(i, j)
     return text
- 
+
+
 def blackfilter(stringToTest, filterList):
    if len(filterList) != 0:
       for v in filterList:

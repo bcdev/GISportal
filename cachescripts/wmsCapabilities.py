@@ -126,7 +126,9 @@ def createCache(server, xml):
    subMasterCache['wmsURL'] = server['url']
    subMasterCache['wcsURL'] = server['wcsurl']
    subMasterCache['serverName'] = server['name']
-   
+   if 'userGroups' in server:
+       subMasterCache['userGroups'] = server['userGroups']
+
    print 'Cache creation complete...'
       
    # Return and save out the cache for this server

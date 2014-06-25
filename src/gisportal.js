@@ -3,7 +3,7 @@
  * @namespace
  */ 
 var gisportal = gisportal || (gisportal = {});
-var actionManager = actionManager || (actionManager = {});
+gisportal.userManager = userManager || (userManager = {});
 
 gisportal.VERSION = "0.4.0";
 gisportal.SVN_VERSION = "$Rev$".replace(/[^\d.]/g, ""); // Return only version number
@@ -23,7 +23,7 @@ gisportal.graphLocation = gisportal.middlewarePath + '/graph';
 // Define a proxy for the map to allow async javascript http protocol requests
 OpenLayers.ProxyHost = gisportal.middlewarePath + '/proxy?url=';   // Flask (Python) service OpenLayers proxy
 
-// Stores the data provided by the master cache file on the server. This 
+// Stores the data provided by the master cache file on the server. This
 // includes layer names, titles, abstracts, etc.
 gisportal.cache = {};
 gisportal.cache.wmsLayers = [];
@@ -262,17 +262,17 @@ gisportal.createRefLayers = function() {
                         'times' : item.times
                      }
                );
-                     
-               microLayer = gisportal.checkNameUnique(microLayer);   
+
+               microLayer = gisportal.checkNameUnique(microLayer);
                gisportal.microLayers[microLayer.id] = microLayer;
                gisportal.layerSelector.addLayer(gisportal.templates.selectionItem({
                      'id': microLayer.id,
-                     'name': microLayer.name, 
-                     'provider': item.options.providerShortTag, 
-                     'title': microLayer.displayTitle, 
+                     'name': microLayer.name,
+                     'provider': item.options.providerShortTag,
+                     'title': microLayer.displayTitle,
                      'abstract': microLayer.productAbstract
                   }), {'tags': microLayer.tags
-               }); 
+               });
             }
          });
       } 
@@ -292,11 +292,18 @@ gisportal.createOpLayers = function() {
    var layers = [];
    $.each(gisportal.cache.wmsLayers, function(i, item) {
       // Make sure important data is not missing...
-      if(typeof item.server !== "undefined" && 
+      if(typeof item.server !== "undefined" &&
       typeof item.wmsURL !== "undefined" && 
       typeof item.wcsURL !== "undefined" && 
       typeof item.serverName !== "undefined" && 
       typeof item.options !== "undefined") {
+          if (typeof item.userGroups !== "undefined") {
+              var userGroups = item.userGroups;
+              if (!gisportal.userManager.isUserAllowedToView(userGroups)) {
+                  return true; // continue to next list element
+              }
+          }
+
          var providerTag = typeof item.options.providerShortTag !== "undefined" ? item.options.providerShortTag : '';
          var positive = typeof item.options.positive !== "undefined" ? item.options.positive : 'up';
          var wmsURL = item.wmsURL;
@@ -556,7 +563,7 @@ gisportal.initWFSLayers = function(data, opts) {
 /**
  * Loads anything that is not dependent on layer data. 
  */
-gisportal.nonLayerDependent = function() {
+gisportal.loadNonLayerDependents = function() {
    // Keeps the vectorLayers at the top of the map
    map.events.register("addlayer", map, function() { 
        // Get and store the number of reference layers
@@ -843,7 +850,7 @@ gisportal.checkIfLayerFromState = function(layer) {
 gisportal.login = function() {
    $('#mapInfoToggleBtn').button("enable");
    gisportal.window.history.loadStateHistory();
-   actionManager.updateActions();
+   gisportal.userManager.updateActions();
 };
 
 /**
@@ -852,7 +859,7 @@ gisportal.login = function() {
 gisportal.logout = function() {
    $('#mapInfoToggleBtn').button("disable").prop("checked", false);
    $('#gisportal-historyWindow').extendedDialog("close");
-   actionManager.updateActions();
+   gisportal.userManager.updateActions();
 };
 
 
@@ -984,7 +991,7 @@ gisportal.main = function() {
    gisportal.mapInit();
 
    // Start setting up anything that is not layer dependent
-   gisportal.nonLayerDependent();
+   gisportal.loadNonLayerDependents();
    
    // Grab the url of any state.
    var stateID = gisportal.utils.getURLParameter('state');

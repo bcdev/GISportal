@@ -30,6 +30,7 @@ gisportal.openid.setup = function(containerID) {
 
    gisportal.openid.onCloseHandler = function () {
        gisportal.openid.set_userinfo_to_html();
+       gisportal.refreshOpLayers();
        if (gisportal.openid.is_logged_in()) {
            gisportal.openid.hideLogin();
        } else {
@@ -102,6 +103,7 @@ gisportal.openid.setup = function(containerID) {
 };
 
 gisportal.openid.set_userinfo_to_html = function() {
+    // todo -- do this only when allowed to
     var on_success = function (data, opts) {
         $('#user_name').html(data.username);
         $('#user_full_name').html(data.fullname);
