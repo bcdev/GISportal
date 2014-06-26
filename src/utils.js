@@ -250,15 +250,17 @@ gisportal.utils.openPopup = function(width, height, url, onOpenHandler, checkfor
 };
 
 gisportal.utils.removeFromArray = function(array, element) {
-    array.splice( $.inArray(element, array), 1 );
+    array.splice($.inArray(element, array), 1);
+}
+
+gisportal.utils.removeFromAssociativeArray = function(array, element) {
+    delete array[element];
 };
 
 gisportal.utils.setDifference = function(array1, array2) {
-    var result = [];
     $.each(array1, function(i, element) {
-       if ($.inArray(element, array2) == -1) {
-           result.push(element);
-       }
+        if ($.inArray(i, array2) !== -1) {
+            gisportal.utils.removeFromAssociativeArray(array1, i)
+        }
     });
-    return result;
 };

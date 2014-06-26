@@ -410,7 +410,7 @@ gisportal.refreshOpLayers = function() {
         if (isUserAllowedToView(serverDescriptor)) {
             if ($.inArray(serverDescriptor.serverName, gisportal.activeWmsServers) == -1) {
                 gisportal.genericAddLayers(serverDescriptor);
-                gisportal.activeWmsServers.push(serverDescriptor);
+                gisportal.activeWmsServers.push(serverDescriptor.serverName);
             }
         } else {
             // remove
@@ -420,8 +420,9 @@ gisportal.refreshOpLayers = function() {
             }
 
         }
-
     }
+    gisportal.layerSelector.refresh();
+    gisportal.layerSelector.sortLayers();
 };
 
 gisportal.genericAddLayers = function(serverDescriptor) {
@@ -437,12 +438,11 @@ gisportal.genericRemoveLayers = function(serverDescriptor) {
     var toRemove = [];
     $.each(gisportal.microLayers, function(id, microLayer) {
         if (microLayer.serverName === serverDescriptor.serverName) {
-            microLayer = gisportal.checkNameUnique(microLayer);
             toRemove.push(microLayer.id);
-            gisportal.layerSelector.removeLayer(id);
+            gisportal.layerSelector.removeLayer(microLayer.name);
         }
     });
-    gisportal.microLayers = gisportal.utils.setDifference(gisportal.microLayers, toRemove);
+    gisportal.utils.setDifference(gisportal.microLayers, toRemove);
 };
 
 

@@ -119,6 +119,13 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
       
       this.$container.append($layer);
    };
+
+   /**
+    * Removes layer from the layerselector
+    */
+   this.removeLayer = function(layerId) {
+       $('#' + this.container + ' [data-id|="' + layerId + '"]').remove();
+   };
    
    /**
     * Selects a layer
@@ -230,5 +237,15 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
             }, 501);
          }
       });     
-   }; 
+   };
+
+   this.sortLayers = function() {
+       var listitems = self.$container.children('li').get();
+       listitems.sort(function(a, b) {
+           return $(a).text().toUpperCase().localeCompare($(b).text().toUpperCase());
+       });
+       self.$container.empty();
+       self.$container.append(listitems);
+   };
+
 };
