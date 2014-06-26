@@ -6,5 +6,9 @@ com.bc.openid.endpointuri = http://host:port/<application context>/
 com.bc.openid.authenticationHandlerClass = com.bc.openid.AuthenticateAll
 
 # authentication parameters
-com.bc.openid.authentication.param.host = localhost
-com.bc.openid.authentication.param.port = 389
+com.bc.openid.authentication.host = localhost
+com.bc.openid.authentication.port = 389
+
+com.bc.openid.authentication.ldap.path = dc=opec,dc=bc,dc=com
+com.bc.openid.authentication.ldap.user-ou = users
+com.bc.openid.authentication.ldap.group-ou = gropus

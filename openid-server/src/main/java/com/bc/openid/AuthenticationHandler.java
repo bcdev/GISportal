@@ -19,6 +19,7 @@ package com.bc.openid;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Responsible for authenticating the user and providing information about him.
@@ -28,6 +29,7 @@ import java.util.Set;
 public abstract class AuthenticationHandler {
 
     private Set<String> authenticatedUsers = new HashSet<>();
+    private Function<String, Void> log;
 
     protected AuthenticationHandler() {
         // necessary for instantiation via reflection
@@ -59,6 +61,20 @@ public abstract class AuthenticationHandler {
                     "Trying to fetch user information about non-logged in user '" + username + "'.");
         }
         return getUserModelImpl(username);
+    }
+
+    public final void setLogger(Function<String, Void> log) {
+        this.log = log;
+    }
+
+    protected final Function<String, Void> getLogger() {
+        if (log == null) {
+            return s -> {
+                System.out.println(s);
+                return null;
+            };
+        }
+        return log;
     }
 
     protected abstract void authenticateImpl(String username, String password) throws AuthenticationException;
