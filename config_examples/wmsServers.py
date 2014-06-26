@@ -12,7 +12,8 @@ servers = {
       'options': {
          'providerShortTag': 'CCI'
       },
-      'wcsurl': 'http://earthserver.pml.ac.uk/thredds/wcs/CCI-v1.0-D?'
+      'wcsurl': 'http://earthserver.pml.ac.uk/thredds/wcs/CCI-v1.0-D?',
+      'users': 'admins'
    },
    'hcmr': { 
       'name': 'hcmr',

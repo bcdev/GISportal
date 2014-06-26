@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import Blueprint, jsonify, current_app, g
+from flask import Blueprint, jsonify, current_app, g, abort
 
 portal_actions = Blueprint('portal_actions', __name__)
 
@@ -19,8 +19,8 @@ def check_for_permission(roles):
                     if group.group_name in roles:
                         return f(*args, **kwargs)
 
-            print('Trying to execute unauthorised method!')
-            return jsonify(user='None')
+            print('Trying to execute unauthorised method \'' + f.__name__ + '\'')
+            abort(401)
         return check_permission
 
     return decorator

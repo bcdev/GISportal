@@ -102,23 +102,22 @@ gisportal.openid.setup = function(containerID) {
 };
 
 gisportal.openid.set_userinfo_to_html = function() {
-    // todo -- do this only when allowed to
-    var on_success = function (data, opts) {
+    var setUserinfo = function (data, opts) {
         $('#user_name').html(data.username);
         $('#user_full_name').html(data.fullname);
         $('#user_openid').html(data.openid);
         $('#user_mail').html(data.email);
         $('#user_groups').html(data.usergroups);
     };
-    var on_error = function (request, errorType, exception) {
+    var nullifyUserInfo = function (request, errorType, exception) {
         $('#user_name').html(null);
         $('#user_full_name').html(null);
         $('#user_openid').html(null);
         $('#user_mail').html(null);
         $('#user_groups').html(null);
-        console.log('Error: Failed to retrieved username. Ajax failed!');
+        console.log('Failed to retrieved username, possible reason: not logged in.');
     };
-    gisportal.genericSync('POST', gisportal.middlewarePath + "/get_user", null, on_success, on_error, 'json', {});
+    gisportal.genericSync('POST', gisportal.middlewarePath + "/get_user", null, setUserinfo, nullifyUserInfo, 'json', {});
 };
 
 // getLink to state
