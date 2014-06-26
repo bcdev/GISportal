@@ -23,10 +23,10 @@
    var _domLoaded = false;
    var _options;
    
-   function _setCookie (c_name, value, exdays) {
+   function _setCookie (c_name, value) {
       var exdate = new Date();
-      exdate.setDate(exdate.getDate() + exdays); // Set expiry date to be exdays after today
-      var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+      exdate.setDate(exdate.getDate() + 20 * 365); // Set expiry date to 20 years in the future
+      var c_value = escape(value) + "; expires=" + exdate.toUTCString();
       document.cookie = c_name + "=" + c_value;
    }
    
@@ -193,7 +193,7 @@
 			      resizable: false,
 			      height:140,
 			      modal: true,
-	      		showHelp: false,
+	      		  showHelp: false,
 			      buttons: {
 	     			   "Yes": function() {
 			        		_setCookie('walkthrough-hide', false);
