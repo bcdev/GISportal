@@ -35,7 +35,7 @@ public class LdapAuthTest {
         // Create initial context
         DirContext ctx = new InitialDirContext();
 
-// Read supportedSASLMechanisms from root DSE
+        // Read supportedSASLMechanisms from root DSE
         Attributes attrs = ctx.getAttributes("ldap://auth.bc.local:389");
         System.out.println("LdapAuthTest.testName");
     }
@@ -61,7 +61,7 @@ public class LdapAuthTest {
         assertEquals("cc@host.com", userModel.getEmailAddress());
         assertEquals("Coasti Colourinho", userModel.getFullName());
         assertEquals("ccolourinho", userModel.getUsername());
-        assertArrayEquals(new String[] {"cc_users"}, userModel.getGroupNames());
+        assertArrayEquals(new String[]{"cc_users"}, userModel.getGroupNames());
     }
 
     @Test

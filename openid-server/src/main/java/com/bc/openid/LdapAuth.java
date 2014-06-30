@@ -25,6 +25,9 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -85,13 +88,23 @@ public class LdapAuth extends AuthenticationHandler {
         Hashtable<String, Object> env = new Hashtable<>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, ldapUrl(host, port));
-//        env.put(Context.SECURITY_AUTHENTICATION, "simple");
         env.put(Context.SECURITY_AUTHENTICATION, "DIGEST-MD5"); // todo - make configurable
-        env.put(Context.SECURITY_CREDENTIALS, password);
+        try {
+            byte[] md5 = MessageDigest.getInstance("MD5").digest(password.getBytes("UTF-8"));
+            StringBuilder builder = new StringBuilder();
+            for (byte b : md5) {
+                builder.append(Integer.toHexString((b & 0xFF) | 0x100).substring(1,3));
+            }
+            env.put(Context.SECURITY_CREDENTIALS, builder.toString());
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         String dn = "cn=" + userEntry.getAttributes().get("cn").get(0).toString() + ",ou=users," + ldapPath;
         env.put("com.sun.jndi.ldap.trace.ber", System.err);
+        env.put(Context.SECURITY_PRINCIPAL, dn);
+        env.put("java.naming.security.sasl.authorizationId", dn);
 //        env.put(Context.SECURITY_PRINCIPAL, dn);
-        env.put(Context.SECURITY_PRINCIPAL, "thomas");
+        System.out.println(env);
         new InitialLdapContext(env, new Control[0]);
     }
 
