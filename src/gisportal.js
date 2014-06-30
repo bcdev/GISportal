@@ -1065,7 +1065,7 @@ gisportal.main = function() {
    
    // Grab the url of any state.
    var stateID = gisportal.utils.getURLParameter('state');
-   
+
    // Check if there is a state to load.
    if(stateID !== null) {
       console.log('Retrieving State...');
@@ -1129,4 +1129,27 @@ gisportal.zoomOverall = function()  {
 
       map.zoomToExtent(new OpenLayers.Bounds(largestBounds));
    }
+};
+
+gisportal.submit_shapefile_upload_form = function() {
+    var percent = $('.percent');
+    var bar = $('.bar');
+    $('#uploadshapefile').ajaxSubmit({
+        beforeSubmit: function() {
+            var percentVal = '0%';
+            bar.width(percentVal);
+            percent.html(percentVal);
+        },
+        uploadProgress: function(event, position, total, percentComplete) {
+            var percentVal = percentComplete + '%';
+            bar.width(percentVal);
+            percent.html(percentVal);
+            console.log(percentVal, position, total);
+        },
+            success: function() {
+            var percentVal = '100%';
+            bar.width(percentVal);
+            percent.html(percentVal);
+        }
+    });
 };

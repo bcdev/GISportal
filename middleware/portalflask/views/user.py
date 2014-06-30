@@ -111,6 +111,7 @@ def permissions(allowed_user_groups):
 
 @portal_user.route('/logout', methods=['GET','POST'])
 def logout():
+   print('logging out user \'' + g.user.username + '\'')
    session.pop('openid', None)
    g.user = None
    return "200", 200

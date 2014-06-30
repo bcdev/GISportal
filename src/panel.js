@@ -491,6 +491,8 @@ gisportal.rightPanel.setup = function() {
    $('#box').button({ icons: { primary: 'ui-icon-drawbox'} });
    $('#circle').button({ icons: { primary: 'ui-icon-drawcircle'} });
    $('#polygon').button({ icons: { primary: 'ui-icon-drawpoly'} });
+   $('#shapefile').button({ icons: { primary: 'ui-icon-uploadshapefile'} });
+   $('#uploadshapefile').attr("action", gisportal.middlewarePath + '/shapefile_upload');
 
    // Data Analysis panel tabs and accordions
    $("#gisportal-tab-analyses").multiOpenAccordion({ collapsible: true, heightStyle: 'content', active: [-1, -1, -1, -1] });
@@ -650,13 +652,12 @@ gisportal.rightPanel.setupDrawingControls = function() {
       }
    }
 
-   gisportal.mapControls.point = new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Point);
    gisportal.mapControls.box = new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.RegularPolygon, {handlerOptions:{sides: 4, irregular: true, persist: false }});
    gisportal.mapControls.circle = new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.RegularPolygon, {handlerOptions:{sides: 50}, persist: false});
    gisportal.mapControls.polygon = new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Polygon);
 
-   //map.addControls([gisportal.mapControls.point, gisportal.mapControls.box, gisportal.mapControls.circle, gisportal.mapControls.polygon]);
-   map.addControls([gisportal.mapControls.point, gisportal.mapControls.box]);
+   map.addControls([gisportal.mapControls.box, gisportal.mapControls.circle, gisportal.mapControls.polygon]);
+//   map.addControls([gisportal.mapControls.box]);
    // Function which can toggle OpenLayers drawing controls based on the value of the clicked control
    function toggleDrawingControl(element) {
       gisportal.toggleControl(element);

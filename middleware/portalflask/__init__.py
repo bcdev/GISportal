@@ -105,6 +105,7 @@ def setup_blueprints(app):
    from views.wfs import portal_wfs
    from views.wcs import portal_wcs
    from views.actions import portal_actions
+   from views.upload import portal_upload
 
    app.register_blueprint(portal_user)
    app.register_blueprint(portal_state)
@@ -113,6 +114,7 @@ def setup_blueprints(app):
    app.register_blueprint(portal_wfs)
    app.register_blueprint(portal_wcs)
    app.register_blueprint(portal_actions)
+   app.register_blueprint(portal_upload)
 
 path = sys.path[0]
 app = create_app(path)
