@@ -1155,9 +1155,7 @@ div.olMapViewport {
 .ui-icon-drawbox  { background-image: url(../img/selectionBox.png) !important; background-position: 0px; height: 26px; width: 26px;margin: -12px -2px !important; }
 .ui-icon-drawcircle  { background-image: url(../img/selectionCircle.png) !important; background-position: 0px; height: 26px; width: 26px;margin: -12px -2px !important; }
 .ui-icon-drawpoly  { background-image: url(../img/selectionPoly.png) !important; background-position: 0px; height: 26px; width: 26px !important; margin: -12px -2px !important; }
-/*.ui-icon-uploadshapefile { background-image: url(../img/uploadShapefile.png) !important; background-position: 0px; height: 26px; width: 26px;margin: -12px -2px !important; }*/
-
-.uploadshapefile { background: url(../img/uploadShapefile.png) no-repeat !important; display: inline-block;  background-size: cover; background-position: 0px; height: 26px; width: 26px;margin: -12px -2px !important;}
+.ui-icon-uploadshapefile { background-image: url(../img/uploadShapefile.png) !important; background-position: 0px; height: 26px; width: 26px; margin: -12px -2px !important;}
 
 #image_src {
     height: 26px; width: 26px; margin: -12px -2px !important;

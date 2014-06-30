@@ -491,8 +491,10 @@ gisportal.rightPanel.setup = function() {
    $('#box').button({ icons: { primary: 'ui-icon-drawbox'} });
    $('#circle').button({ icons: { primary: 'ui-icon-drawcircle'} });
    $('#polygon').button({ icons: { primary: 'ui-icon-drawpoly'} });
-   $('#shapefile').button({ icons: { primary: 'ui-icon-uploadshapefile'} });
-   $('#uploadshapefile').attr("action", gisportal.middlewarePath + '/shapefile_upload');
+   $('#shapefile_menu_button').button({ icons: { primary: 'ui-icon-uploadshapefile'} });
+
+   $('#shapefile_upload_button').change(gisportal.submit_shapefile_upload_form);
+   $('#uploadshapefile').attr('action', gisportal.middlewarePath + '/shapefile_upload');
 
    // Data Analysis panel tabs and accordions
    $("#gisportal-tab-analyses").multiOpenAccordion({ collapsible: true, heightStyle: 'content', active: [-1, -1, -1, -1] });

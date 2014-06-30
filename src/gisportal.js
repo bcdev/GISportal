@@ -1062,9 +1062,28 @@ gisportal.main = function() {
 
    // Start setting up anything that is not layer dependent
    gisportal.loadNonLayerDependents();
-   
+
    // Grab the url of any state.
    var stateID = gisportal.utils.getURLParameter('state');
+
+   $.contextMenu({
+      selector: '#shapefile_menu_button',
+      callback: function(key, opt) {
+          if (key === 'upload') {
+              $('#shapefile_upload_button').click();
+          } else if (key === 'choose') {
+              alert('not yet implemented');
+          }
+      },
+      items: {
+          'upload': {name: 'Upload', icon: 'upload'},
+          'choose': {name: 'Choose', icon: 'choose'}
+      },
+      trigger: 'left',
+      autoHide: false,
+      zIndex: 999
+   });
+
 
    // Check if there is a state to load.
    if(stateID !== null) {
