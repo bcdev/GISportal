@@ -87,5 +87,5 @@ def proxy():
          abort(e.code)
          
       g.error = "Failed to access url, make sure you have entered the correct parameters"
-      error_handler.setError('2-06', None, g.user.id, "views/proxy.py:proxy - URL error, returning 400 to user. Exception %s" % e, request)
+      error_handler.setError('2-06', None, g.user.id if g.user is not None else '', "views/proxy.py:proxy - URL error, returning 400 to user. Exception %s" % e, request)
       abort(400) # return 400 if we can't get an exact code

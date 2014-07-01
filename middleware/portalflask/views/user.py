@@ -109,10 +109,18 @@ def permissions(allowed_user_groups):
     return jsonify(is_accessible=False)
 
 
-@portal_user.route('/get_shapefiles', methods=['POST'])
-def get_shapefiles():
+@portal_user.route('/get_shapefile_names', methods=['POST'])
+def get_shapefile_names():
     import os
     files = [f for f in os.listdir('/home/thomass/temp') if os.path.basename(f).endswith('.shp')]
+    return jsonify(shapefiles=files)
+
+
+@portal_user.route('/get_shapefile_geometry/<shapefile_name>', methods=['POST'])
+def get_shapefile_geometry(shapefile_name):
+    import os
+    files = [f for f in os.listdir('/home/thomass/temp') if os.path.basename(f) == shapefile_name]
+
     return jsonify(shapefiles=files)
 
 

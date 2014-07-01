@@ -503,7 +503,7 @@ gisportal.rightPanel.setup = function() {
    $('#uploadshapefile').attr('action', gisportal.middlewarePath + '/shapefile_upload');
 
    $('input[name="roi_button_group"]').change(function() {
-       if ($('input[name="roi_button_group"]:checked').val() !== 'shapefile_button') {
+       if ($('input[name="roi_button_group"]:checked').val() !== 'shapefile') {
            $('#shapefile_chooser').find('select').prop('disabled', 'disabled');
        } else {
            $('#shapefile_chooser').find('select').prop('disabled', false);
@@ -639,6 +639,41 @@ gisportal.rightPanel.setupDrawingControls = function() {
             break;
          case 'polygon':
             // Get the polygon vertices
+            var vertices = geom.getVertices();
+            $('#dispROI').html('<h3>Custom Polygon ROI</h4>');
+            // Setup the JavaScript canvas object and draw our ROI on it
+            $('#dispROI').append('<canvas id="ROIC" width="100" height="100"></canvas>');
+            var c = document.getElementById('ROIC');
+            var ctx = c.getContext('2d');
+            ctx.lineWidth = 4;
+            ctx.fillStyle = '#CCCCCC';
+            var scale = (width_deg > height_deg) ? 90/width_deg : 90/height_deg;
+            ctx.beginPath();
+            var x0 = 5 + (vertices[0].x-bounds.left)*scale;
+            var y0 = 5 + (bounds.top-vertices[0].y)*scale;
+            ctx.moveTo(x0,y0);
+            for(var i=1,j=vertices.length; i<j; i++){
+               var x = 5 + (vertices[i].x-bounds.left) * scale;
+               var y = 5 + (bounds.top-vertices[i].y) * scale;
+               ctx.lineTo(x, y);
+            }
+            ctx.lineTo(x0,y0);
+            ctx.stroke();
+            ctx.fill();
+            ctx.closePath();
+            //
+            $('#dispROI').append('<p>Centroid Lat, Lon:' + ctrLat.toPrecision(4) + d + ', ' + ctrLon.toPrecision(4) + d + '</p>');
+            $('#dispROI').append('<p>Projected Area: ' + area_km.toPrecision(4) + ' km<sup>2</p>');
+            break;
+         case 'shapefile':
+            // Get the polygon vertices
+             var shapefile_name = $('#shapefile_chooser').find('option:selected').val();
+             var setVertices = function(data, opts) {
+
+             };
+             gisportal.genericSync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile_name, null, setVertices, onError, 'json', {});
+
+
             var vertices = geom.getVertices();
             $('#dispROI').html('<h3>Custom Polygon ROI</h4>');
             // Setup the JavaScript canvas object and draw our ROI on it

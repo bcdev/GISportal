@@ -19,7 +19,6 @@ portal_upload = Blueprint('portal_upload', __name__)
 def shapefile_upload():
     shapefile = request.files.getlist('shapefile[]')
     for file in shapefile:
-        print(file)
         filename = secure_filename(file.filename)
         target = os.path.join('/home/thomass/temp/', filename)
         file.save(target)

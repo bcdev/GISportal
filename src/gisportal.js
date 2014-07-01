@@ -1095,7 +1095,7 @@ gisportal.updateShapefiles = function() {
     var on_error = function(data, opts) {
         console.log('AJAX failed unexpectedly while getting shapefiles');
     };
-    gisportal.genericSync('post', gisportal.middlewarePath + '/get_shapefiles', null, set_shapefiles, on_error, 'json', {})
+    gisportal.genericSync('post', gisportal.middlewarePath + '/get_shapefile_names', null, set_shapefiles, on_error, 'json', {})
 };
 
 gisportal.ajaxState = function(id) { 

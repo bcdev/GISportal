@@ -210,6 +210,11 @@ def getData(params, method, checkdata=None):
    rootgrp.close()
    os.remove(fileName)
    current_app.logger.debug('Process complete, returning data for transmission...')
+   print('#################################')
+   print('#################################')
+   print(output)
+   print('#################################')
+   print('#################################')
    return output
 
 """
@@ -262,6 +267,16 @@ Performs a basic set of statistical functions on the provided data.
 """
 def basic(dataset, params):
    arr = np.array(dataset.variables[params['coverage'].value])
+   '''
+   Use beampy to subset according to shapefile if shapefile is given instead of bounding box
+
+   To Do:
+   - create new Band b from arr
+   - create Shape (new Polygon().addPoint(x, y))
+   - StxFactory.withRoiShape().with...().create()
+   - done
+   '''
+
    # Create a masked array ignoring nan's
    maskedArray = np.ma.masked_array(arr, [np.isnan(x) for x in arr])
    time = getCoordinateVariable(dataset, 'Time')
