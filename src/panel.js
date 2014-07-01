@@ -492,7 +492,6 @@ gisportal.rightPanel.setup = function() {
    $('#circle').button({ icons: { primary: 'ui-icon-drawcircle'} });
    $('#polygon').button({ icons: { primary: 'ui-icon-drawpoly'} });
    $('#shapefile_button').button({ icons: { primary: 'ui-icon-uploadshapefile'} });
-   $('#shapefile_button').click(gisportal.updateShapefiles);
 
     var shapefileDropdownHandler = function () {
         if ($('#shapefile_chooser').find('select').val() === 'upload') {
