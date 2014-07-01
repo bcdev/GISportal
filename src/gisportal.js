@@ -1066,25 +1066,6 @@ gisportal.main = function() {
    // Grab the url of any state.
    var stateID = gisportal.utils.getURLParameter('state');
 
-   $.contextMenu({
-      selector: '#shapefile_menu_button',
-      callback: function(key, opt) {
-          if (key === 'upload') {
-              $('#shapefile_upload_button').click();
-          } else if (key === 'choose') {
-              alert('not yet implemented');
-          }
-      },
-      items: {
-          'upload': {name: 'Upload', icon: 'upload'},
-          'choose': {name: 'Choose', icon: 'choose'}
-      },
-      trigger: 'left',
-      autoHide: false,
-      zIndex: 999
-   });
-
-
    // Check if there is a state to load.
    if(stateID !== null) {
       console.log('Retrieving State...');
@@ -1095,6 +1076,27 @@ gisportal.main = function() {
    }
 };
 
+
+gisportal.updateShapefiles = function() {
+    var set_shapefiles = function(data, opts) {
+        var $shapefileChooser = $('#shapefile_chooser');
+        $shapefileChooser.find('select').find('option').each(function(index) {
+            if (this.value !== 'upload' && this.value !== 'none') {
+                $($shapefileChooser.find('select').find('option[value="' + this.value + '"]')).remove();
+            }
+        });
+
+        $.each(data['shapefiles'], function(shapefile) {
+            if ($shapefileChooser.find('select').find('option[value="' + this + '"]').length === 0) {
+                $shapefileChooser.find('select').append('<option value="' + this + '">' + this + '</option>');
+            }
+        });
+    };
+    var on_error = function(data, opts) {
+        console.log('AJAX failed unexpectedly while getting shapefiles');
+    };
+    gisportal.genericSync('post', gisportal.middlewarePath + '/get_shapefiles', null, set_shapefiles, on_error, 'json', {})
+};
 
 gisportal.ajaxState = function(id) { 
       // Async to get state object
@@ -1153,8 +1155,8 @@ gisportal.zoomOverall = function()  {
 gisportal.submit_shapefile_upload_form = function() {
     var percent = $('.percent');
     var bar = $('.bar');
-    $('#uploadshapefile').ajaxSubmit({
-        beforeSubmit: function() {
+    $('#uploadshapefile').ajaxForm({
+        beforeSend: function() {
             var percentVal = '0%';
             bar.width(percentVal);
             percent.html(percentVal);
@@ -1165,10 +1167,12 @@ gisportal.submit_shapefile_upload_form = function() {
             percent.html(percentVal);
             console.log(percentVal, position, total);
         },
-            success: function() {
+        success: function() {
             var percentVal = '100%';
             bar.width(percentVal);
             percent.html(percentVal);
+            gisportal.updateShapefiles();
         }
     });
+    $('#uploadshapefile').submit();
 };

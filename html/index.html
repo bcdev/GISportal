@@ -559,11 +559,18 @@
                      <input type="radio" id="polygon" name="roi_button_group" value="polygon" />
                      <label class="iconBtn" for="polygon" title="Draw Polygon: Click repeatedly on the map to draw a polygon as a region of interest. Double-click to finish drawing the polygon"></label>
 
-                     <input type="radio" id="shapefile_menu_button" name="roi_button_group" value="shapefile_menu_button" />
-                     <label class="iconBtn" for="shapefile_menu_button" title="Select or upload ESRI shapefile"></label>
+                     <input type="radio" id="shapefile_button" name="roi_button_group" value="shapefile_button" />
+                     <label class="iconBtn" for="shapefile_button" title="Select or upload ESRI shapefile"></label>
+
+                     <form id="shapefile_chooser">
+                         <select size="1" disabled>
+                             <option value="none">No shapefile</option>
+                             <option value="upload">Upload ESRI shapefile...</option>
+                         </select>
+                     </form>
 
                      <form class="uploadshapefile" style="display: none" id="uploadshapefile" method="post" enctype="multipart/form-data">
-                        <input type="file" multiple id="shapefile_upload_button" name="shapefile" />
+                        <input type="file" id="shapefile_upload_button" name="shapefile[]" multiple />
                      </form>
 
                       <!-- todo: move CSS -->

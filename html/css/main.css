@@ -40,7 +40,7 @@ h3 {
 }
 
 /* style the ROI canvas */
-canvas { 
+canvas {
 }
 
 sup {
@@ -1157,12 +1157,10 @@ div.olMapViewport {
 .ui-icon-drawpoly  { background-image: url(../img/selectionPoly.png) !important; background-position: 0px; height: 26px; width: 26px !important; margin: -12px -2px !important; }
 .ui-icon-uploadshapefile { background-image: url(../img/uploadShapefile.png) !important; background-position: 0px; height: 26px; width: 26px; margin: -12px -2px !important;}
 
-#image_src {
-    height: 26px; width: 26px; margin: -12px -2px !important;
-    opacity: 0;
-    filter: alpha(opacity=0); /* IE 5-7 */
+#shapefile_chooser {
+    display: inline-block;
+    padding-top: 5px
 }
-
 
 /* Used gisportal as a namespace to limit damage of any future jquery ui updates */
 .ui-icon-gisportal-globe { background-image: url(../img/globe.png) !important; background-position: 0px; height: 32px; width: 32px;margin: -16px -4px !important; }

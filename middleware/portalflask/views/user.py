@@ -109,6 +109,13 @@ def permissions(allowed_user_groups):
     return jsonify(is_accessible=False)
 
 
+@portal_user.route('/get_shapefiles', methods=['POST'])
+def get_shapefiles():
+    import os
+    files = [f for f in os.listdir('/home/thomass/temp') if os.path.basename(f).endswith('.shp')]
+    return jsonify(shapefiles=files)
+
+
 @portal_user.route('/logout', methods=['GET','POST'])
 def logout():
    print('logging out user \'' + g.user.username + '\'')

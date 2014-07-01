@@ -491,10 +491,25 @@ gisportal.rightPanel.setup = function() {
    $('#box').button({ icons: { primary: 'ui-icon-drawbox'} });
    $('#circle').button({ icons: { primary: 'ui-icon-drawcircle'} });
    $('#polygon').button({ icons: { primary: 'ui-icon-drawpoly'} });
-   $('#shapefile_menu_button').button({ icons: { primary: 'ui-icon-uploadshapefile'} });
+   $('#shapefile_button').button({ icons: { primary: 'ui-icon-uploadshapefile'} });
+   $('#shapefile_button').click(gisportal.updateShapefiles);
 
+    var shapefileDropdownHandler = function () {
+        if ($('#shapefile_chooser').find('select').val() === 'upload') {
+            $('#shapefile_upload_button').click();
+        }
+    };
+   $('#shapefile_chooser').selected(shapefileDropdownHandler);
    $('#shapefile_upload_button').change(gisportal.submit_shapefile_upload_form);
    $('#uploadshapefile').attr('action', gisportal.middlewarePath + '/shapefile_upload');
+
+   $('input[name="roi_button_group"]').change(function() {
+       if ($('input[name="roi_button_group"]:checked').val() !== 'shapefile_button') {
+           $('#shapefile_chooser').find('select').prop('disabled', 'disabled');
+       } else {
+           $('#shapefile_chooser').find('select').prop('disabled', false);
+       }
+   });
 
    // Data Analysis panel tabs and accordions
    $("#gisportal-tab-analyses").multiOpenAccordion({ collapsible: true, heightStyle: 'content', active: [-1, -1, -1, -1] });

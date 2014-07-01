@@ -17,7 +17,7 @@ portal_upload = Blueprint('portal_upload', __name__)
 
 @portal_upload.route('/shapefile_upload', methods=['POST'])
 def shapefile_upload():
-    shapefile = request.files.getlist('shapefile')
+    shapefile = request.files.getlist('shapefile[]')
     for file in shapefile:
         print(file)
         filename = secure_filename(file.filename)
