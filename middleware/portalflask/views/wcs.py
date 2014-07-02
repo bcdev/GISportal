@@ -17,7 +17,7 @@ on the received data, before jsonifying the output and returning it.
 @portal_wcs.route('/wcs', methods = ['GET'])
 def getWcsData():
    import random
-   
+
    g.graphError = ""
 
    params = getParams() # Gets any parameters
@@ -261,38 +261,31 @@ def getBboxData(params, method):
       #if e[0] == 2:
          #g.error = "Unable to save file"
          #abort(400)
-           
+
 """
 Performs a basic set of statistical functions on the provided data.
 """
 def basic(dataset, params):
-   arr = np.array(dataset.variables[params['coverage'].value])
-   '''
-   Use beampy to subset according to shapefile if shapefile is given instead of bounding box
+    #import portalflask.core.compute_graph as cg
+    #return cg.get_output()
 
-   To Do:
-   - create new Band b from arr
-   - create Shape (new Polygon().addPoint(x, y))
-   - StxFactory.withRoiShape().with...().create()
-   - done
-   '''
 
    # Create a masked array ignoring nan's
    maskedArray = np.ma.masked_array(arr, [np.isnan(x) for x in arr])
    time = getCoordinateVariable(dataset, 'Time')
-      
+
    if time == None:
       g.graphError = "could not find time dimension"
       return
-   
+
    times = np.array(time)
    output = {}
-   
+
    units = getUnits(dataset.variables[params['coverage'].value])
    output['units'] = units
-   
+
    current_app.logger.debug('starting basic calc') # DEBUG
-   
+
    #mean = getMean(maskedArray)
    #median = getMedian(maskedArray)
    #std = getStd(maskedArray)
@@ -302,9 +295,9 @@ def basic(dataset, params):
    start = None
    if timeUnits:
       start = (netCDF.num2date(times[0], time.units, calendar='standard')).isoformat()
-   else: 
+   else:
       start = ''.join(times[0])
-   
+
    #=========================================================================
    # if np.isnan(max) or np.isnan(min) or np.isnan(std) or np.isnan(mean) or np.isnan(median):
    #   output = {}
@@ -312,35 +305,35 @@ def basic(dataset, params):
    # else:
    #   output['global'] = {'mean': mean, 'median': median,'std': std, 'min': min, 'max': max, 'time': start}
    #=========================================================================
-   
+
    output['global'] = {'time': start}
    current_app.logger.debug('starting iter of dates') # DEBUG
-   
+
    output['data'] = {}
-   
+
    for i, row in enumerate(maskedArray):
       #current_app.logger.debug(row)
       if timeUnits:
          date = netCDF.num2date(time[i], time.units, calendar='standard').isoformat()
-      else:     
+      else:
          date = ''.join(times[i])
       mean = getMean(row)
       median = getMedian(row)
       std = getStd(row)
       min = getMin(row)
       max = getMax(row)
-      
+
       if np.isnan(max) or np.isnan(min) or np.isnan(std) or np.isnan(mean) or np.isnan(median):
          pass
       else:
          output['data'][date] = {'mean': mean, 'median': median,'std': std, 'min': min, 'max': max}
-   
+
    if len(output['data']) < 1:
       g.graphError = "no valid data available to use"
       return output
-      
+
    current_app.logger.debug('Finished basic') # DEBUG
-   
+
    return output
 
 

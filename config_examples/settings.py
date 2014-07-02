@@ -28,3 +28,9 @@ ACTION_REGISTRY = [
         'allowedUserGroups' : ['admins']
     }
 ]
+
+JAVA_HOME = '/opt/java'
+JDK_HOME = '/opt/java'
+PATH_extension = JAVA_HOME + '/bin'
+LD_LIBRARY_PATH_extension = JDK_HOME + '/jre/lib/amd64/server'
+BEAM_HOME = '/home/thomass/beam-5.0'

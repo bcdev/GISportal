@@ -8,6 +8,7 @@ from core.group_extension import GroupExtension
 from openid.extensions.sreg import SRegResponse
 
 import sys
+import os
 import settings as settings
 
 def create_app(path):
@@ -91,6 +92,11 @@ def setup_logging(app, path):
 def setup_config(app):
    app.config.from_object(settings)
    app.logger.debug("In debug mode: %s" % app.debug)
+   os.environ['JAVA_HOME'] = settings.JAVA_HOME
+   os.environ['JDK_HOME'] = settings.JDK_HOME
+   os.environ['PATH'] = settings.PATH_extension + ':' + os.getenv('PATH', '')
+   os.environ['LD_LIBRARY_PATH'] = settings.LD_LIBRARY_PATH_extension + ':' + os.getenv('LD_LIBRARY_PATH', '')
+   os.environ['BEAM_HOME'] = settings.BEAM_HOME
 
 
 # Alternative method to using 'setup_routing' above
