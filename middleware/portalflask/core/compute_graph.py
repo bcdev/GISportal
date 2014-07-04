@@ -1,7 +1,7 @@
 import beampy
 import shapefile
 from beampy import jpy
-from netCDF4 import Dataset, num2date
+from netCDF4 import num2date
 import numpy as np
 
 def get_name_index(fields):
@@ -40,29 +40,47 @@ def get_shape(record):
     return path
 
 
-def get_output():
-    nc_file = '/home/thomass/OPATMBFM3_OGS_HC_Med_19990101_20111231_Totalchlorophyll.nc'
-    variable_name = 'Totchl'
-    shapefile_path = '/home/thomass/temp/countries.shp'
-    record_name = 'Colombia'
+def get_axis_root(product, axis):
+    variable_metadata_root = product.getMetadataRoot().getElement('Variable_Attributes')
+    axis_root = variable_metadata_root.getElement(axis)
+    return axis_root
 
-    dataset = Dataset(nc_file, 'r')
+
+def get_coordinate_variable(product, axis):
+    axis_root = get_axis_root(product, axis)
+    if axis_root is None:
+        return None
+
+    axis_element_attribute = axis_root.getElement('_CoordinateAxisType').getData().toString()
+    if axis_element_attribute == axis:
+        return np.array(axis_root.getElement('Values').getAttributes()[0].getData().getElems())
+    return None
+
+
+def getUnits(product, axis):
+    axis_root = get_axis_root(product, axis)
+    units_attribute = axis_root.getAttribute('units')
+    if units_attribute is not None:
+        return units_attribute.getData().toString()
+    return None
+
+
+def get_output(ncfile_name, variable_name, shapefile_path, record_name):
 
     sf = shapefile.Reader(shapefile_path)
     record = get_record(record_name, sf)
     shape = get_shape(record)
-    product = beampy.ProductIO.readProduct(nc_file)
+    product = beampy.ProductIO.readProduct(ncfile_name)
 
     output = {}
 
-    time = getCoordinateVariable(dataset, 'Time')
-    if time is None:
+    times = get_coordinate_variable(product, 'Time')
+    if times is None:
         raise ValueError('No time variable found')
-    times = np.array(time)
 
-    timeUnits = getUnits(time)
-    if timeUnits:
-        start = (num2date(times[0], time.units, calendar='standard')).isoformat()
+    time_units = getUnits(product, 'Time')
+    if time_units:
+        start = (num2date(times[0], time_units, calendar='standard')).isoformat()
     else:
         start = ''.join(times[0])
 
@@ -72,14 +90,15 @@ def get_output():
     output['units'] = units
 
     output['data'] = {}
+    factory = jpy.get_type('org.esa.beam.framework.datamodel.StxFactory')().withRoiShape(shape)
+    pm = jpy.get_type('com.bc.ceres.core.ProgressMonitor')
     for time_index, band in enumerate(product.getBands()):
-        if timeUnits:
-            date = num2date(time[time_index], time.units, calendar='standard').isoformat()
+        if time_units:
+            date = num2date(time[time_index], time_units, calendar='standard').isoformat()
         else:
             date = ''.join(times[time_index])
 
-        factory = beampy.StxFactory()
-        stx = factory.withROIShape(shape).create(band, beampy.ProgressMonitor.NULL)
+        stx = factory.create(band, pm.NULL)
         maximum = stx.getMaximum()
         minimum = stx.getMinimum()
         std = stx.getStandardDeviation()
@@ -92,22 +111,3 @@ def get_output():
             output['data'][date] = {'mean': mean, 'median': median,'std': std, 'min': minimum, 'max': maximum}
 
     return output
-
-
-def getCoordinateVariable(dataset, axis):
-    for i, key in enumerate(dataset.variables):
-        var = dataset.variables[key]
-        for name in var.ncattrs():
-            if name == "_CoordinateAxisType" and var._CoordinateAxisType == axis:
-                return var
-
-    return None
-
-
-
-def getUnits(variable):
-    for name in variable.ncattrs():
-        if name == "units":
-            return variable.units
-
-    return ''

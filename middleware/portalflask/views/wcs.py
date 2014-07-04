@@ -14,9 +14,8 @@ portal_wcs = Blueprint('portal_wcs', __name__)
 Gets wcs data from a specified server, then performs a requested function
 on the received data, before jsonifying the output and returning it.
 """
-@portal_wcs.route('/wcs', methods = ['GET'])
+@portal_wcs.route('/wcs', methods=['GET'])
 def getWcsData():
-   import random
 
    g.graphError = ""
 
@@ -26,44 +25,47 @@ def getWcsData():
    params['url'] = createURL(params)
    current_app.logger.debug('Processing request...') # DEBUG
    current_app.logger.debug(params['url'].value)
-   type = params['type'].value
-   if type == 'histogram': # Outputs data needed to create a histogram
-      output = getBboxData(params, histogram)
-   elif type == 'timeseries': # Outputs a set of standard statistics
-      output = getBboxData(params, basic)
-   elif type == 'scatter': # Outputs a scatter graph
-      output = getBboxData(params, scatter)
-   elif type == 'hovmollerLon' or 'hovmollerLat': # outputs a hovmoller graph
-      output = getBboxData(params, hovmoller)
-   elif type == 'point':
-      output = getPointData(params, raw)
-   elif type == 'raw': # Outputs the raw values
-      output = getBboxData(params, raw)
-   elif type == 'test': # Used to test new code
-      output = getBboxData(params, test)
-   elif type == 'error': # Used to test error handling client-side
-      choice = random.randrange(1,7)
-      if choice == 1:
-         g.error = "test 404"
-         abort(400)
-      elif choice == 2:
-         abort(401)
-      elif choice == 3:
-         abort(404)
-      elif choice == 4:
-         return jsonify(outpu = "edfwefwrfewf")
-      elif choice == 5:
-         abort(502)
-      elif choice == 6:
-         x = y # Should create a 500 from apache
+   graph_type = params['graphType'].value
+   geometry_type = params['geometryType'].value
+
+   # todo: remove these nested ifs. E.g.:
+   # - in first step, compute geometry depending on geometry_type
+   # - use beampy to compute actual output data
+
+   if geometry_type == 'box':
+      if graph_type == 'histogram': # Outputs data needed to create a histogram
+         output = getDataSafe(params, histogram)
+      elif graph_type == 'timeseries': # Outputs a set of standard statistics
+         output = getDataSafe(params, basic)
+      elif graph_type == 'scatter': # Outputs a scatter graph
+         output = getDataSafe(params, scatter)
+      elif graph_type == 'hovmollerLon' or 'hovmollerLat': # outputs a hovmoller graph
+         output = getDataSafe(params, hovmoller)
+      elif graph_type == 'raw': # Outputs the raw values
+          output = getDataSafe(params, raw)
+
+   elif geometry_type == 'shapefile':
+       getDataSafe(params, basic2, False)
+
+   elif geometry_type == 'circle':
+       print('not yet implemented')
+
+   elif geometry_type == 'polygon':
+       print('not yet implemented')
+
+   elif geometry_type == 'point':
+       output = getPointData(params, raw)
+
    else:
-      g.error = '"%s" is not a valid option' % type
-      return abort(400)
-   
+       error = '"%s" is not a valid option' % geometry_type
+       g.error = error
+       print(error)
+       return abort(400)
+
    current_app.logger.debug('Jsonifying response...') # DEBUG
    
    try:
-      jsonData = jsonify(output = output, type = params['type'].value, coverage = params['coverage'].value, error = g.graphError)
+      jsonData = jsonify(output=output, type=params['graphType'].value, coverage=params['coverage'].value, error=g.graphError)
    except TypeError as e:
       g.error = "Request aborted, exception encountered: %s" % e
       error_handler.setError('2-06', None, g.user.id, "views/wcs.py:getWcsData - Type erro, returning 400 to user. Exception %s" % e, request)
@@ -72,6 +74,16 @@ def getWcsData():
    current_app.logger.debug('Request complete, Sending results') # DEBUG
    
    return jsonData
+
+
+def basic2(params):
+    import portalflask.core.compute_graph as cg
+    ncfile_name = params['file_name']
+    variable_name = params['coverage']
+    shapefile_path = params['shapefile']
+    record_name = params['record_name']
+
+    return cg.get_output(ncfile_name, variable_name, shapefile_path, record_name)
 
 """
 Gets any parameters.
@@ -92,13 +104,10 @@ def getParams():
    nameToParam["vertical"] = Param("vertical", True, True, request.args.get('depth', None))
    
    # One Required
-   nameToParam["bbox"] = Param("bbox", True, True, request.args.get('bbox', None))
-   nameToParam["circle"] = Param("circle", True, True, request.args.get('circle', None))
-   nameToParam["polygon"] = Param("polygon", True, True, request.args.get('polygon', None))
-   nameToParam["point"] = Param("point", True, True, request.args.get('point', None))
-   
+   nameToParam["geometryType"] = Param("geometryType", True, True, request.args.get('geometryType', None))
+
    # Custom
-   nameToParam["type"] = Param("type", False, False, request.args.get('type'))
+   nameToParam["graphType"] = Param("graphType", False, False, request.args.get('graphType'))
    nameToParam["graphXAxis"] = Param("graphXAxis", True, False, request.args.get('graphXAxis'))
    nameToParam["graphYAxis"] = Param("graphYAxis", True, False, request.args.get('graphYAxis'))
    nameToParam["graphZAxis"] = Param("graphZAxis", True, False, request.args.get('graphZAxis'))
@@ -116,21 +125,19 @@ def checkParams(params):
    checkedParams = {}
    
    for key in params.iterkeys():
-      if params[key].value == None or len(params[key].value) == 0:
+      if params[key].value is None or len(params[key].value) == 0:
          if not params[key].isOptional():            
-            g.error = 'required parameter "%s" is missing or is set to an invalid value' % key
-            error_handler.setError('2-06', None, g.user.id, "views/wcs.py:checkParams - Parameter is missing or invalid, returning 400 to user. Parameter %s" % key, request)
+            error = 'required parameter "%s" is missing or is set to an invalid value' % key
+            g.error = error
+            print(error)
+            user_id = g.user.id if g.user is not None else ''
+            error_handler.setError('2-06', None, user_id, "views/wcs.py:checkParams - Parameter is missing or invalid, returning 400 to user. Parameter %s" % key, request)
             abort(400)
       else:
          checkedParams[key] = params[key]
          
    return checkedParams
 
-def createMask(params):
-   if params["bbox"] != None:
-      pass
-   
-   
 
 """
 Create the url that will be used to contact the wcs server.
@@ -149,14 +156,16 @@ def createURL(params):
       error_handler.setError('2-06', None, g.user.id, "views/wcs.py:createURL - Possible recursion detected, returning 400 to user.", request)
       abort(400)
    return Param("url", False, False, url)
-      
+
+
 def contactWCSServer(url):
    current_app.logger.debug('Contacting WCS Server with request...')
    resp = urllib2.urlopen(url)     
    current_app.logger.debug(url)
    current_app.logger.debug('Request successful')
    return resp
-      
+
+
 def saveOutTempFile(resp):
    current_app.logger.debug('Saving out temporary file...')
    temp = tempfile.NamedTemporaryFile('w+b', delete=False, dir='/tmp')
@@ -165,12 +174,14 @@ def saveOutTempFile(resp):
    resp.close()
    current_app.logger.debug('Temporary file saved successfully')
    return temp.name
-    
-def openNetCDFFile(fileName, params):
+
+
+def openNetCDFFile(fileName, format):
    current_app.logger.debug('Opening netCDF file...')
-   rootgrp = netCDF.Dataset(fileName, 'r', format=params['format'].value)
+   rootgrp = netCDF.Dataset(fileName, 'r', format=format)
    current_app.logger.debug('NetCDF file opened')
    return rootgrp
+
 
 def expandBbox(params):
    # TODO: try except for malformed bbox
@@ -197,31 +208,25 @@ def expandBbox(params):
 """
 Generic method for getting data from a wcs server
 """
-def getData(params, method, checkdata=None):
-   import os
+def getData(params, method, open_dataset=True):
    resp = contactWCSServer(params['url'].value)
    fileName = saveOutTempFile(resp)
-   rootgrp = openNetCDFFile(fileName, params)
-   current_app.logger.debug('Checking data...')
-   # Check data
-   # Run passed in method
-   current_app.logger.debug('Data checked, beginning requested process...')
-   output = method(rootgrp, params)
-   rootgrp.close()
-   os.remove(fileName)
+   params[''] = fileName
+   if open_dataset:
+      rootgrp = openNetCDFFile(fileName, params['format'].value)
+      output = method(rootgrp, params)
+      rootgrp.close()
+   else:
+      output = method(params)
+   # os.remove(fileName)
    current_app.logger.debug('Process complete, returning data for transmission...')
-   print('#################################')
-   print('#################################')
-   print(output)
-   print('#################################')
-   print('#################################')
    return output
+
 
 """
 Tries to get a single point of data to return
 """      
 def getPointData(params, method):
-   import os
    current_app.logger.debug('Beginning try to get point data...')
    for x in range(10) :
       current_app.logger.debug('Attempt %s' % (x + 1))
@@ -242,10 +247,10 @@ def getPointData(params, method):
    g.graphError = "Could not retrieve a data point for that area"
    return {}
 
-def getBboxData(params, method):
-   import os, errno
+
+def getDataSafe(params, method, open_dataset=True):
    try:
-      return getData(params, method)
+      return getData(params, method, open_dataset)
    except urllib2.URLError as e:
       if hasattr(e, 'code'): # check for the code attribute from urllib2.urlopen
          if e.code == 400:
@@ -255,20 +260,15 @@ def getBboxData(params, method):
          abort(400)
          
       g.error = "Failed to access url, make sure you have entered the correct parameters"
-      error_handler.setError('2-06', None, g.user.id, "views/wcs.py:getBboxData - Failed to access url, returning 400 to user. Exception %s" % e, request)
+      error_handler.setError('2-06', None, g.user.id, "views/wcs.py:getDataSafe - Failed to access url, returning 400 to user. Exception %s" % e, request)
       abort(400) # return 400 if we can't get an exact code
-   #except IOError as e:
-      #if e[0] == 2:
-         #g.error = "Unable to save file"
-         #abort(400)
+
 
 """
 Performs a basic set of statistical functions on the provided data.
 """
 def basic(dataset, params):
-    #import portalflask.core.compute_graph as cg
-    #return cg.get_output()
-
+   arr = np.array(dataset.variables[params['coverage'].value])
 
    # Create a masked array ignoring nan's
    maskedArray = np.ma.masked_array(arr, [np.isnan(x) for x in arr])

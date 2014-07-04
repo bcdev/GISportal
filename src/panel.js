@@ -508,6 +508,7 @@ gisportal.rightPanel.setup = function() {
        } else {
            $('#shapefile_chooser').find('select').prop('disabled', false);
        }
+       gisportal.geometryType = $('#ROIButtonSet').find('input[name=roi_button_group]:checked').val();
    });
 
    // Data Analysis panel tabs and accordions
@@ -1038,10 +1039,11 @@ gisportal.rightPanel.setupGraphingTools = function() {
             baseurl: $('#graphcreator-baseurl').val(),
             coverage: gisportal.layers[graphcreatorCoverageElement.find('option:selected').val()].origName ||
                       graphcreatorCoverageElement.find('option:selected').val(),
-            type: graphcreatorGalleryElement.find('input[name="gallery"]:checked').val(),
+            graphType: graphcreatorGalleryElement.find('input[name="gallery"]:checked').val(),
             bins: $('#graphcreator-bins').val(),
             time: dateRange,
             bbox: $('#graphcreator-bbox').val(),
+            geometryType: gisportal.geometryType,
             depth: depthDirection(),
             graphXAxis: graphXAxis,
             graphYAxis: graphYAxis,
