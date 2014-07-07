@@ -103,8 +103,12 @@ def getParams():
    nameToParam["time"] = Param("time", True, True, request.args.get('time', None))
    nameToParam["vertical"] = Param("vertical", True, True, request.args.get('depth', None))
    
-   # One Required
+   # Geometry spec
    nameToParam["geometryType"] = Param("geometryType", True, True, request.args.get('geometryType', None))
+   nameToParam["bbox"] = Param("bbox", True, True, request.args.get('bbox', None))
+   nameToParam["circle"] = Param("circle", True, True, request.args.get('circle', None))
+   nameToParam["polygon"] = Param("polygon", True, True, request.args.get('polygon', None))
+   nameToParam["point"] = Param("point", True, True, request.args.get('point', None))
 
    # Custom
    nameToParam["graphType"] = Param("graphType", False, False, request.args.get('graphType'))
@@ -160,8 +164,8 @@ def createURL(params):
 
 def contactWCSServer(url):
    current_app.logger.debug('Contacting WCS Server with request...')
-   resp = urllib2.urlopen(url)     
    current_app.logger.debug(url)
+   resp = urllib2.urlopen(url)
    current_app.logger.debug('Request successful')
    return resp
 
@@ -211,7 +215,7 @@ Generic method for getting data from a wcs server
 def getData(params, method, open_dataset=True):
    resp = contactWCSServer(params['url'].value)
    fileName = saveOutTempFile(resp)
-   params[''] = fileName
+   params['file_name'] = fileName
    if open_dataset:
       rootgrp = openNetCDFFile(fileName, params['format'].value)
       output = method(rootgrp, params)
@@ -252,13 +256,14 @@ def getDataSafe(params, method, open_dataset=True):
    try:
       return getData(params, method, open_dataset)
    except urllib2.URLError as e:
+      print(e)
       if hasattr(e, 'code'): # check for the code attribute from urllib2.urlopen
          if e.code == 400:
             g.error = "Failed to access url, make sure you have entered the correct parameters."
          if e.code == 500:
             g.error = "Sorry, looks like one of the servers you requested data from is having trouble at the moment. It returned a 500."
          abort(400)
-         
+
       g.error = "Failed to access url, make sure you have entered the correct parameters"
       error_handler.setError('2-06', None, g.user.id, "views/wcs.py:getDataSafe - Failed to access url, returning 400 to user. Exception %s" % e, request)
       abort(400) # return 400 if we can't get an exact code

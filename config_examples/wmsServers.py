@@ -12,7 +12,7 @@ servers = {
       'options': {
          'providerShortTag': 'CCI'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/CCI-v1.0-D?',
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/CCI-v1.0-D?',
       'users': 'admins'
    },
    'hcmr': { 
@@ -27,7 +27,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'HCMR'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/HCMR-M-AGGSLOW?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/HCMR-M-AGGSLOW?'
    },
    'pml_annual': { 
       'name': 'pml_annual',
@@ -40,7 +40,7 @@ servers = {
       'options': {
          'providerShortTag': 'PML'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/PML-Y-AGGSLOW?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/PML-Y-AGGSLOW?'
    },
    'pml_seasonal': { 
       'name': 'pml_seasonal',
@@ -53,7 +53,7 @@ servers = {
       'options': {
          'providerShortTag': 'PML'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/PML-S-AGGSLOW?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/PML-S-AGGSLOW?'
    },
    'pml_monthly': { 
       'name': 'pml_monthly',
@@ -66,7 +66,7 @@ servers = {
       'options': {
          'providerShortTag': 'PML'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/PML-M-AGGSLOW?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/PML-M-AGGSLOW?'
    },
    'pml_daily': { 
       'name': 'pml_daily',
@@ -79,7 +79,7 @@ servers = {
       'options': {
          'providerShortTag': 'PML'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/PML-D-AGGSLOW?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/PML-D-AGGSLOW?'
    },
    'imsmetu_annual': { 
       'name': 'imsmetu_annual',
@@ -93,7 +93,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'IMS-METU'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/IMSMETU-Y/BIMS0.1_HC_IMSMETU_blacksea_19900101-20090101_ANNUAL.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/IMSMETU-Y/BIMS0.1_HC_IMSMETU_blacksea_19900101-20090101_ANNUAL.nc?'
    },
    'cefas': { 
       'name': 'cefas',
@@ -106,7 +106,7 @@ servers = {
       'options': {
          'providerShortTag': 'Cefas'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/CEFAS/resoutcut.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/CEFAS/resoutcut.nc?'
    },
    'dmi_monthy': { 
       'name': 'dmi_monthly',
@@ -119,7 +119,7 @@ servers = {
       'options': {
          'providerShortTag': 'DMI'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/DMI_M/DMI_1990_2009_monthly_mean.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/DMI_M/DMI_1990_2009_monthly_mean.nc?'
    },
    'dmi_annual': { 
       'name': 'dmi_annual',
@@ -132,7 +132,7 @@ servers = {
       'options': {
          'providerShortTag': 'DMI'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/DMI_Y/DMI_1990_2009_annual_mean.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/DMI_Y/DMI_1990_2009_annual_mean.nc?'
    },
    'dmi_seasonal': { 
       'name': 'dmi_seasonal',
@@ -145,7 +145,7 @@ servers = {
       'options': {
          'providerShortTag': 'DMI'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/DMI_S/DMI_1990_2009_seasonal_anomaly.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/DMI_S/DMI_1990_2009_seasonal_anomaly.nc?'
    },
    'ogs_Ammonia': { 
       'name': 'ogs_Ammonia',
@@ -159,7 +159,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_ammonia.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_ammonia.nc?'
    },
    'ogs_CarnZoo': { 
       'name': 'ogs_CarnZoo',
@@ -173,7 +173,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_CarnMesozoo.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_CarnMesozoo.nc?'
    },
    'ogs_C-Diat': { 
       'name': 'ogs_C-Diat',
@@ -187,7 +187,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Cdia.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Cdia.nc?'
    },
    'ogs_Chl-Diat': { 
       'name': 'ogs_Chl-Diat',
@@ -201,7 +201,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-dia.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-dia.nc?'
    },
    'ogs_Chl-LargePhy': { 
       'name': 'ogs_Chl-LargePhy',
@@ -215,7 +215,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-largephy.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-largephy.nc?'
    },
    'ogs_Chl-Nflag': { 
       'name': 'ogs_Chl-Nflag',
@@ -229,7 +229,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-nflag.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-nflag.nc?'
    },
    'ogs_Chl-PicoPhy': { 
       'name': 'ogs_Chl-PicoPhy',
@@ -243,7 +243,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-picophy.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-picophy.nc?'
    },
    'ogs_C-LargePhy': { 
       'name': 'ogs_C-LargePhy',
@@ -257,7 +257,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Clargephy.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Clargephy.nc?'
    },
    'ogs_C-Nflag': { 
       'name': 'ogs_C-Nflag',
@@ -271,7 +271,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Cnflag.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Cnflag.nc?'
    },
    'ogs_C-PicoPhy': { 
       'name': 'ogs_C-PicoPhy',
@@ -285,7 +285,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Cpicophy.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Cpicophy.nc?'
    },
    'ogs_HeteroFlag': { 
       'name': 'ogs_HeteroFlag',
@@ -299,7 +299,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_HeteroFlag.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_HeteroFlag.nc?'
    },
    'ogs_MicroZoo': { 
       'name': 'ogs_MicroZoo',
@@ -313,7 +313,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Microzoo.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Microzoo.nc?'
    },
    'ogs_Nitrate': { 
       'name': 'ogs_Nitrate',
@@ -327,7 +327,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_nitrate.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_nitrate.nc?'
    },
    'ogs_OmniZoo': { 
       'name': 'ogs_OmniZoo',
@@ -341,7 +341,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_OmniMesozoo.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_OmniMesozoo.nc?'
    },
    'ogs_Oxygen': { 
       'name': 'ogs_Oxygen',
@@ -355,7 +355,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_oxygen.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_oxygen.nc?'
    },
    'ogs_pCO2': { 
       'name': 'ogs_pCO2',
@@ -369,7 +369,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_pCO.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_pCO.nc?'
    },
    'ogs_Phosphate': { 
       'name': 'ogs_Phosphate',
@@ -383,7 +383,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_phosphate.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_phosphate.nc?'
    },
    'ogs_NPP': { 
       'name': 'ogs_NPP',
@@ -397,7 +397,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_ppn.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_ppn.nc?'
    },
    'ogs_R_NO3NH4_PO4': { 
       'name': 'ogs_R_NO3NH4_PO4',
@@ -411,7 +411,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_R_NO3NH4_PO4.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_R_NO3NH4_PO4.nc?'
    },
    'ogs_R_NO3_PHOS': { 
       'name': 'ogs_R_NO3_PHOS',
@@ -425,7 +425,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_R_NO3_PO4.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_R_NO3_PO4.nc?'
    },
    'ogs_R_NO3_SIO4': { 
       'name': 'ogs_R_NO3_SIO4',
@@ -439,7 +439,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_R_NO3_SIO4.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_R_NO3_SIO4.nc?'
    },
    'ogs_sal': { 
       'name': 'ogs_sal',
@@ -453,7 +453,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_sal_Anomaly.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_sal_Anomaly.nc?'
    },
    'ogs_sal': { 
       'name': 'ogs_sal',
@@ -467,7 +467,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_sal.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_sal.nc?'
    },
    'ogs_Silicate': { 
       'name': 'ogs_Silicate',
@@ -481,7 +481,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_silicate.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_silicate.nc?'
    },
    'ogs_tem': { 
       'name': 'ogs_tem',
@@ -495,7 +495,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_tem_Anomaly.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_tem_Anomaly.nc?'
    },
    'ogs_temp': { 
       'name': 'ogs_temp',
@@ -509,7 +509,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_temp.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_temp.nc?'
    },
    'ogs_Totchl': { 
       'name': 'ogs_Totchl',
@@ -523,7 +523,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Totalchlorophyll.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Totalchlorophyll.nc?'
    },
    'ogs_TotphytoC': { 
       'name': 'ogs_TotphytoC',
@@ -537,7 +537,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_TotalPhytoC.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_TotalPhytoC.nc?'
    },
    'ogs_Totzoo': { 
       'name': 'ogs_Totzoo',
@@ -551,7 +551,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Totalzooplankton.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Totalzooplankton.nc?'
    },
    'ogs_Wmin_NO3': { 
       'name': 'ogs_Wmin_NO3',
@@ -565,7 +565,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Wmin_nitrate.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Wmin_nitrate.nc?'
    },
    'ogs_Wmin_PO4': { 
       'name': 'ogs_Wmin_PO4',
@@ -579,7 +579,7 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Wmin_phosphate.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Wmin_phosphate.nc?'
    },
    'ogs_Wmin_SiO2': { 
       'name': 'ogs_Wmin_SiO2',
@@ -593,6 +593,6 @@ servers = {
          'positive': 'down',
          'providerShortTag': 'OGS'
       },
-      'wcsurl': 'http://portaldev.marineopec.eu/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Wmin_silicate.nc?'
+      'wcsurl': 'http://rsg.pml.ac.uk/thredds/wcs/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Wmin_silicate.nc?'
    }
 }
