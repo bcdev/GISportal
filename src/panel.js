@@ -7,12 +7,12 @@ gisportal.leftPanel = {};
 gisportal.leftPanel.open = function() {
    $(".lPanel").show("fast");
    $(".triggerL").addClass("active");
-}
+};
 
 gisportal.leftPanel.toggle = function() {
    $(".lPanel").toggle("fast");
    $(".triggerL").toggleClass("active");
-}
+};
 
 gisportal.leftPanel.setup = function() {
    //$('#refLayers').multiOpenAccordion({
@@ -494,19 +494,23 @@ gisportal.rightPanel.setup = function() {
    $('#shapefile_button').button({ icons: { primary: 'ui-icon-uploadshapefile'} });
 
     var shapefileDropdownHandler = function () {
-        if ($('#shapefile_chooser').find('select').val() === 'upload') {
+        var selectedValue = $('#shapefile_chooser').val();
+        if (selectedValue === 'upload') {
             $('#shapefile_upload_button').click();
         }
+        gisportal.updateShapes();
     };
    $('#shapefile_chooser').selected(shapefileDropdownHandler);
    $('#shapefile_upload_button').change(gisportal.submit_shapefile_upload_form);
    $('#uploadshapefile').attr('action', gisportal.middlewarePath + '/shapefile_upload');
 
    $('input[name="roi_button_group"]').change(function() {
-       if ($('input[name="roi_button_group"]:checked').val() !== 'shapefile') {
-           $('#shapefile_chooser').find('select').prop('disabled', 'disabled');
+       if ($('input[name="roi_button_group"]:checked').val() === 'shapefile') {
+           $('#shape_chooser').find('select').prop('disabled', false);
+           gisportal.updateShapefiles();
+           gisportal.updateShapes();
        } else {
-           $('#shapefile_chooser').find('select').prop('disabled', false);
+           $('#shape_chooser').find('select').prop('disabled', 'disabled');
        }
        gisportal.geometryType = $('#ROIButtonSet').find('input[name=roi_button_group]:checked').val();
    });
@@ -670,7 +674,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
             // Get the polygon vertices
              var shapefile_name = $('#shapefile_chooser').find('option:selected').val();
              var setVertices = function(data, opts) {
-
+                 // todo - implement
              };
              gisportal.genericSync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile_name, null, setVertices, onError, 'json', {});
 
@@ -1044,6 +1048,8 @@ gisportal.rightPanel.setupGraphingTools = function() {
             time: dateRange,
             bbox: $('#graphcreator-bbox').val(),
             geometryType: gisportal.geometryType,
+            shapefile: $('#shapefile_chooser').find('option:selected').val(),
+            shapeName: $('#shapename_chooser').find('option:selected').val(),
             depth: depthDirection(),
             graphXAxis: graphXAxis,
             graphYAxis: graphYAxis,

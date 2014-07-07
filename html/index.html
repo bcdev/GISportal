@@ -562,10 +562,12 @@
                      <input type="radio" id="shapefile_button" name="roi_button_group" value="shapefile" />
                      <label class="iconBtn" for="shapefile_button" title="Select or upload ESRI shapefile"></label>
 
-                     <form id="shapefile_chooser">
-                         <select size="1" disabled>
+                     <form id="shape_chooser">
+                         <select id="shapefile_chooser" size="1" disabled>
                              <option value="none">No shapefile</option>
                              <option value="upload">Upload ESRI shapefile...</option>
+                         </select>
+                         <select id="shapename_chooser" size="1" disabled>
                          </select>
                      </form>
 

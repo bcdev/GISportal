@@ -1,6 +1,7 @@
 from flask import Blueprint, abort, request, jsonify, g, current_app
 from portalflask.core.param import Param
 from portalflask.core import error_handler
+import portalflask.core.shapefile_support as shapefile_support
 
 import urllib
 import urllib2
@@ -21,7 +22,7 @@ def getWcsData():
 
    params = getParams() # Gets any parameters
    params = checkParams(params) # Checks what parameters where entered
-   
+
    params['url'] = createURL(params)
    current_app.logger.debug('Processing request...') # DEBUG
    current_app.logger.debug(params['url'].value)
@@ -45,7 +46,10 @@ def getWcsData():
           output = getDataSafe(params, raw)
 
    elif geometry_type == 'shapefile':
-       getDataSafe(params, basic2, False)
+       bounding_box = shapefile_support.get_bounding_box(params['shapefile'].value, params['shapeName'].value)
+       params['bbox'] = Param("bbox", True, True, bounding_box)
+       params['url'] = createURL(params)
+       output = getDataSafe(params, basic2, False)
 
    elif geometry_type == 'circle':
        print('not yet implemented')
@@ -77,13 +81,14 @@ def getWcsData():
 
 
 def basic2(params):
-    import portalflask.core.compute_graph as cg
     ncfile_name = params['file_name']
-    variable_name = params['coverage']
-    shapefile_path = params['shapefile']
-    record_name = params['record_name']
+    variable_name = params['coverage'].value
+    shapefile_name = params['shapefile'].value
+    shape_name = params['shapeName'].value
 
-    return cg.get_output(ncfile_name, variable_name, shapefile_path, record_name)
+    output = shapefile_support.get_output(ncfile_name, variable_name, shapefile_name, shape_name)
+    print(output)
+    return output
 
 """
 Gets any parameters.
@@ -104,11 +109,13 @@ def getParams():
    nameToParam["vertical"] = Param("vertical", True, True, request.args.get('depth', None))
    
    # Geometry spec
-   nameToParam["geometryType"] = Param("geometryType", True, True, request.args.get('geometryType', None))
+   nameToParam["geometryType"] = Param("geometryType", False, False, request.args.get('geometryType', None))
    nameToParam["bbox"] = Param("bbox", True, True, request.args.get('bbox', None))
    nameToParam["circle"] = Param("circle", True, True, request.args.get('circle', None))
    nameToParam["polygon"] = Param("polygon", True, True, request.args.get('polygon', None))
    nameToParam["point"] = Param("point", True, True, request.args.get('point', None))
+   nameToParam["shapefile"] = Param("shapefile", True, False, request.args.get('shapefile', None))
+   nameToParam["shapeName"] = Param("shapeName", True, False, request.args.get('shapeName', None))
 
    # Custom
    nameToParam["graphType"] = Param("graphType", False, False, request.args.get('graphType'))

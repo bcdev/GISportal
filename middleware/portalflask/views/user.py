@@ -1,11 +1,12 @@
 import hashlib
-import hashlib
+import os
 
 from portalflask.models.database import db_session
 from portalflask.models.user import User
 from portalflask.models.usergroup import UserGroup
 from portalflask import oid
 from portalflask.core.group_extension import GroupExtension, GROUPS_KEY
+import portalflask.core.shapefile_support as shapefile_support
 
 from actions import check_for_permission
 from flask import Blueprint, render_template, redirect, url_for, g, session, request, jsonify, current_app
@@ -111,16 +112,23 @@ def permissions(allowed_user_groups):
 
 @portal_user.route('/get_shapefile_names', methods=['POST'])
 def get_shapefile_names():
-    import os
+    print('get_shapefile_names')
     files = [f for f in os.listdir('/home/thomass/temp') if os.path.basename(f).endswith('.shp')]
     return jsonify(shapefiles=files)
 
 
+@portal_user.route('/get_shape_names/<shapefile_name>', methods=['POST'])
+def get_shape_names(shapefile_name):
+    print('get_shape_names')
+    shape_names = shapefile_support.get_shape_names(shapefile_name)
+    return jsonify(shape_names=shape_names)
+
+
+# todo (Till?) -- extend by shape, and complete
 @portal_user.route('/get_shapefile_geometry/<shapefile_name>', methods=['POST'])
 def get_shapefile_geometry(shapefile_name):
-    import os
+    print('get_shape_geometry')
     files = [f for f in os.listdir('/home/thomass/temp') if os.path.basename(f) == shapefile_name]
-
     return jsonify(shapefiles=files)
 
 

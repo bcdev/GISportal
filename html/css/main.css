@@ -1157,7 +1157,7 @@ div.olMapViewport {
 .ui-icon-drawpoly  { background-image: url(../img/selectionPoly.png) !important; background-position: 0px; height: 26px; width: 26px !important; margin: -12px -2px !important; }
 .ui-icon-uploadshapefile { background-image: url(../img/uploadShapefile.png) !important; background-position: 0px; height: 26px; width: 26px; margin: -12px -2px !important;}
 
-#shapefile_chooser {
+#shape_chooser {
     display: inline-block;
     padding-top: 5px
 }
