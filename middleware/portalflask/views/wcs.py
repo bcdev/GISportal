@@ -31,7 +31,7 @@ def getWcsData():
 
    # todo: remove these nested ifs. E.g.:
    # - in first step, compute geometry depending on geometry_type
-   # - use beampy to compute actual output data
+   # - always use beampy to compute actual output data
 
    if geometry_type == 'box':
       if graph_type == 'histogram': # Outputs data needed to create a histogram
@@ -49,7 +49,7 @@ def getWcsData():
        bounding_box = shapefile_support.get_bounding_box(params['shapefile'].value, params['shapeName'].value)
        params['bbox'] = Param("bbox", True, True, bounding_box)
        params['url'] = createURL(params)
-       output = getDataSafe(params, basic2, False)
+       output = getDataSafe(params, get_timeseries_for_shapefile, False)
 
    elif geometry_type == 'circle':
        print('not yet implemented')
@@ -80,14 +80,13 @@ def getWcsData():
    return jsonData
 
 
-def basic2(params):
+def get_timeseries_for_shapefile(params):
     ncfile_name = params['file_name']
     variable_name = params['coverage'].value
     shapefile_name = params['shapefile'].value
     shape_name = params['shapeName'].value
 
-    output = shapefile_support.get_output(ncfile_name, variable_name, shapefile_name, shape_name)
-    return output
+    return shapefile_support.get_timeseries(ncfile_name, variable_name, shapefile_name, shape_name)
 
 """
 Gets any parameters.
