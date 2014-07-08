@@ -500,7 +500,7 @@ gisportal.rightPanel.setup = function() {
         }
         gisportal.updateShapes();
     };
-   $('#shapefile_chooser').selected(shapefileDropdownHandler);
+   $('#shapefile_chooser').change(shapefileDropdownHandler);
    $('#shapefile_upload_button').change(gisportal.submit_shapefile_upload_form);
    $('#uploadshapefile').attr('action', gisportal.middlewarePath + '/shapefile_upload');
 

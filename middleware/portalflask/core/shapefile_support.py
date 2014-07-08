@@ -6,14 +6,16 @@ from beampy import jpy
 from netCDF4 import num2date
 import numpy as np
 
+from portalflask.views.actions import check_for_permission
 
-def get_output(ncfile_name, variable_name, shapefile_name, shape_name):
+@check_for_permission(['admins'])
+def get_timeseries(ncfile_name, variable_name, shapefile_name, shape_name):
     sf = shapefile.Reader('/home/thomass/temp/' + shapefile_name) # todo replace hard-coded dir
     record = get_record(shape_name, sf)
     shape = get_shape(record)
     product = beampy.ProductIO.readProduct(ncfile_name)
 
-    output = {}
+    timeseries = {}
 
     times = get_coordinate_variable(product, 'Time')
     if times is None:
@@ -25,12 +27,12 @@ def get_output(ncfile_name, variable_name, shapefile_name, shape_name):
     else:
         start = ''.join(times[0])
 
-    output['global'] = {'time': start}
+    timeseries['global'] = {'time': start}
 
     units = get_axis_units(product, str(variable_name))
-    output['units'] = units
+    timeseries['units'] = units
 
-    output['data'] = {}
+    timeseries['data'] = {}
     factory = jpy.get_type('org.esa.beam.framework.datamodel.StxFactory')().withRoiShape(shape)
     pm = jpy.get_type('com.bc.ceres.core.ProgressMonitor')
 
@@ -51,11 +53,11 @@ def get_output(ncfile_name, variable_name, shapefile_name, shape_name):
         if np.isnan(maximum) or np.isnan(minimum) or np.isnan(std) or np.isnan(mean) or np.isnan(median):
             pass
         else:
-            output['data'][date] = {'mean': mean, 'median': median,'std': std, 'min': minimum, 'max': maximum}
+            timeseries['data'][date] = {'mean': mean, 'median': median,'std': std, 'min': minimum, 'max': maximum}
 
-    return output
+    return timeseries
 
-
+@check_for_permission(['admins'])
 def get_shape_names(shapefile_name):
     # todo - replace hard-coded path
     if not os.path.exists('/home/thomass/temp/' + shapefile_name):
@@ -67,7 +69,7 @@ def get_shape_names(shapefile_name):
         shape_names.append(shape_record.record[index])
     return shape_names
 
-
+@check_for_permission(['admins'])
 def get_bounding_box(shapefile_name, shape_name):
     # todo - replace hard-coded path
     if not os.path.exists('/home/thomass/temp/' + shapefile_name):

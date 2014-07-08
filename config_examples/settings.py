@@ -24,7 +24,19 @@ OPENID_RP_URL = 'http://opec-portal-test:8585/openid-server/provider/discovery/g
 ACTION_REGISTRY = [
     {   'actionIdentifier' : 'userInfoAction',
         'actionDescription' : 'display user info',
-        'jQueryCriteria' : {'tag': 'label', 'attributes' : {'for' : 'userInfoToggleBtn'}}, # --> label[for='userInfoToggleBtn']
+        'jQueryCriteria' : [
+            {'tag': 'label', 'attributes' : {'for' : 'userInfoToggleBtn'}}  # --> label[for='userInfoToggleBtn']
+            ],
+        'allowedUserGroups' : ['admins']
+    },
+    {
+        'actionIdentifier' : 'shapefile',
+        'actionDescription' : 'use shapefile features',
+        'jQueryCriteria' : [
+            {'tag': 'label', 'attributes' : {'for' : 'shapefile_button'}},
+            {'id': 'shapefile_chooser'},
+            {'id': 'shapename_chooser'}
+        ],
         'allowedUserGroups' : ['admins']
     }
 ]

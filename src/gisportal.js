@@ -920,6 +920,8 @@ gisportal.login = function() {
    gisportal.window.history.loadStateHistory();
    gisportal.userManager.updateActions();
    gisportal.refreshOpLayers();
+   gisportal.updateShapefiles();
+   gisportal.updateShapes();
 };
 
 /**
@@ -930,6 +932,8 @@ gisportal.logout = function() {
    $('#gisportal-historyWindow').extendedDialog("close");
    gisportal.userManager.updateActions();
    gisportal.refreshOpLayers();
+   gisportal.updateShapefiles();
+   gisportal.updateShapes();
 };
 
 
@@ -1049,12 +1053,14 @@ gisportal.main = function() {
       showMinimise: true,
       dblclick: "collapse"
    });
-   
+
+   gisportal.userManager.updateActions()
+
    gisportal.layerSelector = new gisportal.window.layerSelector('gisportal-layerSelection .gisportal-tagMenu', 'gisportal-layerSelection .gisportal-selectable ul');
    gisportal.historyWindow = new gisportal.window.history();
 
    // Setup the gritter so we can use it for error messages
-   gisportal.gritter.setup();
+//   gisportal.gritter.setup();
 
    // Set up the map
    // any layer dependent code is called in a callback in mapInit
@@ -1078,34 +1084,40 @@ gisportal.main = function() {
 
 
 gisportal.updateShapefiles = function() {
-    var set_shapefiles = function(data, opts) {
-        var $shapefileChooser = $('#shapefile_chooser');
+    var $shapefileChooser = $('#shapefile_chooser');
+    var clear_shapefiles = function() {
         $shapefileChooser.find('option').each(function(index) {
             if (this.value !== 'upload' && this.value !== 'none') {
                 $($shapefileChooser.find('option[value="' + this.value + '"]')).remove();
             }
         });
+    };
 
+    var set_shapefiles = function(data, opts) {
+        clear_shapefiles();
         $.each(data['shapefiles'], function(index) {
             if ($shapefileChooser.find('option[value="' + this + '"]').length === 0) {
                 $shapefileChooser.append('<option value="' + this + '">' + this + '</option>');
             }
         });
     };
-    var on_error = function(data, opts) {
-        console.log('AJAX failed unexpectedly while getting shapefiles');
+    var on_forbidden = function(data, opts) {
+        clear_shapefiles();
     };
-    gisportal.genericSync('post', gisportal.middlewarePath + '/get_shapefile_names', null, set_shapefiles, on_error, 'json', {})
+    gisportal.genericSync('post', gisportal.middlewarePath + '/get_shapefile_names', null, set_shapefiles, on_forbidden, 'json', {})
 };
 
 gisportal.updateShapes = function() {
     var shapefile_name = $('#shapefile_chooser').find('option:selected').val();
-    var set_shapes = function(data, opts) {
-        var $shapenameChooser = $('#shapename_chooser');
+    var $shapenameChooser = $('#shapename_chooser');
+    var clear_shapes = function() {
         $shapenameChooser.find('option').each(function(index) {
             $($shapenameChooser.find('option[value="' + this.value + '"]')).remove();
         });
+    };
 
+    var set_shapes = function(data, opts) {
+        clear_shapes();
         if (data['shape_names']) {
             $.each(data['shape_names'], function (index) {
                 if ($shapenameChooser.find('option[value="' + this + '"]').length === 0) {
@@ -1115,10 +1127,10 @@ gisportal.updateShapes = function() {
         }
     };
 
-    var on_error = function(data, opts) {
-        console.log('AJAX failed unexpectedly while getting shapes of shapefile \'' + shapefile_name + '\'');
+    var on_forbidden = function(data, opts) {
+        clear_shapes();
     };
-    gisportal.genericAsync('post', gisportal.middlewarePath + '/get_shape_names/' + shapefile_name, null, set_shapes, on_error, 'json', {})
+    gisportal.genericAsync('post', gisportal.middlewarePath + '/get_shape_names/' + shapefile_name, null, set_shapes, on_forbidden, 'json', {})
 
 };
 

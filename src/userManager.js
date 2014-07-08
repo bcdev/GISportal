@@ -8,10 +8,13 @@ gisportal.userManager.updateActions = function() {
 
     for (var i = 0; i < actions.length; i++) {
         var action = actions[i];
-        var cssTarget = findCssTarget(action['jQueryCritera']);
+        var cssTargets = findCssTargets(action['jQueryCritera']);
         var allowedUserGroups = getAllowedUserGroups(action);
         var isAllowed = isUserAllowed(allowedUserGroups);
-        $(cssTarget).attr('style', getStyleAttribute(isAllowed, cssTarget));
+        cssTargets.forEach(function (element) {
+            var cssTarget = element;
+            $(cssTarget).attr('style', getStyleAttribute(isAllowed, cssTarget));
+        });
     }
 };
 
@@ -19,20 +22,30 @@ gisportal.userManager.isUserAllowedToView = function (userGroups) {
     return isUserAllowed(userGroups);
 };
 
-function findCssTarget(jQueryCriteria) {
-    var tag = jQueryCriteria['tag'];
-    var attributes = jQueryCriteria['attributes'];
-    var cssTarget = tag;
-    cssTarget += '[';
-    for (var key in attributes) {
-        if (attributes.hasOwnProperty(key)) {
-            cssTarget += key + '=\'';
-            cssTarget += attributes[key] + '\'';
-            cssTarget += ' ';
+function findCssTargets(jQueryCriteria) {
+    var cssTargets = [];
+    jQueryCriteria.forEach(function (element) {
+        var criterion = element;
+        if ('id' in criterion) {
+            var id = criterion['id'];
+            var cssTarget = '#' + id;
+        } else {
+            var tag = criterion['tag'];
+            var attributes = criterion['attributes'];
+            var cssTarget = tag;
+            cssTarget += '[';
+            for (var key in attributes) {
+                if (attributes.hasOwnProperty(key)) {
+                    cssTarget += key + '=\'';
+                    cssTarget += attributes[key] + '\'';
+                    cssTarget += ' ';
+                }
+            }
+            cssTarget += ']';
         }
-    }
-    cssTarget += ']';
-    return cssTarget;
+        cssTargets.push(cssTarget);
+    });
+    return cssTargets;
 }
 
 function onRetrieveActionsSuccess(data, opt) {
@@ -56,9 +69,14 @@ function getStyleAttribute(is_accessible, cssTarget) {
     var newStyle;
     if (is_accessible) {
         styleAttribute = $(cssTarget).attr('style');
-        newStyle = styleAttribute.replace(/display:.*none/i, '');
+        if (styleAttribute !== undefined) {
+            newStyle = styleAttribute.replace(/display:.*none/i, '');
+        }
     } else {
         styleAttribute = $(cssTarget).attr('style');
+        if (styleAttribute === undefined) {
+            return 'display:none';
+        }
         if (styleAttribute.indexOf('display') == -1) {
             newStyle = styleAttribute + ';display:none';
         } else {

@@ -264,23 +264,3 @@ gisportal.utils.setDifference = function(array1, array2) {
         }
     });
 };
-
-// adding 'selected' method to jQuery.
-// purpose: call function whenever element in dropdown list is clicked upon,
-// not only when the selection changes
-// source: http://stackoverflow.com/a/898761/2043113
-// usage example:  $('#myDropdown').selected(function() {alert('Selected!'); });
-(function($) {
-    $.fn.selected = function(fn) {
-        return this.each(function() {
-            var clicknum = 0;
-            $(this).click(function() {
-                clicknum++;
-                if (clicknum == 2) {
-                    clicknum = 0;
-                    fn(this);
-                }
-            });
-        });
-    }
-})(jQuery);

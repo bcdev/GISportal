@@ -111,6 +111,7 @@ def permissions(allowed_user_groups):
 
 
 @portal_user.route('/get_shapefile_names', methods=['POST'])
+@check_for_permission(['admins'])
 def get_shapefile_names():
     print('get_shapefile_names')
     files = [f for f in os.listdir('/home/thomass/temp') if os.path.basename(f).endswith('.shp')]
@@ -118,6 +119,7 @@ def get_shapefile_names():
 
 
 @portal_user.route('/get_shape_names/<shapefile_name>', methods=['POST'])
+@check_for_permission(['admins'])
 def get_shape_names(shapefile_name):
     print('get_shape_names')
     shape_names = shapefile_support.get_shape_names(shapefile_name)

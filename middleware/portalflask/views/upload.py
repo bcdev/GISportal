@@ -1,5 +1,4 @@
 import hashlib
-import hashlib
 
 from portalflask.models.database import db_session
 from portalflask.models.user import User
@@ -13,9 +12,12 @@ from flask import Blueprint
 from flask import request
 from werkzeug.utils import secure_filename
 
+from actions import check_for_permission
+
 portal_upload = Blueprint('portal_upload', __name__)
 
 @portal_upload.route('/shapefile_upload', methods=['POST'])
+@check_for_permission(['admins'])
 def shapefile_upload():
     shapefile = request.files.getlist('shapefile[]')
     for file in shapefile:
