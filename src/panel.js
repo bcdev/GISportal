@@ -507,11 +507,11 @@ gisportal.rightPanel.setup = function() {
    $('input[name="roi_button_group"]').change(function() {
        if ($('input[name="roi_button_group"]:checked').val() === 'shapefile') {
            $('#shape_chooser').find('select').prop('disabled', false);
-           gisportal.updateShapefiles();
-           gisportal.updateShapes();
        } else {
            $('#shape_chooser').find('select').prop('disabled', 'disabled');
        }
+       gisportal.updateShapefiles();
+       gisportal.updateShapes();
        gisportal.geometryType = $('#ROIButtonSet').find('input[name=roi_button_group]:checked').val();
    });
 
@@ -542,6 +542,9 @@ gisportal.rightPanel.setup = function() {
 
 };
 
+gisportal.switchBackToPan = function() {
+    $('label[for="pan"], #pan').click();
+};
 /**
  * Sets up the drawing controls to allow for the selection
  * of ROI's.
@@ -572,8 +575,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
 
    // Function called once a ROI has been drawn on the map
    function ROIAdded(feature) {
-      // Switch back to pan
-      $('label[for="pan"], #pan').click();
+      gisportal.switchBackToPan();
 
       // Get the geometry of the drawn feature
       var geom = new OpenLayers.Geometry();
@@ -713,19 +715,22 @@ gisportal.rightPanel.setupDrawingControls = function() {
    gisportal.mapControls.polygon = new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Polygon);
 
    map.addControls([gisportal.mapControls.box, gisportal.mapControls.circle, gisportal.mapControls.polygon]);
-//   map.addControls([gisportal.mapControls.box]);
    // Function which can toggle OpenLayers drawing controls based on the value of the clicked control
-   function toggleDrawingControl(element) {
-      gisportal.toggleControl(element);
+   function toggleDrawingControl(element, removePanControl) {
+      if (removePanControl) {
+          gisportal.toggleControl(element);
+      }
       vectorLayer.removeAllFeatures();
       map.ROI_Type = element.value;
-      // DEBUG
-      //console.info(map.ROI_Type);
    }
 
    // Manually Handle drawing control radio buttons click event - each button has a class of "iconBtn"
-   $('#ROIButtonSet input:radio').click(function(e) {
-      toggleDrawingControl(this);
+   $('#ROIButtonSet').find('input:radio').click(function(e) {
+      var removePanControl = true;
+      if (this['id'].indexOf('shapefile') !== -1) {
+          removePanControl = false;
+      }
+      toggleDrawingControl(this, removePanControl);
    });
 
    // So that changing the input box changes the visual selection box on map

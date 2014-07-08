@@ -87,7 +87,6 @@ def basic2(params):
     shape_name = params['shapeName'].value
 
     output = shapefile_support.get_output(ncfile_name, variable_name, shapefile_name, shape_name)
-    print(output)
     return output
 
 """
