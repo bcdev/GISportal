@@ -728,6 +728,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
    $('#ROIButtonSet').find('input:radio').click(function(e) {
       var removePanControl = true;
       if (this['id'].indexOf('shapefile') !== -1) {
+          gisportal.switchBackToPan();
           removePanControl = false;
       }
       toggleDrawingControl(this, removePanControl);
