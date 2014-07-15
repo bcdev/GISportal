@@ -5,6 +5,7 @@ import portalflask.core.shapefile_support as shapefile_support
 
 import urllib
 import urllib2
+import os
 import tempfile
 import numpy as np
 import netCDF4 as netCDF
@@ -49,7 +50,13 @@ def getWcsData():
        bounding_box = shapefile_support.get_bounding_box(params['shapefile'].value, params['shapeName'].value)
        params['bbox'] = Param("bbox", True, True, bounding_box)
        params['url'] = createURL(params)
-       output = getDataSafe(params, get_timeseries_for_shapefile, False)
+       if graph_type == 'timeseries':
+          output = getDataSafe(params, get_timeseries_for_shapefile, False)
+       elif graph_type == 'histogram':
+           output = getDataSafe(params, get_histogram_for_shapefile, False)
+       elif graph_type == 'hovmollerLon' or 'hovmollerLat':
+           output = getDataSafe(params, get_hovmoller_for_shapefile, False)
+
 
    elif geometry_type == 'circle':
        print('not yet implemented')
@@ -87,6 +94,26 @@ def get_timeseries_for_shapefile(params):
     shape_name = params['shapeName'].value
 
     return shapefile_support.get_timeseries(ncfile_name, variable_name, shapefile_name, shape_name)
+
+
+def get_histogram_for_shapefile(params):
+    ncfile_name = params['file_name']
+    variable_name = params['coverage'].value
+    shapefile_name = params['shapefile'].value
+    shape_name = params['shapeName'].value
+
+    data = shapefile_support.get_band_data_as_array(ncfile_name, variable_name, shapefile_name, shape_name)
+    return {'histogram': getHistogram(data)}
+
+
+def get_hovmoller_for_shapefile(params):
+    ncfile_name = params['file_name']
+    variable_name = params['graphZAxis'].value
+    shapefile_name = params['shapefile'].value
+    shape_name = params['shapeName'].value
+
+    return shapefile_support.get_hovmoller(ncfile_name, variable_name, shapefile_name, shape_name, params['graphXAxis'].value, params['graphYAxis'].value)
+
 
 """
 Gets any parameters.
@@ -227,7 +254,7 @@ def getData(params, method, open_dataset=True):
       rootgrp.close()
    else:
       output = method(params)
-   # os.remove(fileName)
+   os.remove(fileName)
    current_app.logger.debug('Process complete, returning data for transmission...')
    return output
 
@@ -352,6 +379,12 @@ def hovmoller(dataset, params):
    yAxisVar = params['graphYAxis'].value
    zAxisVar = params['graphZAxis'].value
 
+   print('##############')
+   print(xAxisVar)
+   print(yAxisVar)
+   print(zAxisVar)
+   print('##############')
+
    xVar = getCoordinateVariable(dataset, xAxisVar)
    xArr = np.array(xVar)
    yVar = getCoordinateVariable(dataset, yAxisVar)
@@ -446,8 +479,7 @@ def hovmoller(dataset, params):
       g.graphError = "no valid data available to use"
       error_handler.setError('2-07', None, g.user.id, "views/wcs.py:hovmoller - No valid data available to use.")
       return output
-      
-   
+
    return output
 
 

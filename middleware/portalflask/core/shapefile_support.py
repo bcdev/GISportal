@@ -1,17 +1,18 @@
 import os
 
+import shapefile as sf
 import beampy
-import shapefile
 from beampy import jpy
 from netCDF4 import num2date
 import numpy as np
 
 from portalflask.views.actions import check_for_permission
 
+
 @check_for_permission(['admins'])
 def get_timeseries(ncfile_name, variable_name, shapefile_name, shape_name):
-    sf = shapefile.Reader('/home/thomass/temp/' + shapefile_name) # todo replace hard-coded dir
-    record = get_record(shape_name, sf)
+    shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name) # todo replace hard-coded dir
+    record = get_record(shape_name, shapefile)
     shape = get_shape(record)
     product = beampy.ProductIO.readProduct(ncfile_name)
 
@@ -34,7 +35,7 @@ def get_timeseries(ncfile_name, variable_name, shapefile_name, shape_name):
 
     timeseries['data'] = {}
     factory = jpy.get_type('org.esa.beam.framework.datamodel.StxFactory')().withRoiShape(shape)
-    pm = jpy.get_type('com.bc.ceres.core.ProgressMonitor')
+    ProgressMonitor = jpy.get_type('com.bc.ceres.core.ProgressMonitor')
 
     for time_index, band in enumerate(product.getBands()):
         print (str(time_index) + ': ' + band.getName())
@@ -43,7 +44,7 @@ def get_timeseries(ncfile_name, variable_name, shapefile_name, shape_name):
         else:
             date = ''.join(times[time_index])
 
-        stx = factory.create(band, pm.NULL)
+        stx = factory.create(band, ProgressMonitor.NULL)
         maximum = stx.getMaximum()
         minimum = stx.getMinimum()
         std = stx.getStandardDeviation()
@@ -57,25 +58,110 @@ def get_timeseries(ncfile_name, variable_name, shapefile_name, shape_name):
 
     return timeseries
 
+
+@check_for_permission(['admins'])
+def get_hovmoller(ncfile_name, variable_name, shapefile_name, shape_name, x_axis_var, y_axis_var):
+    shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name) # todo replace hard-coded dir
+    record = get_record(shape_name, shapefile)
+    shape = get_shape(record)
+    product = beampy.ProductIO.readProduct(ncfile_name)
+
+    x_arr = get_coordinate_variable(product, x_axis_var)
+    y_arr = get_coordinate_variable(product, y_axis_var)
+    z_arr = np.zeros(product.getSceneRasterWidth() * product.getSceneRasterHeight())  # np.array(dataset.variables[z_axis_var])
+
+    if x_arr is None:
+        # g.graphError = "could not find %s dimension" % x_axis_var
+        print('could not find %s dimension' % x_axis_var)
+        return
+    if y_arr is None:
+        # g.graphError = "could not find %s dimension" % y_axis_var
+        print('could not find %s dimension' % y_axis_var)
+        return
+
+    # Create a masked array ignoring nan's
+    # z_masked_array = np.ma.masked_invalid(z_arr)
+
+    lat = None
+    lon = None
+
+    if x_axis_var == 'Time':
+        times = x_arr
+        time = get_coordinate_variable(product, x_axis_var)
+        lat = y_arr
+    else:
+        lon = x_arr
+        times = y_arr
+        time = get_coordinate_variable(product, y_axis_var)
+
+    time_units = get_axis_units(product, 'Time')
+    start = (num2date(times[0], time_units, calendar='standard')).isoformat() if time_units else ''.join(times[0])
+
+    output = {
+        'global': {'time': start},
+        'data': []
+    }
+
+    direction = None
+    if lat is not None:
+        direction = 'lat'
+    elif lon is not None:
+        direction = 'lon'
+        # z_arr = z_arr.swapaxes(1, 2)  # Make it use Lon instead of Lat
+
+    output['depth'] = get_depth(product)
+
+    bands = [b for b in product.getBands() if b.getName().startswith(variable_name)]
+    for time_index in len(bands):
+        date = num2date(time[time_index], time_units, calendar='standard').isoformat() if time_units else ''.join(times[time_index])
+
+        if direction == 'lat':
+            for y in product.getSceneRasterHeight():
+                bands[time_index].readPixels(0, y, product.getSceneRasterWidth(), 1, z_arr)
+                valid_pixels = []
+                # mask.readPixels(0, y, width, 1, mask_pixels)
+                for x, p in enumerate(z_arr):
+                    # if mask_pixels[x] == 0:
+                        valid_pixels.append(p)
+
+                mean = float(np.mean(valid_pixels))
+
+                if np.isnan(mean):
+                    mean = 0
+
+            output['data'].append([date, float(lat[y]), mean])
+        elif direction == "lon":
+            pass
+
+    if len(output['data']) < 1:
+        # g.graphError = "no valid data available to use"
+        # error_handler.setError('2-07', None, g.user.id, "views/wcs.py:hovmoller - No valid data available to use.")
+        print('no valid data available to use')
+        return output
+
+    return output
+
+
 @check_for_permission(['admins'])
 def get_shape_names(shapefile_name):
     # todo - replace hard-coded path
     if not os.path.exists('/home/thomass/temp/' + shapefile_name):
         return None
-    sf = shapefile.Reader('/home/thomass/temp/' + shapefile_name)
-    index = get_name_index(sf.fields) - 1 # '- 1' because fields count a deletion flag, which is not present in records
+    shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name)
+    index = get_name_index(shapefile.fields) - 1 # '- 1' because fields count a deletion flag, which is not present in records
     shape_names = []
-    for shape_record in sf.shapeRecords():
+    for shape_record in shapefile.shapeRecords():
         shape_names.append(shape_record.record[index])
     return shape_names
+
 
 @check_for_permission(['admins'])
 def get_bounding_box(shapefile_name, shape_name):
     # todo - replace hard-coded path
     if not os.path.exists('/home/thomass/temp/' + shapefile_name):
         return None
-    sf = shapefile.Reader('/home/thomass/temp/' + shapefile_name)
-    record = get_record(shape_name, sf)
+    shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name)
+    record = get_record(shape_name, shapefile)
     shape_bbox = record.shape.bbox
     result_bbox = ''
     for i, component in enumerate(shape_bbox):
@@ -89,6 +175,7 @@ def get_bounding_box(shapefile_name, shape_name):
 def get_shape_geometry(shapefile_name, shape_name):
     if not os.path.exists('/home/thomass/temp/' + shapefile_name):
         return None
+    shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name)
     sf = shapefile.Reader('/home/thomass/temp/' + shapefile_name)
     name_index = get_name_index(sf.fields) - 1
 
@@ -208,18 +295,19 @@ def get_shape(record):
 
 
 def get_coordinate_variable(product, axis):
-    axis_root = get_axis_root(product, axis)
-    if axis_root is None:
-        return None
-
-    axis_element_attribute = axis_root.getAttribute('_CoordinateAxisType').getData().toString()
-    if axis_element_attribute == axis:
-        return np.array(axis_root.getElement('Values').getAttributes()[0].getData().getElems())
+    for element in product.getMetadataRoot().getElement('Variable_Attributes').getElements():
+        coordinate_axis_attribute = element.getAttribute('_CoordinateAxisType')
+        if coordinate_axis_attribute is not None:
+            axis_element_attribute = coordinate_axis_attribute.getData().toString()
+            if axis_element_attribute == axis:
+                return np.array(element.getElement('Values').getAttributes()[0].getData().getElems())
     return None
 
 
 def get_axis_units(product, axis):
     axis_root = get_axis_root(product, axis)
+    if axis_root is None:
+        return None
     units_attribute = axis_root.getAttribute('units')
     if units_attribute is not None:
         return units_attribute.getData().toString()
@@ -230,3 +318,16 @@ def get_axis_root(product, axis):
     variable_metadata_root = product.getMetadataRoot().getElement('Variable_Attributes')
     axis_root = variable_metadata_root.getElement(axis)
     return axis_root
+
+
+def get_depth(product):
+    axis_root = get_axis_root(product, 'depth')
+    has_axis_root = axis_root is not None
+    is_height_type = axis_root.getAttribute('_CoordinateAxisType').getData().getElemString() == 'Height'
+    is_positive_Z_coordinate = axis_root.getAttribute('_CoordinateZisPositive') is not None
+    print(has_axis_root)
+    print(is_height_type)
+    print(is_positive_Z_coordinate)
+    if has_axis_root and is_height_type and is_positive_Z_coordinate:
+        return axis_root.getElement('Values').getAttributes()[0].getData().getElems()[0]
+    return None
