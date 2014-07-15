@@ -176,10 +176,9 @@ def get_shape_geometry(shapefile_name, shape_name):
     if not os.path.exists('/home/thomass/temp/' + shapefile_name):
         return None
     shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name)
-    sf = shapefile.Reader('/home/thomass/temp/' + shapefile_name)
-    name_index = get_name_index(sf.fields) - 1
+    name_index = get_name_index(shapefile.fields) - 1
 
-    for index, shape_record in enumerate(sf.shapeRecords()):
+    for index, shape_record in enumerate(shapefile.shapeRecords()):
         if shape_record.record[name_index] == shape_name:
             break
 
