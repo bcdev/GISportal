@@ -126,12 +126,12 @@ def get_shape_names(shapefile_name):
     return jsonify(shape_names=shape_names)
 
 
-# todo (Till?) -- extend by shape, and complete
-@portal_user.route('/get_shapefile_geometry/<shapefile_name>', methods=['POST'])
-def get_shapefile_geometry(shapefile_name):
+# todo (Til?) -- extend by shape, and complete
+@portal_user.route('/get_shapefile_geometry/<shapefile_name>/<shape_name>', methods=['POST'])
+def get_shapefile_geometry(shapefile_name, shape_name):
     print('get_shape_geometry')
     files = [f for f in os.listdir('/home/thomass/temp') if os.path.basename(f) == shapefile_name]
-    return jsonify(shapefiles=files)
+    #return jsonify(shapefiles=files)
 
 
 @portal_user.route('/logout', methods=['GET','POST'])

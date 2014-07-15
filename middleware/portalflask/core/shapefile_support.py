@@ -86,6 +86,13 @@ def get_bounding_box(shapefile_name, shape_name):
     return result_bbox
 
 
+@check_for_permission(['admins'])
+def get_shape_geometry(shapefile_name, shape_name):
+    if not os.path.exists('/home/thomass/temp/' + shapefile_name):
+        return None
+    sf = shapefile.Reader('/home/thomass/temp/' + shapefile_name)
+
+
 def get_name_index(fields):
     for index, field in enumerate(fields):
         identifier_index = 0

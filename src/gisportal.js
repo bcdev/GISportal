@@ -1130,10 +1130,13 @@ gisportal.updateShapes = function() {
     var on_forbidden = function(data, opts) {
         clear_shapes();
     };
-    gisportal.genericAsync('post', gisportal.middlewarePath + '/get_shape_names/' + shapefile_name, null, set_shapes, on_forbidden, 'json', {})
+    gisportal.genericSync('post', gisportal.middlewarePath + '/get_shape_names/' + shapefile_name, null, set_shapes, on_forbidden, 'json', {})
 
 };
 
+gisportal.getShapeGeometry = function(shapefile, shapename) {
+
+}
 
 gisportal.ajaxState = function(id) { 
       // Async to get state object

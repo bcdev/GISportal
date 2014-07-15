@@ -493,14 +493,23 @@ gisportal.rightPanel.setup = function() {
    $('#polygon').button({ icons: { primary: 'ui-icon-drawpoly'} });
    $('#shapefile_button').button({ icons: { primary: 'ui-icon-uploadshapefile'} });
 
+
+
+    var updateShapenameDropdown = function () {
+        var selectedValue = $('#shapename_chooser').val();
+        console.log('Selected shape: ' + selectedValue);
+    }
+
     var shapefileDropdownHandler = function () {
         var selectedValue = $('#shapefile_chooser').val();
         if (selectedValue === 'upload') {
             $('#shapefile_upload_button').click();
         }
         gisportal.updateShapes();
+        updateShapenameDropdown();
     };
    $('#shapefile_chooser').change(shapefileDropdownHandler);
+   $('#shapename_chooser').change(updateShapenameDropdown);
    $('#shapefile_upload_button').change(gisportal.submit_shapefile_upload_form);
    $('#uploadshapefile').attr('action', gisportal.middlewarePath + '/shapefile_upload');
 
