@@ -142,6 +142,11 @@ def logout():
    return "200", 200
 
 
+@portal_user.route('/is_logged_in', methods=['GET'])
+def is_logged_in():
+   return jsonify(logged_in=g.user is not None)
+
+
 def add_user_to_db(email, username, full_name, group_names):
     db_groups = UserGroup.query.all()
     for group_name in group_names:

@@ -93,6 +93,60 @@ def get_shape_geometry(shapefile_name, shape_name):
     sf = shapefile.Reader('/home/thomass/temp/' + shapefile_name)
 
 
+@check_for_permission(['admins'])
+def get_band_data_as_array(ncfile_name, variable_name, shapefile_name, shape_name):
+    FeatureUtils = jpy.get_type('org.esa.beam.util.FeatureUtils')
+    File = jpy.get_type('java.io.File')
+    Util = jpy.get_type('org.esa.beam.statistics.output.Util')
+    DefaultFeatureCollection = jpy.get_type('org.geotools.feature.DefaultFeatureCollection')
+    VectorDataNode = jpy.get_type('org.esa.beam.framework.datamodel.VectorDataNode')
+    ProgressMonitor = jpy.get_type('com.bc.ceres.core.ProgressMonitor')
+    Color = jpy.get_type('java.awt.Color')
+
+    print('imported everything')
+    shapefile_path = '/home/thomass/temp/' + shapefile_name
+    shapefile = File(shapefile_path)
+    features = FeatureUtils.loadFeatureCollectionFromShapefile(shapefile)
+    feature_iterator = features.features()
+    while feature_iterator.hasNext():
+        simple_feature = feature_iterator.next()
+        name = Util.getFeatureName(simple_feature)
+        if name == shape_name:
+            break
+
+    feature_iterator.close()
+    fc = DefaultFeatureCollection(simple_feature.getIdentifier().getID(), simple_feature.getType())
+    fc.add(simple_feature)
+
+    print('reading product')
+    product = beampy.ProductIO.readProduct(ncfile_name)
+    product_features = FeatureUtils.clipFeatureCollectionToProductBounds(fc, product, None, ProgressMonitor.NULL)
+
+    vdn = VectorDataNode(shape_name, product_features)
+    product.getVectorDataGroup().add(vdn)
+    mask = product.addMask('valid', vdn, 'desc', Color.black, 0.0)
+
+    width = product.getSceneRasterWidth()
+    height = product.getSceneRasterHeight()
+
+    pixels = np.zeros(width, dtype=np.float32)
+    mask_pixels = np.zeros(width, dtype=np.int32)
+    result = []
+
+    jpy.diag.flags = jpy.diag.F_ALL
+
+    for band in product.getBands():
+        if band.getName().startswith(variable_name):
+            for y in range(height):
+                band.readPixels(0, y, width, 1, pixels)
+                mask.readPixels(0, y, width, 1, mask_pixels)
+                for x, p in enumerate(pixels):
+                    if mask_pixels[x] == 0:
+                        result.append(p)
+
+    return np.array(result)
+
+
 def get_name_index(fields):
     for index, field in enumerate(fields):
         identifier_index = 0

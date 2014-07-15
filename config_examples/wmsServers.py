@@ -3,7 +3,7 @@
 servers = {
    'cci': { 
       'name': 'cci',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/CCI-v1.0-D?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/CCI-v1.0-D?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -17,7 +17,7 @@ servers = {
    },
    'hcmr': { 
       'name': 'hcmr',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/HCMR-M-AGGSLOW?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/HCMR-M-AGGSLOW?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -31,7 +31,7 @@ servers = {
    },
    'pml_annual': { 
       'name': 'pml_annual',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/PML-Y-AGGSLOW?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/PML-Y-AGGSLOW?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -44,7 +44,7 @@ servers = {
    },
    'pml_seasonal': { 
       'name': 'pml_seasonal',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/PML-S-AGGSLOW?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/PML-S-AGGSLOW?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -57,7 +57,7 @@ servers = {
    },
    'pml_monthly': { 
       'name': 'pml_monthly',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/PML-M-AGGSLOW?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/PML-M-AGGSLOW?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -70,7 +70,7 @@ servers = {
    },
    'pml_daily': { 
       'name': 'pml_daily',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/PML-D-AGGSLOW?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/PML-D-AGGSLOW?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -83,7 +83,7 @@ servers = {
    },
    'imsmetu_annual': { 
       'name': 'imsmetu_annual',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/IMSMETU-Y/BIMS0.1_HC_IMSMETU_blacksea_19900101-20090101_ANNUAL.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/IMSMETU-Y/BIMS0.1_HC_IMSMETU_blacksea_19900101-20090101_ANNUAL.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -97,7 +97,7 @@ servers = {
    },
    'cefas': { 
       'name': 'cefas',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/CEFAS/resoutcut.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/CEFAS/resoutcut.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -110,7 +110,7 @@ servers = {
    },
    'dmi_monthy': { 
       'name': 'dmi_monthly',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/DMI_M/DMI_1990_2009_monthly_mean.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/DMI_M/DMI_1990_2009_monthly_mean.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -123,7 +123,7 @@ servers = {
    },
    'dmi_annual': { 
       'name': 'dmi_annual',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/DMI_Y/DMI_1990_2009_annual_mean.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/DMI_Y/DMI_1990_2009_annual_mean.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -136,7 +136,7 @@ servers = {
    },
    'dmi_seasonal': { 
       'name': 'dmi_seasonal',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/DMI_S/DMI_1990_2009_seasonal_anomaly.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/DMI_S/DMI_1990_2009_seasonal_anomaly.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -149,7 +149,7 @@ servers = {
    },
    'ogs_Ammonia': { 
       'name': 'ogs_Ammonia',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_ammonia.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_ammonia.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -163,7 +163,7 @@ servers = {
    },
    'ogs_CarnZoo': { 
       'name': 'ogs_CarnZoo',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_CarnMesozoo.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_CarnMesozoo.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -177,7 +177,7 @@ servers = {
    },
    'ogs_C-Diat': { 
       'name': 'ogs_C-Diat',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Cdia.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Cdia.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -191,7 +191,7 @@ servers = {
    },
    'ogs_Chl-Diat': { 
       'name': 'ogs_Chl-Diat',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-dia.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-dia.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -205,7 +205,7 @@ servers = {
    },
    'ogs_Chl-LargePhy': { 
       'name': 'ogs_Chl-LargePhy',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-largephy.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-largephy.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -219,7 +219,7 @@ servers = {
    },
    'ogs_Chl-Nflag': { 
       'name': 'ogs_Chl-Nflag',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-nflag.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-nflag.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -233,7 +233,7 @@ servers = {
    },
    'ogs_Chl-PicoPhy': { 
       'name': 'ogs_Chl-PicoPhy',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-picophy.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_chl-picophy.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -247,7 +247,7 @@ servers = {
    },
    'ogs_C-LargePhy': { 
       'name': 'ogs_C-LargePhy',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Clargephy.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Clargephy.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -261,7 +261,7 @@ servers = {
    },
    'ogs_C-Nflag': { 
       'name': 'ogs_C-Nflag',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Cnflag.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Cnflag.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -275,7 +275,7 @@ servers = {
    },
    'ogs_C-PicoPhy': { 
       'name': 'ogs_C-PicoPhy',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Cpicophy.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Cpicophy.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -289,7 +289,7 @@ servers = {
    },
    'ogs_HeteroFlag': { 
       'name': 'ogs_HeteroFlag',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_HeteroFlag.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_HeteroFlag.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -303,7 +303,7 @@ servers = {
    },
    'ogs_MicroZoo': { 
       'name': 'ogs_MicroZoo',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Microzoo.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Microzoo.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -317,7 +317,7 @@ servers = {
    },
    'ogs_Nitrate': { 
       'name': 'ogs_Nitrate',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_nitrate.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_nitrate.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -331,7 +331,7 @@ servers = {
    },
    'ogs_OmniZoo': { 
       'name': 'ogs_OmniZoo',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_OmniMesozoo.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_OmniMesozoo.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -345,7 +345,7 @@ servers = {
    },
    'ogs_Oxygen': { 
       'name': 'ogs_Oxygen',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_oxygen.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_oxygen.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -359,7 +359,7 @@ servers = {
    },
    'ogs_pCO2': { 
       'name': 'ogs_pCO2',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_pCO.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_pCO.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -373,7 +373,7 @@ servers = {
    },
    'ogs_Phosphate': { 
       'name': 'ogs_Phosphate',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_phosphate.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_phosphate.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -387,7 +387,7 @@ servers = {
    },
    'ogs_NPP': { 
       'name': 'ogs_NPP',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_ppn.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_ppn.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -401,7 +401,7 @@ servers = {
    },
    'ogs_R_NO3NH4_PO4': { 
       'name': 'ogs_R_NO3NH4_PO4',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_R_NO3NH4_PO4.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_R_NO3NH4_PO4.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -415,7 +415,7 @@ servers = {
    },
    'ogs_R_NO3_PHOS': { 
       'name': 'ogs_R_NO3_PHOS',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_R_NO3_PO4.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_R_NO3_PO4.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -429,7 +429,7 @@ servers = {
    },
    'ogs_R_NO3_SIO4': { 
       'name': 'ogs_R_NO3_SIO4',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_R_NO3_SIO4.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_R_NO3_SIO4.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -443,7 +443,7 @@ servers = {
    },
    'ogs_sal': { 
       'name': 'ogs_sal',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_sal_Anomaly.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_sal_Anomaly.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -457,7 +457,7 @@ servers = {
    },
    'ogs_sal': { 
       'name': 'ogs_sal',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_sal.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_sal.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -471,7 +471,7 @@ servers = {
    },
    'ogs_Silicate': { 
       'name': 'ogs_Silicate',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_silicate.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_silicate.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -485,7 +485,7 @@ servers = {
    },
    'ogs_tem': { 
       'name': 'ogs_tem',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_tem_Anomaly.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_tem_Anomaly.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -499,7 +499,7 @@ servers = {
    },
    'ogs_temp': { 
       'name': 'ogs_temp',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_temp.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_temp.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -513,7 +513,7 @@ servers = {
    },
    'ogs_Totchl': { 
       'name': 'ogs_Totchl',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Totalchlorophyll.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Totalchlorophyll.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -527,7 +527,7 @@ servers = {
    },
    'ogs_TotphytoC': { 
       'name': 'ogs_TotphytoC',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_TotalPhytoC.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_TotalPhytoC.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -541,7 +541,7 @@ servers = {
    },
    'ogs_Totzoo': { 
       'name': 'ogs_Totzoo',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Totalzooplankton.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Totalzooplankton.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -555,7 +555,7 @@ servers = {
    },
    'ogs_Wmin_NO3': { 
       'name': 'ogs_Wmin_NO3',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Wmin_nitrate.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Wmin_nitrate.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -569,7 +569,7 @@ servers = {
    },
    'ogs_Wmin_PO4': { 
       'name': 'ogs_Wmin_PO4',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Wmin_phosphate.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Wmin_phosphate.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -583,7 +583,7 @@ servers = {
    },
    'ogs_Wmin_SiO2': { 
       'name': 'ogs_Wmin_SiO2',
-      'url': 'http://portaldev.marineopec.eu/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Wmin_silicate.nc?',
+      'url': 'http://rsg.pml.ac.uk/thredds/wms/OGS/OPATMBFM3_OGS_HC_Med_19990101_20111231_Wmin_silicate.nc?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',

@@ -17,13 +17,16 @@ def create_app(path):
    print path
    
    setup_version(app)
-   
+
    #=== SETUP LOGGING ===#
    setup_logging(app, path)
    
    #=== SETUP CONFIG ===#
    setup_config(app)
-   
+
+   #=== SETUP beampy ===# (must be placed after config setup)
+   setup_beampy()
+
    #=== SETUP DATABASE ===#
    app.config['DATABASE_URI'] = settings.DATABASE_URI
 
@@ -97,6 +100,13 @@ def setup_config(app):
    os.environ['PATH'] = settings.PATH_extension + ':' + os.getenv('PATH', '')
    os.environ['LD_LIBRARY_PATH'] = settings.LD_LIBRARY_PATH_extension + ':' + os.getenv('LD_LIBRARY_PATH', '')
    os.environ['BEAM_HOME'] = settings.BEAM_HOME
+
+
+def setup_beampy():
+    import beampy
+    import jpy
+    SystemUtils = jpy.get_type('org.esa.beam.util.SystemUtils')
+    SystemUtils.init3rdPartyLibs(None)
 
 
 # Alternative method to using 'setup_routing' above

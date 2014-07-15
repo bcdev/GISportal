@@ -1054,7 +1054,7 @@ gisportal.main = function() {
       dblclick: "collapse"
    });
 
-   gisportal.userManager.updateActions()
+   gisportal.userManager.updateActions();
 
    gisportal.layerSelector = new gisportal.window.layerSelector('gisportal-layerSelection .gisportal-tagMenu', 'gisportal-layerSelection .gisportal-selectable ul');
    gisportal.historyWindow = new gisportal.window.history();
@@ -1068,6 +1068,12 @@ gisportal.main = function() {
 
    // Start setting up anything that is not layer dependent
    gisportal.loadNonLayerDependents();
+
+   if (gisportal.openid.is_logged_in()) {
+       gisportal.openid.hideLogin();
+   } else {
+       gisportal.openid.showLogin();
+   }
 
    // Grab the url of any state.
    var stateID = gisportal.utils.getURLParameter('state');
