@@ -497,8 +497,9 @@ gisportal.rightPanel.setup = function() {
 
     var updateShapenameDropdown = function () {
         var selectedValue = $('#shapename_chooser').val();
-        console.log('Selected shape: ' + selectedValue);
-    }
+        var shapefile = $('#shapefile_chooser').val();
+        gisportal.drawShape(shapefile, selectedValue);
+    };
 
     var shapefileDropdownHandler = function () {
         var selectedValue = $('#shapefile_chooser').val();

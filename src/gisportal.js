@@ -1140,8 +1140,24 @@ gisportal.updateShapes = function() {
 
 };
 
-gisportal.getShapeGeometry = function(shapefile, shapename) {
+gisportal.drawShape = function(shapefile, shapename) {
+    var create_shape = function(data) {
+        subshapes = data['geometry'];
+        subshapes.forEach(function(subshape, i) {
+            points = [];
+            subshape.forEach(function (point) {
+                points.push(new OpenLayers.Geometry.Point(point[0], point[1]))
+            });
+            ring = new OpenLayers.Geometry.LinearRing(points);
+            polygon = new OpenLayers.Geometry.Polygon([ring]);
 
+            feature = new OpenLayers.Feature.Vector(polygon);
+            layer = new OpenLayers.Layer.Vector(shapename + i);
+            layer.addFeatures([feature]);
+            map.addLayer(layer)
+        });
+    }
+    gisportal.genericAsync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile + '/' + shapename, null, create_shape, null, 'json', {})
 }
 
 gisportal.ajaxState = function(id) { 
