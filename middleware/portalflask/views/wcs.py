@@ -379,12 +379,6 @@ def hovmoller(dataset, params):
    yAxisVar = params['graphYAxis'].value
    zAxisVar = params['graphZAxis'].value
 
-   print('##############')
-   print(xAxisVar)
-   print(yAxisVar)
-   print(zAxisVar)
-   print('##############')
-
    xVar = getCoordinateVariable(dataset, xAxisVar)
    xArr = np.array(xVar)
    yVar = getCoordinateVariable(dataset, yAxisVar)
