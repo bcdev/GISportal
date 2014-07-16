@@ -493,8 +493,6 @@ gisportal.rightPanel.setup = function() {
    $('#polygon').button({ icons: { primary: 'ui-icon-drawpoly'} });
    $('#shapefile_button').button({ icons: { primary: 'ui-icon-uploadshapefile'} });
 
-
-
     var updateShapenameDropdown = function () {
         var selectedValue = $('#shapename_chooser').val();
         var shapefile = $('#shapefile_chooser').val();
