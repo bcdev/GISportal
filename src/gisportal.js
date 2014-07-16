@@ -1140,25 +1140,40 @@ gisportal.updateShapes = function() {
 
 };
 
+gisportal.removeShapes = function() {
+    layers = map.getLayersBy('controlID', 'poiLayer');
+    console.log(layers);
+    layers.forEach(function (entry) {
+        console.log(entry['id']);
+        //$('#' + entry['id']).remove();
+        map.removeLayer(entry);
+
+    });
+}
+
 gisportal.drawShape = function(shapefile, shapename) {
     var create_shape = function(data) {
-        subshapes = data['geometry'];
+        var subshapes = data['geometry'];
+        if (subshapes == null) {
+            return;
+        }
+        var vectorLayer = map.getLayersBy('controlID', 'poiLayer')[0];
+        vectorLayer.removeAllFeatures();
         subshapes.forEach(function(subshape, i) {
-            points = [];
+            var points = [];
             subshape.forEach(function (point) {
                 points.push(new OpenLayers.Geometry.Point(point[0], point[1]))
             });
-            ring = new OpenLayers.Geometry.LinearRing(points);
-            polygon = new OpenLayers.Geometry.Polygon([ring]);
+            var ring = new OpenLayers.Geometry.LinearRing(points);
+            var polygon = new OpenLayers.Geometry.Polygon([ring]);
 
-            feature = new OpenLayers.Feature.Vector(polygon);
-            layer = new OpenLayers.Layer.Vector(shapename + i);
-            layer.addFeatures([feature]);
-            map.addLayer(layer)
+            var feature = new OpenLayers.Feature.Vector(polygon);
+            vectorLayer.addFeatures([feature]);
         });
-    }
+
+    };
     gisportal.genericAsync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile + '/' + shapename, null, create_shape, null, 'json', {})
-}
+};
 
 gisportal.ajaxState = function(id) { 
       // Async to get state object

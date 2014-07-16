@@ -569,9 +569,6 @@ gisportal.rightPanel.setupDrawingControls = function() {
          fillOpacity : 0.3,
          pointRadius: 5
       },
-      preFeatureInsert : function(feature) {
-         this.removeAllFeatures();
-      },
       onFeatureInsert : function(feature) {
          ROIAdded(feature);
       },
@@ -588,8 +585,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
       gisportal.switchBackToPan();
 
       // Get the geometry of the drawn feature
-      var geom = new OpenLayers.Geometry();
-      geom = feature.geometry;
+      var geom = feature.geometry;
 
       // Special HTML character for the degree symbol
       var d = '&deg;';
@@ -685,11 +681,11 @@ gisportal.rightPanel.setupDrawingControls = function() {
          case 'shapefile':
             // Get the polygon vertices
              var shapefile_name = $('#shapefile_chooser').find('option:selected').val();
-             var setVertices = function(data, opts) {
+            /* var setVertices = function(data, opts) {
                  // todo - implement
              };
              gisportal.genericSync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile_name, null, setVertices, onError, 'json', {});
-
+            */
 
             var vertices = geom.getVertices();
             $('#dispROI').html('<h3>Custom Polygon ROI</h4>');
