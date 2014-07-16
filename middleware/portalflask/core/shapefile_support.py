@@ -61,14 +61,14 @@ def get_timeseries(ncfile_name, variable_name, shapefile_name, shape_name):
 
 @check_for_permission(['admins'])
 def get_hovmoller(ncfile_name, variable_name, shapefile_name, shape_name, x_axis_var, y_axis_var):
-    shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name) # todo replace hard-coded dir
-    record = get_record(shape_name, shapefile)
-    shape = get_shape(record)
     product = beampy.ProductIO.readProduct(ncfile_name)
+
+    mask = create_mask(shapefile_name, shape_name, product)
 
     x_arr = get_coordinate_variable(product, x_axis_var)
     y_arr = get_coordinate_variable(product, y_axis_var)
-    z_arr = np.zeros(product.getSceneRasterWidth() * product.getSceneRasterHeight())  # np.array(dataset.variables[z_axis_var])
+    z_arr = np.zeros(product.getSceneRasterWidth() * product.getSceneRasterHeight())
+    mask_pixels = np.zeros(product.getSceneRasterWidth() * product.getSceneRasterHeight())
 
     if x_arr is None:
         # g.graphError = "could not find %s dimension" % x_axis_var
@@ -78,9 +78,6 @@ def get_hovmoller(ncfile_name, variable_name, shapefile_name, shape_name, x_axis
         # g.graphError = "could not find %s dimension" % y_axis_var
         print('could not find %s dimension' % y_axis_var)
         return
-
-    # Create a masked array ignoring nan's
-    # z_masked_array = np.ma.masked_invalid(z_arr)
 
     lat = None
     lon = None
@@ -107,31 +104,24 @@ def get_hovmoller(ncfile_name, variable_name, shapefile_name, shape_name, x_axis
         direction = 'lat'
     elif lon is not None:
         direction = 'lon'
-        # z_arr = z_arr.swapaxes(1, 2)  # Make it use Lon instead of Lat
 
     output['depth'] = get_depth(product)
 
     bands = [b for b in product.getBands() if b.getName().startswith(variable_name)]
-    for time_index in len(bands):
-        date = num2date(time[time_index], time_units, calendar='standard').isoformat() if time_units else ''.join(times[time_index])
 
-        if direction == 'lat':
-            for y in product.getSceneRasterHeight():
+    if direction == 'lat':
+        height = product.getSceneRasterHeight()
+        for y in range(height):
+            for time_index in range(len(bands)):
+                date = num2date(time[time_index], time_units, calendar='standard').isoformat() if time_units else ''.join(times[time_index])
                 bands[time_index].readPixels(0, y, product.getSceneRasterWidth(), 1, z_arr)
-                valid_pixels = []
-                # mask.readPixels(0, y, width, 1, mask_pixels)
-                for x, p in enumerate(z_arr):
-                    # if mask_pixels[x] == 0:
-                        valid_pixels.append(p)
-
-                mean = float(np.mean(valid_pixels))
-
-                if np.isnan(mean):
-                    mean = 0
-
-            output['data'].append([date, float(lat[y]), mean])
-        elif direction == "lon":
-            pass
+                mask.readPixels(0, y, product.getSceneRasterWidth(), 1, mask_pixels)
+                ma_array = np.ma.array(np.ma.masked_invalid(z_arr), mask=mask_pixels)
+                mean = float(np.mean(ma_array))
+                lat_value = float(lat[height - 1 - y])  # lat is stored in reversed order
+                output['data'].append([date, lat_value, mean])
+    elif direction == "lon":
+        pass
 
     if len(output['data']) < 1:
         # g.graphError = "no valid data available to use"
@@ -203,36 +193,8 @@ def get_shape_geometry(shapefile_name, shape_name):
 
 @check_for_permission(['admins'])
 def get_band_data_as_array(ncfile_name, variable_name, shapefile_name, shape_name):
-    FeatureUtils = jpy.get_type('org.esa.beam.util.FeatureUtils')
-    File = jpy.get_type('java.io.File')
-    Util = jpy.get_type('org.esa.beam.statistics.output.Util')
-    DefaultFeatureCollection = jpy.get_type('org.geotools.feature.DefaultFeatureCollection')
-    VectorDataNode = jpy.get_type('org.esa.beam.framework.datamodel.VectorDataNode')
-    ProgressMonitor = jpy.get_type('com.bc.ceres.core.ProgressMonitor')
-    Color = jpy.get_type('java.awt.Color')
-
-    print('imported everything')
-    shapefile_path = '/home/thomass/temp/' + shapefile_name
-    shapefile = File(shapefile_path)
-    features = FeatureUtils.loadFeatureCollectionFromShapefile(shapefile)
-    feature_iterator = features.features()
-    while feature_iterator.hasNext():
-        simple_feature = feature_iterator.next()
-        name = Util.getFeatureName(simple_feature)
-        if name == shape_name:
-            break
-
-    feature_iterator.close()
-    fc = DefaultFeatureCollection(simple_feature.getIdentifier().getID(), simple_feature.getType())
-    fc.add(simple_feature)
-
-    print('reading product')
     product = beampy.ProductIO.readProduct(ncfile_name)
-    product_features = FeatureUtils.clipFeatureCollectionToProductBounds(fc, product, None, ProgressMonitor.NULL)
-
-    vdn = VectorDataNode(shape_name, product_features)
-    product.getVectorDataGroup().add(vdn)
-    mask = product.addMask('valid', vdn, 'desc', Color.black, 0.0)
+    mask = create_mask(shapefile_name, shape_name, product)
 
     width = product.getSceneRasterWidth()
     height = product.getSceneRasterHeight()
@@ -324,9 +286,36 @@ def get_depth(product):
     has_axis_root = axis_root is not None
     is_height_type = axis_root.getAttribute('_CoordinateAxisType').getData().getElemString() == 'Height'
     is_positive_Z_coordinate = axis_root.getAttribute('_CoordinateZisPositive') is not None
-    print(has_axis_root)
-    print(is_height_type)
-    print(is_positive_Z_coordinate)
     if has_axis_root and is_height_type and is_positive_Z_coordinate:
         return axis_root.getElement('Values').getAttributes()[0].getData().getElems()[0]
     return None
+
+
+def create_mask(shapefile_name, shape_name, product):
+    FeatureUtils = jpy.get_type('org.esa.beam.util.FeatureUtils')
+    File = jpy.get_type('java.io.File')
+    Util = jpy.get_type('org.esa.beam.statistics.output.Util')
+    DefaultFeatureCollection = jpy.get_type('org.geotools.feature.DefaultFeatureCollection')
+    VectorDataNode = jpy.get_type('org.esa.beam.framework.datamodel.VectorDataNode')
+    ProgressMonitor = jpy.get_type('com.bc.ceres.core.ProgressMonitor')
+    Color = jpy.get_type('java.awt.Color')
+
+    shapefile_path = '/home/thomass/temp/' + shapefile_name
+    shapefile = File(shapefile_path)
+    features = FeatureUtils.loadFeatureCollectionFromShapefile(shapefile)
+    feature_iterator = features.features()
+    while feature_iterator.hasNext():
+        simple_feature = feature_iterator.next()
+        name = Util.getFeatureName(simple_feature)
+        if name == shape_name:
+            break
+
+    feature_iterator.close()
+    fc = DefaultFeatureCollection(simple_feature.getIdentifier().getID(), simple_feature.getType())
+    fc.add(simple_feature)
+
+    product_features = FeatureUtils.clipFeatureCollectionToProductBounds(fc, product, None, ProgressMonitor.NULL)
+
+    vdn = VectorDataNode(shape_name, product_features)
+    product.getVectorDataGroup().add(vdn)
+    return product.addMask('valid', vdn, 'desc', Color.black, 0.0)
