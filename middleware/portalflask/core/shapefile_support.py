@@ -121,7 +121,16 @@ def get_hovmoller(ncfile_name, variable_name, shapefile_name, shape_name, x_axis
                 lat_value = float(lat[height - 1 - y])  # lat is stored in reversed order
                 output['data'].append([date, lat_value, mean])
     elif direction == "lon":
-        pass
+        width = product.getSceneRasterWidth()
+        for x in range(width):
+            for time_index in range(len(bands)):
+                date = num2date(time[time_index], time_units, calendar='standard').isoformat() if time_units else ''.join(times[time_index])
+                bands[time_index].readPixels(x, 0, 1, product.getSceneRasterHeight(), z_arr)
+                mask.readPixels(x, 0, 1, product.getSceneRasterHeight(), mask_pixels)
+                ma_array = np.ma.array(np.ma.masked_invalid(z_arr), mask=mask_pixels)
+                mean = float(np.mean(ma_array))
+                lon_value = float(lon[x])
+                output['data'].append([date, lon_value, mean])
 
     if len(output['data']) < 1:
         # g.graphError = "no valid data available to use"
