@@ -2,6 +2,9 @@ from flask import Blueprint, abort, request, jsonify, g, current_app
 from portalflask.core.param import Param
 from portalflask.core import error_handler
 import portalflask.core.shapefile_support as shapefile_support
+import portalflask.core.graph_support as graph_support
+
+from portalflask.views.actions import check_for_permission
 
 import urllib
 import urllib2
@@ -19,6 +22,28 @@ on the received data, before jsonifying the output and returning it.
 @portal_wcs.route('/wcs', methods=['GET'])
 def getWcsData():
 
+   geometry_graph_to_method = {
+       'box': {
+           'histogram': (histogram, True),
+           'timeseries': (timeseries, True),
+           'hovmollerLon': (hovmoller, True),
+           'hovmollerLat': (hovmoller, True)
+       },
+       'shapefile': {
+           'histogram': (get_histogram_for_shapefile, False),
+           'timeseries': (get_timeseries_for_shapefile, False),
+           'hovmollerLon': (get_hovmoller_for_shapefile, False),
+           'hovmollerLat': (get_hovmoller_for_shapefile, False)
+       },
+       'circle': {
+           'histogram': (get_histogram_for_circle, False),
+           # 'timeseries': (get_timeseries_for_circle, False),
+           # 'hovmollerLon': (get_hovmoller_for_circle, False),
+           # 'hovmollerLat': (get_hovmoller_for_circle, False)
+       }
+
+   }
+
    g.graphError = ""
 
    params = getParams() # Gets any parameters
@@ -30,48 +55,9 @@ def getWcsData():
    graph_type = params['graphType'].value
    geometry_type = params['geometryType'].value
 
-   # todo: remove these nested ifs. E.g.:
-   # - in first step, compute geometry depending on geometry_type
-   # - always use beampy to compute actual output data
-
-   if geometry_type == 'box':
-      if graph_type == 'histogram': # Outputs data needed to create a histogram
-         output = getDataSafe(params, histogram)
-      elif graph_type == 'timeseries': # Outputs a set of standard statistics
-         output = getDataSafe(params, basic)
-      elif graph_type == 'scatter': # Outputs a scatter graph
-         output = getDataSafe(params, scatter)
-      elif graph_type == 'hovmollerLon' or 'hovmollerLat': # outputs a hovmoller graph
-         output = getDataSafe(params, hovmoller)
-      elif graph_type == 'raw': # Outputs the raw values
-          output = getDataSafe(params, raw)
-
-   elif geometry_type == 'shapefile':
-       bounding_box = shapefile_support.get_bounding_box(params['shapefile'].value, params['shapeName'].value)
-       params['bbox'] = Param("bbox", True, True, bounding_box)
-       params['url'] = createURL(params)
-       if graph_type == 'timeseries':
-          output = getDataSafe(params, get_timeseries_for_shapefile, False)
-       elif graph_type == 'histogram':
-           output = getDataSafe(params, get_histogram_for_shapefile, False)
-       elif graph_type == 'hovmollerLon' or 'hovmollerLat':
-           output = getDataSafe(params, get_hovmoller_for_shapefile, False)
-
-
-   elif geometry_type == 'circle':
-       print('not yet implemented')
-
-   elif geometry_type == 'polygon':
-       print('not yet implemented')
-
-   elif geometry_type == 'point':
-       output = getPointData(params, raw)
-
-   else:
-       error = '"%s" is not a valid option' % geometry_type
-       g.error = error
-       print(error)
-       return abort(400)
+   update_bounding_box(params)
+   method = geometry_graph_to_method[geometry_type][graph_type]
+   output = getDataSafe(params, method=method[0], open_dataset=method[1])
 
    current_app.logger.debug('Jsonifying response...') # DEBUG
    
@@ -86,33 +72,61 @@ def getWcsData():
    
    return jsonData
 
-
+@check_for_permission(['admins'])
 def get_timeseries_for_shapefile(params):
+    import beampy  # import here, because importing may take a while
+
     ncfile_name = params['file_name']
     variable_name = params['coverage'].value
     shapefile_name = params['shapefile'].value
     shape_name = params['shapeName'].value
 
-    return shapefile_support.get_timeseries(ncfile_name, variable_name, shapefile_name, shape_name)
+    shape = shapefile_support.get_shape(shapefile_name, shape_name)
+    product = beampy.ProductIO.readProduct(ncfile_name)
+
+    return graph_support.get_timeseries(product, variable_name, shape)
 
 
+@check_for_permission(['admins'])
 def get_histogram_for_shapefile(params):
+    import beampy  # import here, because importing may take a while
     ncfile_name = params['file_name']
     variable_name = params['coverage'].value
     shapefile_name = params['shapefile'].value
     shape_name = params['shapeName'].value
 
-    data = shapefile_support.get_band_data_as_array(ncfile_name, variable_name, shapefile_name, shape_name)
-    return {'histogram': getHistogram(data)}
+    product = beampy.ProductIO.readProduct(ncfile_name)
+    mask = shapefile_support.create_mask(shapefile_name, shape_name, product)
+    data = graph_support.get_band_data_as_array(variable_name, product, mask)
+    return {'histogram': get_histogram(data)}
 
 
+@check_for_permission(['admins'])
 def get_hovmoller_for_shapefile(params):
+    import beampy  # import here, because importing may take a while
+
     ncfile_name = params['file_name']
     variable_name = params['graphZAxis'].value
     shapefile_name = params['shapefile'].value
     shape_name = params['shapeName'].value
 
-    return shapefile_support.get_hovmoller(ncfile_name, variable_name, shapefile_name, shape_name, params['graphXAxis'].value, params['graphYAxis'].value)
+    product = beampy.ProductIO.readProduct(ncfile_name)
+    mask = shapefile_support.create_mask(shapefile_name, shape_name, product)
+    return graph_support.get_hovmoller(product, variable_name, mask, params['graphXAxis'].value, params['graphYAxis'].value)
+
+
+@check_for_permission(['admins'])
+def get_histogram_for_circle(params):
+    import beampy  # import here, because importing may take a while
+    ncfile_name = params['file_name']
+    variable_name = params['coverage'].value
+
+    # todo - continue here
+
+    mask = params['circle']
+    product = beampy.ProductIO.readProduct(ncfile_name)
+    data = graph_support.get_band_data_as_array(variable_name, product, mask)
+    return {'histogram': get_histogram(data)}
 
 
 """
@@ -241,6 +255,14 @@ def expandBbox(params):
    current_app.logger.debug('Url recreated')
    return params
 
+
+def update_bounding_box(params):
+    if 'shapefile' in params and 'shapeName' in params:
+        bounding_box = shapefile_support.get_bounding_box(params['shapefile'].value, params['shapeName'].value)
+        params['bbox'] = Param("bbox", True, True, bounding_box)
+        params['url'] = createURL(params)
+
+
 """
 Generic method for getting data from a wcs server
 """
@@ -304,12 +326,12 @@ def getDataSafe(params, method, open_dataset=True):
 """
 Performs a basic set of statistical functions on the provided data.
 """
-def basic(dataset, params):
-   arr = np.array(dataset.variables[params['coverage'].value])
+def timeseries(dataset, params):
+   data = np.array(dataset.variables[params['coverage'].value])
 
    # Create a masked array ignoring nan's
-   maskedArray = np.ma.masked_array(arr, [np.isnan(x) for x in arr])
-   time = getCoordinateVariable(dataset, 'Time')
+   masked_array = np.ma.masked_array(data, [np.isnan(x) for x in data])
+   time = get_coordinate_variable(dataset, 'Time')
 
    if time == None:
       g.graphError = "could not find time dimension"
@@ -318,17 +340,17 @@ def basic(dataset, params):
    times = np.array(time)
    output = {}
 
-   units = getUnits(dataset.variables[params['coverage'].value])
+   units = get_units(dataset.variables[params['coverage'].value])
    output['units'] = units
 
    current_app.logger.debug('starting basic calc') # DEBUG
 
-   #mean = getMean(maskedArray)
-   #median = getMedian(maskedArray)
-   #std = getStd(maskedArray)
-   #min = getMin(maskedArray)
-   #max = getMax(maskedArray)
-   timeUnits = getUnits(time)
+   #mean = get_mean(maskedArray)
+   #median = get_median(maskedArray)
+   #std = get_std(maskedArray)
+   #min = get_min(maskedArray)
+   #max = get_max(maskedArray)
+   timeUnits = get_units(time)
    start = None
    if timeUnits:
       start = (netCDF.num2date(times[0], time.units, calendar='standard')).isoformat()
@@ -348,17 +370,17 @@ def basic(dataset, params):
 
    output['data'] = {}
 
-   for i, row in enumerate(maskedArray):
+   for i, row in enumerate(masked_array):
       #current_app.logger.debug(row)
       if timeUnits:
          date = netCDF.num2date(time[i], time.units, calendar='standard').isoformat()
       else:
          date = ''.join(times[i])
-      mean = getMean(row)
-      median = getMedian(row)
-      std = getStd(row)
-      min = getMin(row)
-      max = getMax(row)
+      mean = get_mean(row)
+      median = get_median(row)
+      std = get_std(row)
+      min = get_min(row)
+      max = get_max(row)
 
       if np.isnan(max) or np.isnan(min) or np.isnan(std) or np.isnan(mean) or np.isnan(median):
          pass
@@ -379,15 +401,9 @@ def hovmoller(dataset, params):
    yAxisVar = params['graphYAxis'].value
    zAxisVar = params['graphZAxis'].value
 
-   print('##############')
-   print(xAxisVar)
-   print(yAxisVar)
-   print(zAxisVar)
-   print('##############')
-
-   xVar = getCoordinateVariable(dataset, xAxisVar)
+   xVar = get_coordinate_variable(dataset, xAxisVar)
    xArr = np.array(xVar)
-   yVar = getCoordinateVariable(dataset, yAxisVar)
+   yVar = get_coordinate_variable(dataset, yAxisVar)
    yArr = np.array(yVar)
    zArr = np.array(dataset.variables[zAxisVar])
    
@@ -416,7 +432,7 @@ def hovmoller(dataset, params):
 
    output = {}
    
-   timeUnits = getUnits(time)
+   timeUnits = get_units(time)
    start = None
    if timeUnits:
       start = (netCDF.num2date(times[0], time.units, calendar='standard')).isoformat()
@@ -442,7 +458,7 @@ def hovmoller(dataset, params):
 
    # If 4 dimensions, assume depth and switch with time
    if numDimensions == 4:
-      depth = np.array(getDepth(dataset))
+      depth = np.array(get_depth(dataset))
       if len(depth.shape) > 1:
          current_app.logger.debug('WARNING: There are multiple depths.')
       else:
@@ -468,7 +484,7 @@ def hovmoller(dataset, params):
          elif direction == "lon":
             pos = lon[j]
          
-         mean = getMean(row)
+         mean = get_mean(row)
          
          if np.isnan(mean):
             mean = 0
@@ -482,73 +498,65 @@ def hovmoller(dataset, params):
 
    return output
 
-
-
   
-"""
+'''
 Creates a histogram from the provided data. If no bins are created it creates its own.
-"""
+'''
 def histogram(dataset, params):
    var = np.array(dataset.variables[params['coverage'].value]) # Get the coverage as a numpy array
-   return {'histogram': getHistogram(var)}
+   return {'histogram': get_histogram(var)}
 
-"""
-Creates a scatter from the provided data.
-"""
-def scatter(dataset, params):
-   var = np.array(dataset.variables[params['coverage'].value])
-   return {'scatter': getScatter(var)}
 
-"""
+'''
 Returns the raw data.
-"""
+'''
 def raw(dataset, params):
    var = np.array(dataset.variables[params['coverage'].value]) # Get the coverage as a numpy array
    return {'rawdata': var.tolist()}
 
-"""
+'''
 Returns the median value from the provided array.
-"""
-def getMedian(arr):
+'''
+def get_median(arr):
    return float(np.ma.median(arr))
 
-"""
+'''
 Returns the mean value from the provided array.
-"""
-def getMean(arr):
+'''
+def get_mean(arr):
    return float(np.mean(arr))
 
-"""
+'''
 Returns the std value from the provided array.
-"""
-def getStd(arr):
+'''
+def get_std(arr):
    return float(np.std(arr.compressed()))
 
-"""
+'''
 Returns the minimum value from the provided array. 
-"""
-def getMin(arr):
+'''
+def get_min(arr):
    return float(np.min(arr)) # Get the min ignoring nan's, then cast to float
 
-"""
+'''
 Returns the maximum value from the provided array.
-"""
-def getMax(arr):
+'''
+def get_max(arr):
    return float(np.max(arr)) # Get the max ignoring nan's, then cast to float
 
-"""
+'''
 Returns a histogram created from the provided array. If no bins
 are provided, some are created using the min and max values of the array.
-"""
-def getHistogram(arr):
+'''
+def get_histogram(arr):
    maskedarr = np.ma.masked_array(arr, [np.isnan(x) for x in arr])
    bins = request.args.get('bins', None) # TODO move to get params
    numbers = []
    current_app.logger.debug('before bins') # DEBUG
    
    if bins == None or not bins:
-      max = getMax(maskedarr)
-      min = getMin(maskedarr)
+      max = get_max(maskedarr)
+      min = get_min(maskedarr)
       bins = np.linspace(min, max, 11) # Create ten evenly spaced bins 
       current_app.logger.debug('bins generated') # DEBUG
       N,bins = np.histogram(maskedarr, bins) # Create the histogram
@@ -569,31 +577,34 @@ def getHistogram(arr):
       numbers.append((bins[i] + (bins[i+1] - bins[i])/2, float(N[i]))) # Get a number halfway between this bin and the next
    return {'Numbers': numbers, 'Bins': bins.tolist()}
 
-"""
+
+'''
 Utility function to find the time dimension from a netcdf file. Needed as the
 time dimension will not always have the same name or the same attributes.
-"""
-def getCoordinateVariable(dataset, axis):
+'''
+def get_coordinate_variable(dataset, axis):
    for i, key in enumerate(dataset.variables):
       var = dataset.variables[key]
-      current_app.logger.debug("========== key:" + key + " ===========") # DEBUG
+      current_app.logger.debug('========== key:' + key + ' ===========') # DEBUG
       for name in var.ncattrs():
          current_app.logger.debug(name) # DEBUG
-         if name == "_CoordinateAxisType" and var._CoordinateAxisType == axis:
+         if name == '_CoordinateAxisType' and var._CoordinateAxisType == axis:
             return var
    
    return None
 
-def getDepth(dataset):
+
+def get_depth(dataset):
    for i, key in enumerate(dataset.variables):
       var = dataset.variables[key]
-      if "_CoordinateAxisType" in var.ncattrs() and "_CoordinateZisPositive" in var.ncattrs():
-         #if var._CoordinateAxisType == "Height" and var._CoordinateZisPositive == "down":
-         if var._CoordinateAxisType == "Height":
+      if '_CoordinateAxisType' in var.ncattrs() and '_CoordinateZisPositive' in var.ncattrs():
+         #if var._CoordinateAxisType == 'Height' and var._CoordinateZisPositive == 'down':
+         if var._CoordinateAxisType == 'Height':
             return var
    return None
 
-def getDimension(dataset, dimName):
+
+def get_dimension(dataset, dimName):
    for i, key in enumerate(dataset.dimensions):
       current_app.logger.debug(key)
       dimension = dataset.dimensions[key]
@@ -602,13 +613,8 @@ def getDimension(dataset, dimName):
    
    return None
 
-def getXDimension(dataset):
-   pass
 
-def getYDimension(dataset):
-   pass
-
-def getUnits(variable):
+def get_units(variable):
    for name in variable.ncattrs():
       if name == "units":
          return variable.units

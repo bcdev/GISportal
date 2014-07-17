@@ -126,12 +126,12 @@ def get_shape_names(shapefile_name):
     return jsonify(shape_names=shape_names)
 
 
-# todo (Til?) -- extend by shape, and complete
 @portal_user.route('/get_shapefile_geometry/<shapefile_name>/<shape_name>', methods=['POST'])
 @check_for_permission(['admins'])
 def get_shapefile_geometry(shapefile_name, shape_name):
     print('get_shape_geometry')
     return jsonify(geometry=shapefile_support.get_shape_geometry(shapefile_name, shape_name), bounds=shapefile_support.get_bounding_box(shapefile_name, shape_name))
+
 
 @portal_user.route('/logout', methods=['GET','POST'])
 def logout():
@@ -153,5 +153,5 @@ def add_user_to_db(email, username, full_name, group_names):
         if not group_is_already_in_db:
             db_session.add(UserGroup(group_name))
     db_session.commit()
-    user_groups = UserGroup.query.filter(UserGroup.group_name in group_names)
+    user_groups = UserGroup.query.filter(UserGroup.group_name.in_(group_names)).all()
     db_session.add(User(email=email, openid=session['openid'], username=username, full_name=full_name, groups=user_groups))
