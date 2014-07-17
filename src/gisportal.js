@@ -1153,6 +1153,7 @@ gisportal.removeShapes = function() {
 
 gisportal.drawShape = function(shapefile, shapename) {
     var create_shape = function(data) {
+        gisportal.current_area = 0;
         var subshapes = data['geometry'];
         if (subshapes == null) {
             return;

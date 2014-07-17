@@ -131,7 +131,7 @@ def get_shape_names(shapefile_name):
 @check_for_permission(['admins'])
 def get_shapefile_geometry(shapefile_name, shape_name):
     print('get_shape_geometry')
-    return jsonify(geometry=shapefile_support.get_shape_geometry(shapefile_name, shape_name))
+    return jsonify(geometry=shapefile_support.get_shape_geometry(shapefile_name, shape_name), bounds=shapefile_support.get_bounding_box(shapefile_name, shape_name))
 
 @portal_user.route('/logout', methods=['GET','POST'])
 def logout():
