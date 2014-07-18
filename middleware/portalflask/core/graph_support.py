@@ -3,6 +3,7 @@ from netCDF4 import num2date
 import jpy
 import numpy as np
 
+
 def get_timeseries(product, variable_name, shape):
     timeseries = {}
 

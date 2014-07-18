@@ -99,7 +99,7 @@ def get_shape_for_record(record):
         for point in record.shape.points[start_index:end_index]:
             # lon lat
             path.lineTo(point[0], point[1])
-        path.lineTo(start_point[0], start_point[1])
+        path.closePath()
         shape.add(path)
         start_index = end_index
 

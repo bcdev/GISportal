@@ -1056,8 +1056,9 @@ gisportal.rightPanel.setupGraphingTools = function() {
             graphType: graphcreatorGalleryElement.find('input[name="gallery"]:checked').val(),
             bins: $('#graphcreator-bins').val(),
             time: dateRange,
-            bbox: $('#graphcreator-bbox').val(),
             geometryType: gisportal.geometryType,
+            bbox: $('#graphcreator-bbox').val(),
+            poylgon: '', // todo - continue here
             shapefile: $('#shapefile_chooser').find('option:selected').val(),
             shapeName: $('#shapename_chooser').find('option:selected').val(),
             depth: depthDirection(),
