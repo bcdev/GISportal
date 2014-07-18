@@ -431,6 +431,8 @@ gisportal.leftPanel.loadState = function(state) {
  */
 gisportal.rightPanel = {};
 
+gisportal.current_area = 0;
+
 gisportal.rightPanel.open = function() {
    $(".rPanel").show("fast");
    $(".triggerR").addClass("active");
@@ -677,39 +679,75 @@ gisportal.rightPanel.setupDrawingControls = function() {
             $('#dispROI').append('<p>Projected Area: ' + area_km.toPrecision(4) + ' km<sup>2</p>');
             break;
          case 'shapefile':
-            // Get the polygon vertices
-             var shapefile_name = $('#shapefile_chooser').find('option:selected').val();
-            /* var setVertices = function(data, opts) {
-                 // todo - implement
-             };
-             gisportal.genericSync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile_name, null, setVertices, onError, 'json', {});
-            */
+             var shapefile = $('#shapefile_chooser').find('option:selected').val();
+             var shapename = $('#shapename_chooser').find('option:selected').val();
+             var drawShape = function(data, opts) {
+                 if (data == undefined) {
+                     console.log("Data = undefined");
+                     return;
+                 }
+                 var subshapes = data['geometry'];
+                 var b = data['bounds'].split(',');
+                 bounds.top = parseFloat(b[3]);
+                 bounds.left = parseFloat(b[0]);
+                 bounds.bottom = parseFloat(b[1]);
+                 bounds.right = parseFloat(b[2]);
 
-            var vertices = geom.getVertices();
-            $('#dispROI').html('<h3>Custom Polygon ROI</h4>');
-            // Setup the JavaScript canvas object and draw our ROI on it
-            $('#dispROI').append('<canvas id="ROIC" width="100" height="100"></canvas>');
-            var c = document.getElementById('ROIC');
-            var ctx = c.getContext('2d');
-            ctx.lineWidth = 4;
-            ctx.fillStyle = '#CCCCCC';
-            var scale = (width_deg > height_deg) ? 90/width_deg : 90/height_deg;
-            ctx.beginPath();
-            var x0 = 5 + (vertices[0].x-bounds.left)*scale;
-            var y0 = 5 + (bounds.top-vertices[0].y)*scale;
-            ctx.moveTo(x0,y0);
-            for(var i=1,j=vertices.length; i<j; i++){
-               var x = 5 + (vertices[i].x-bounds.left) * scale;
-               var y = 5 + (bounds.top-vertices[i].y) * scale;
-               ctx.lineTo(x, y);
-            }
-            ctx.lineTo(x0,y0);
-            ctx.stroke();
-            ctx.fill();
-            ctx.closePath();
-            //
-            $('#dispROI').append('<p>Centroid Lat, Lon:' + ctrLat.toPrecision(4) + d + ', ' + ctrLon.toPrecision(4) + d + '</p>');
-            $('#dispROI').append('<p>Projected Area: ' + area_km.toPrecision(4) + ' km<sup>2</p>');
+                 area_deg = geom.getArea();                 //TODO Fix this as it doesn't work correctly! (Only uses the current geometric and not the whole shape)
+                 area_km = (geom.getGeodesicArea()*1e-6);   //TODO Same as above
+                 height_deg = bounds.getHeight();
+                 width_deg = bounds.getWidth();
+                 ctrLon = geom.getCentroid().x;             //TODO Look some lines above
+                 ctrLat = geom.getCentroid().y;             //TODO Again look a bit further up in the code
+                 height_km = OpenLayers.Util.distVincenty(new OpenLayers.LonLat(ctrLon,bounds.top),new OpenLayers.LonLat(ctrLon,bounds.bottom));
+                 width_km = OpenLayers.Util.distVincenty(new OpenLayers.LonLat(bounds.left,ctrLat),new OpenLayers.LonLat(bounds.right,ctrLat));
+                 radius_deg = ((bounds.getWidth() + bounds.getHeight())/4);
+
+                 $('#dispROI').html('<h3>Shapefile ROI</h4>');
+                 // Setup the JavaScript canvas object and draw our ROI on it
+                 $('#dispROI').append('<canvas id="ROIC" width="100" height="100"></canvas>');
+
+                 var c = document.getElementById('ROIC');
+                 var ctx = c.getContext('2d');
+                 ctx.lineWidth = 4;
+                 ctx.fillStyle = '#CCCCCC';
+                 var scale = (width_deg > height_deg) ? 90/width_deg : 90/height_deg;
+
+                 subshapes.forEach(function(subshape, i) {
+                     var points = [];
+                     subshape.forEach(function (point) {
+                         points.push(new OpenLayers.Geometry.Point(point[0], point[1]))
+                     });
+                     vertices = points;
+                     ctx.beginPath();
+                     var x0 = 5 + (vertices[0].x-bounds.left)*scale;
+                     var y0 = 5 + (bounds.top-vertices[0].y)*scale;
+                     ctx.moveTo(x0,y0);
+                     for(var i=1,j=vertices.length; i<j; i++){
+                         var x = 5 + (vertices[i].x-bounds.left) * scale;
+                         var y = 5 + (bounds.top-vertices[i].y) * scale;
+                         ctx.lineTo(x, y);
+                     }
+                     ctx.lineTo(x0,y0);
+                     ctx.stroke();
+                     ctx.fill();
+                     ctx.closePath();
+                 });
+
+
+                 $('#dispROI').append('<p>Centroid Lat, Lon:' + ctrLat.toPrecision(4) + d + ', ' + ctrLon.toPrecision(4) + d + '</p>');
+                 if (gisportal.current_area == 0) {
+                     $('#dispROI').append('<p>Projected Area: ' + area_km.toPrecision(4) + ' km<sup>2</p>');
+                     gisportal.current_area = area_km
+                 } else {
+                     gisportal.current_area = parseFloat(parseFloat(gisportal.current_area) + parseFloat(area_km));
+                     console.log(gisportal.current_area.toPrecision(4));
+                     $('#dispROI').append('<p>Projected Area: ' + gisportal.current_area.toPrecision(4) + ' km<sup>2</p>');
+                 }
+
+                 //console.log('Projected Area: ' + area_km.toPrecision(4) + ' km');
+             };
+             gisportal.genericSync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile + '/' + shapename, null, drawShape, null, 'json', {})
             break;
       }
    }
