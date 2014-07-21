@@ -1,34 +1,27 @@
 from beampy import jpy
-import numpy as np
+from pygeoif import geometry
 
 
-def get_bounding_box(polygon):
-    x = np.array(polygon)[range(0, len(polygon) - 1, 2)]
-    y = np.array(polygon)[range(1, len(polygon), 2)]
-    return [(np.min(x)), (np.min(y)), (np.max(x)), (np.max(y))]
+def get_bounding_box(wkt):
+    geom = geometry.from_wkt(wkt)
+    minx = geom.bounds[0]
+    miny = geom.bounds[1]
+    maxx = geom.bounds[2]
+    maxy = geom.bounds[3]
+    return str(minx) + ',' + str(miny) + ',' + str(maxx) + ',' + str(maxy)
 
 
-def get_shape(polygon):
-    GeometryFactory = jpy.get_type('com.vividsolutions.jts.geom.GeometryFactory')
+def get_shape(wkt):
     LiteShape = jpy.get_type('org.geotools.geometry.jts.LiteShape')
-    Coordinate = jpy.get_type('com.vividsolutions.jts.geom.Coordinate')
+    WKTReader = jpy.get_type('com.vividsolutions.jts.io.WKTReader')
 
-    gf = GeometryFactory()
-    coordinates = []
+    wktReader = WKTReader()
+    geom = wktReader.read(wkt)
 
-    x = np.array(polygon)[range(0, len(polygon) - 1, 2)]
-    y = np.array(polygon)[range(1, len(polygon), 2)]
-
-    for i in range(0, len(x)):
-        coordinates.append(Coordinate(x[i], y[i]))
-    coordinates.append(Coordinate(x[0], y[0]))
-
-    linear_ring = gf.createLinearRing(coordinates)
-    polygon = gf.createPolygon(linear_ring, None)
-    return LiteShape(polygon, None, False)
+    return LiteShape(geom, None, False)
 
 
-def create_mask(product, polygon):
+def create_mask(product, wkt):
     VectorDataNode = jpy.get_type('org.esa.beam.framework.datamodel.VectorDataNode')
     Color = jpy.get_type('java.awt.Color')
     DefaultFeatureCollection = jpy.get_type('org.geotools.feature.DefaultFeatureCollection')
@@ -44,7 +37,7 @@ def create_mask(product, polygon):
     sft = sftb.buildFeatureType()
 
     sfb = SimpleFeatureBuilder(sft)
-    sfb.set('geometry', get_shape(polygon).getGeometry())
+    sfb.set('geometry', get_shape(wkt).getGeometry())
     feature = sfb.buildFeature('geom')
 
     fc = DefaultFeatureCollection('name', sft)

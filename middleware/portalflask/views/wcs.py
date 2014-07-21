@@ -2,7 +2,7 @@ from flask import Blueprint, abort, request, jsonify, g, current_app
 from portalflask.core.param import Param
 from portalflask.core import error_handler
 import portalflask.core.shapefile_support as shapefile_support
-import portalflask.core.polygon_support as polygon_support
+import portalflask.core.geometry_support as geometry_support
 import portalflask.core.graph_support as graph_support
 
 from portalflask.views.actions import check_for_permission
@@ -36,11 +36,11 @@ def getWcsData():
            'hovmollerLon': (get_hovmoller_for_shapefile, False),
            'hovmollerLat': (get_hovmoller_for_shapefile, False)
        },
-       'polygon': {
-           'histogram': (get_histogram_for_polygon, False),
-           'timeseries': (get_timeseries_for_polygon, False),
-           'hovmollerLon': (get_hovmoller_for_polygon, False),
-           'hovmollerLat': (get_hovmoller_for_polygon, False)
+       'wkt': {
+           'histogram': (get_histogram_for_wkt, False),
+           'timeseries': (get_timeseries_for_wkt, False),
+           'hovmollerLon': (get_hovmoller_for_wkt, False),
+           'hovmollerLat': (get_hovmoller_for_wkt, False)
        }
 
    }
@@ -56,7 +56,6 @@ def getWcsData():
    graph_type = params['graphType'].value
    geometry_type = params['geometryType'].value
 
-   update_bounding_box(params)
    method = geometry_graph_to_method[geometry_type][graph_type]
    output = getDataSafe(params, method=method[0], open_dataset=method[1])
 
@@ -118,38 +117,39 @@ def get_hovmoller_for_shapefile(params):
 
 
 @check_for_permission(['admins'])
-def get_histogram_for_polygon(params):
+def get_histogram_for_wkt(params):
     import beampy  # import here, because importing may take a while
     ncfile_name = params['file_name']
     variable_name = params['coverage'].value
+    wkt = params['wkt']
 
-    mask = polygon_support.create_mask(params['polygon'])
+    mask = geometry_support.create_mask(wkt)
     product = beampy.ProductIO.readProduct(ncfile_name)
     data = graph_support.get_band_data_as_array(variable_name, product, mask)
     return {'histogram': get_histogram(data)}
 
 
 @check_for_permission(['admins'])
-def get_hovmoller_for_polygon(params):
+def get_hovmoller_for_wkt(params):
     import beampy  # import here, because importing may take a while
     ncfile_name = params['file_name']
     variable_name = params['graphZAxis'].value
-    polygon = params['polygon']
+    wkt = params['wkt']
 
     product = beampy.ProductIO.readProduct(ncfile_name)
-    mask = polygon_support.create_mask(polygon)
+    mask = geometry_support.create_mask(wkt)
     return graph_support.get_hovmoller(product, variable_name, mask, params['graphXAxis'].value, params['graphYAxis'].value)
 
 
 @check_for_permission(['admins'])
-def get_timeseries_for_polygon(params):
+def get_timeseries_for_wkt(params):
     import beampy  # import here, because importing may take a while
 
     ncfile_name = params['file_name']
     variable_name = params['coverage'].value
-    polygon = params['polygon'].value
+    wkt = params['wkt'].value
 
-    shape = polygon_support.get_shape(polygon)
+    shape = geometry_support.get_shape(wkt)
     product = beampy.ProductIO.readProduct(ncfile_name)
 
     return graph_support.get_timeseries(product, variable_name, shape)
@@ -175,12 +175,10 @@ def getParams():
    
    # Geometry spec
    nameToParam["geometryType"] = Param("geometryType", False, False, request.args.get('geometryType', None))
-   nameToParam["bbox"] = Param("bbox", True, True, request.args.get('bbox', None))
-   nameToParam["circle"] = Param("circle", True, True, request.args.get('circle', None))
-   nameToParam["polygon"] = Param("polygon", True, True, request.args.get('polygon', None))
-   nameToParam["point"] = Param("point", True, True, request.args.get('point', None))
+   nameToParam["wkt"] = Param("wkt", True, False, request.args.get('wkt', None))
    nameToParam["shapefile"] = Param("shapefile", True, False, request.args.get('shapefile', None))
    nameToParam["shapeName"] = Param("shapeName", True, False, request.args.get('shapeName', None))
+   nameToParam["bbox"] = Param("bbox", False, True, get_bounding_box(nameToParam))
 
    # Custom
    nameToParam["graphType"] = Param("graphType", False, False, request.args.get('graphType'))
@@ -193,6 +191,19 @@ def getParams():
    nameToParam["graphZFunc"] = Param("graphZFunc", True, False, request.args.get('graphZFunc'))
    
    return nameToParam
+
+
+def get_bounding_box(params):
+    geometry_type = params['geometryType'].value
+    if geometry_type == 'box':
+        return params['geometry']
+    elif geometry_type == 'shapefile':
+        return shapefile_support.get_bounding_box(params['shapefile'].value, params['shapeName'].value)
+    elif geometry_type == 'wkt':
+        return geometry_support.get_bounding_box(params['wkt'].value)
+    else:
+        raise ValueError('Unknown geometry type \'' + geometry_type + '\'')
+
 
 """
 Check the parameters to see if they are valid.
@@ -223,7 +234,7 @@ def createURL(params):
    for param in params.itervalues():
       if param.neededInUrl():
          urlParams[param.getName()] = param.value
-   
+
    query = urllib.urlencode(urlParams)
    url = params['baseURL'].value + query
    current_app.logger.debug('URL: ' + url) # DEBUG
@@ -280,15 +291,6 @@ def expandBbox(params):
    params['url'] = createURL(params)
    current_app.logger.debug('Url recreated')
    return params
-
-
-def update_bounding_box(params):
-    if 'shapefile' in params and 'shapeName' in params:
-        bounding_box = shapefile_support.get_bounding_box(params['shapefile'].value, params['shapeName'].value)
-    elif 'polygon' in params:
-        bounding_box = polygon_support.get_bounding_box(params['polygon'].value)
-    params['url'] = createURL(params)
-    params['bbox'] = Param("bbox", True, True, bounding_box)
 
 
 """
