@@ -1075,6 +1075,8 @@ gisportal.main = function() {
        gisportal.openid.showLogin();
    }
 
+   gisportal.setupShapefileDropdown();
+
    // Grab the url of any state.
    var stateID = gisportal.utils.getURLParameter('state');
 
@@ -1088,6 +1090,25 @@ gisportal.main = function() {
    }
 };
 
+gisportal.setupShapefileDropdown = function() {
+    var config = {
+        '.chosen-select'           : {"disable_search": true, "inherit_select_classes": true, "width": "220px"},
+        '.chosen-select-region' : {disable_search_threshold:10, "inherit_select_classes": true, "width": "220px", no_results_text:'No region found!'}
+    }
+    for (var selector in config) {
+        $(selector).chosen(config[selector]).ready(function() {
+            if (selector == ".chosen-select-region") {
+                $('#shapefile_chooser').hide();
+                $('#shapename_chooser').hide();
+            }
+        });
+    }
+    $('#shapefile_chooser').chosen().change(function () {
+        if ($('#shapefile_chooser').val() == "upload") {
+            $('#shapefile_upload_button').focus().click();
+        }
+    });
+}
 
 gisportal.updateShapefiles = function() {
     var $shapefileChooser = $('#shapefile_chooser');
@@ -1095,6 +1116,7 @@ gisportal.updateShapefiles = function() {
         $shapefileChooser.find('option').each(function(index) {
             if (this.value !== 'upload' && this.value !== 'none') {
                 $($shapefileChooser.find('option[value="' + this.value + '"]')).remove();
+                $shapefileChooser.trigger('chosen:updated');
             }
         });
     };
@@ -1104,6 +1126,7 @@ gisportal.updateShapefiles = function() {
         $.each(data['shapefiles'], function(index) {
             if ($shapefileChooser.find('option[value="' + this + '"]').length === 0) {
                 $shapefileChooser.append('<option value="' + this + '">' + this + '</option>');
+                $shapefileChooser.trigger('chosen:updated');
             }
         });
     };
@@ -1116,6 +1139,7 @@ gisportal.updateShapefiles = function() {
 gisportal.updateShapes = function() {
     var shapefile_name = $('#shapefile_chooser').find('option:selected').val();
     var $shapenameChooser = $('#shapename_chooser');
+
     var clear_shapes = function() {
         $shapenameChooser.find('option').each(function(index) {
             $($shapenameChooser.find('option[value="' + this.value + '"]')).remove();
@@ -1125,11 +1149,19 @@ gisportal.updateShapes = function() {
     var set_shapes = function(data, opts) {
         clear_shapes();
         if (data['shape_names']) {
+            $('#shapename_chooser').show();
             $.each(data['shape_names'], function (index) {
                 if ($shapenameChooser.find('option[value="' + this + '"]').length === 0) {
                     $shapenameChooser.append('<option value="' + this + '">' + this + '</option>');
                 }
             });
+            $('#shapename_chooser').removeAttr("disabled");
+            $('#shapename_chooser').trigger('chosen:updated');
+            $('#shapename_chooser').hide();
+        } else {
+            $('#shapename_chooser').attr("disabled", "disabled");
+            $('#shapename_chooser').trigger('chosen:updated');
+            $('#shapename_chooser').hide();
         }
     };
 
@@ -1153,11 +1185,11 @@ gisportal.removeShapes = function() {
 
 gisportal.drawShape = function(shapefile, shapename) {
     var create_shape = function(data) {
-        gisportal.current_area = 0;
         var subshapes = data['geometry'];
         if (subshapes == null) {
             return;
         }
+        var features = [];
         var vectorLayer = map.getLayersBy('controlID', 'poiLayer')[0];
         vectorLayer.removeAllFeatures();
         subshapes.forEach(function(subshape, i) {
@@ -1169,11 +1201,60 @@ gisportal.drawShape = function(shapefile, shapename) {
             var polygon = new OpenLayers.Geometry.Polygon([ring]);
 
             var feature = new OpenLayers.Feature.Vector(polygon);
-            vectorLayer.addFeatures([feature]);
+            features.push(feature);
         });
-
+        vectorLayer.addFeatures(features);
+        gisportal.fillROIDisplay(subshapes, features, data['bounds'].split(','));
     };
     gisportal.genericAsync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile + '/' + shapename, null, create_shape, null, 'json', {})
+};
+
+gisportal.fillROIDisplay = function(subshapes, features, b) {
+    $('#dispROI').html('<h3>Shapefile ROI</h4>');
+    // Setup the JavaScript canvas object and draw our ROI on it
+    $('#dispROI').append('<canvas id="ROIC" width="100" height="100"></canvas>');
+
+    var c = document.getElementById('ROIC');
+    var ctx = c.getContext('2d');
+    ctx.lineWidth = 4;
+    ctx.fillStyle = '#CCCCCC';
+
+    var current_area = 0;
+
+    subshapes.forEach(function(subshape, i) {
+        var geom = features[i].geometry;
+        var bounds = geom.getBounds();
+        bounds.top = parseFloat(b[3]);
+        bounds.left = parseFloat(b[0]);
+        bounds.bottom = parseFloat(b[1]);
+        bounds.right = parseFloat(b[2]);
+
+        var area_km = (geom.getGeodesicArea()*1e-6);
+        var height_deg = bounds.getHeight();
+        var width_deg = bounds.getWidth();
+        var scale = (width_deg > height_deg) ? 90/width_deg : 90/height_deg;
+
+        var points = [];
+        subshape.forEach(function (point) {
+            points.push(new OpenLayers.Geometry.Point(point[0], point[1]))
+        });
+        ctx.beginPath();
+        var x0 = 5 + (points[0].x-bounds.left)*scale;
+        var y0 = 5 + (bounds.top-points[0].y)*scale;
+        ctx.moveTo(x0,y0);
+        for(var i=1,j=points.length; i<j; i++){
+            var x = 5 + (points[i].x-bounds.left) * scale;
+            var y = 5 + (bounds.top-points[i].y) * scale;
+            ctx.lineTo(x, y);
+        }
+        ctx.lineTo(x0,y0);
+        ctx.stroke();
+        ctx.fill();
+        ctx.closePath();
+        current_area += parseFloat(area_km);
+    });
+
+    $('#dispROI').append('<p>Projected Area: ' + current_area.toPrecision(4) + ' km<sup>2</p>');
 };
 
 gisportal.ajaxState = function(id) { 

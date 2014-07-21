@@ -9,6 +9,7 @@
 
 <!-- Default styling for web app plus overrides of OpenLayers and jQuery UI styles -->
 <link rel="stylesheet" type="text/css" href="css/GISPortal.css" />
+<link rel="stylesheet" type="text/css" href="css/chosen.min.css" />
 
 <!-- ============================ JavaScript libraries ============================ -->
 <!-- Latest jQuery from jQuery.com -->
@@ -23,6 +24,9 @@
 
 <!-- Flotr2 -->
 <script type="text/javascript" src="js-libs/Flotr2/js/flotr2.min.js"></script>
+
+<!-- Dropdowns -->
+<script type="text/javascript" src="js-libs/chosen.jquery.min.js"></script>
 
 <!-- http://forum.jquery.com/topic/expand-all-zones-for-an-accordion#14737000002919405 -->
 <!-- <script type="text/javascript" src="js-libs/multiAccordion.js"></script> -->
@@ -562,18 +566,17 @@
                      <input type="radio" id="shapefile_button" name="roi_button_group" value="shapefile" />
                      <label class="iconBtn" for="shapefile_button" title="Select or upload ESRI shapefile"></label>
 
-                     <form id="shape_chooser">
-                         <select id="shapefile_chooser" size="1" disabled>
-                             <option value="none">No shapefile</option>
-                             <option value="upload">Upload ESRI shapefile...</option>
-                         </select>
-                         <select id="shapename_chooser" size="1" disabled>
-                         </select>
-                     </form>
-
-                     <form class="uploadshapefile" style="display: none" id="uploadshapefile" method="post" enctype="multipart/form-data">
-                        <input type="file" id="shapefile_upload_button" name="shapefile[]" multiple />
-                     </form>
+                      <form id="shape_chooser">
+                          <select id="shapefile_chooser" data-placeholder="Select a shapefile" class="chosen-select" style="width:350px;" disabled>
+                              <option value="none"></option>
+                              <option value="upload">Upload ESRI shapefile...</option>
+                          </select>
+                          <select id="shapename_chooser" data-placeholder="No shapes" size="1" class="chosen-select-region" disabled>
+                          </select>
+                      </form>
+                      <form id="uploadshapefile" style="display: none" class="uploadshapefile" method="post" enctype="multipart/form-data">
+                          <input type="file" id="shapefile_upload_button" name="shapefile[]" multiple />
+                      </form>
 
                       <!-- todo: move CSS -->
                      <div class="progress" style="display: none">
