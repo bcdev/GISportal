@@ -2,6 +2,7 @@ from flask import Blueprint, abort, request, jsonify, g, current_app
 from portalflask.core.param import Param
 from portalflask.core import error_handler
 import portalflask.core.shapefile_support as shapefile_support
+import portalflask.core.polygon_support as polygon_support
 import portalflask.core.graph_support as graph_support
 
 from portalflask.views.actions import check_for_permission
@@ -35,11 +36,11 @@ def getWcsData():
            'hovmollerLon': (get_hovmoller_for_shapefile, False),
            'hovmollerLat': (get_hovmoller_for_shapefile, False)
        },
-       'circle': {
-           'histogram': (get_histogram_for_circle, False),
-           # 'timeseries': (get_timeseries_for_circle, False),
-           # 'hovmollerLon': (get_hovmoller_for_circle, False),
-           # 'hovmollerLat': (get_hovmoller_for_circle, False)
+       'polygon': {
+           'histogram': (get_histogram_for_polygon, False),
+           'timeseries': (get_timeseries_for_polygon, False),
+           'hovmollerLon': (get_hovmoller_for_polygon, False),
+           'hovmollerLat': (get_hovmoller_for_polygon, False)
        }
 
    }
@@ -71,6 +72,7 @@ def getWcsData():
    current_app.logger.debug('Request complete, Sending results') # DEBUG
    
    return jsonData
+
 
 @check_for_permission(['admins'])
 def get_timeseries_for_shapefile(params):
@@ -116,17 +118,41 @@ def get_hovmoller_for_shapefile(params):
 
 
 @check_for_permission(['admins'])
-def get_histogram_for_circle(params):
+def get_histogram_for_polygon(params):
     import beampy  # import here, because importing may take a while
     ncfile_name = params['file_name']
     variable_name = params['coverage'].value
 
-    # todo - continue here
-
-    mask = params['circle']
+    mask = polygon_support.create_mask(params['polygon'])
     product = beampy.ProductIO.readProduct(ncfile_name)
     data = graph_support.get_band_data_as_array(variable_name, product, mask)
     return {'histogram': get_histogram(data)}
+
+
+@check_for_permission(['admins'])
+def get_hovmoller_for_polygon(params):
+    import beampy  # import here, because importing may take a while
+    ncfile_name = params['file_name']
+    variable_name = params['graphZAxis'].value
+    polygon = params['polygon']
+
+    product = beampy.ProductIO.readProduct(ncfile_name)
+    mask = polygon_support.create_mask(polygon)
+    return graph_support.get_hovmoller(product, variable_name, mask, params['graphXAxis'].value, params['graphYAxis'].value)
+
+
+@check_for_permission(['admins'])
+def get_timeseries_for_polygon(params):
+    import beampy  # import here, because importing may take a while
+
+    ncfile_name = params['file_name']
+    variable_name = params['coverage'].value
+    polygon = params['polygon'].value
+
+    shape = polygon_support.get_shape(polygon)
+    product = beampy.ProductIO.readProduct(ncfile_name)
+
+    return graph_support.get_timeseries(product, variable_name, shape)
 
 
 """
@@ -259,8 +285,10 @@ def expandBbox(params):
 def update_bounding_box(params):
     if 'shapefile' in params and 'shapeName' in params:
         bounding_box = shapefile_support.get_bounding_box(params['shapefile'].value, params['shapeName'].value)
-        params['bbox'] = Param("bbox", True, True, bounding_box)
-        params['url'] = createURL(params)
+    elif 'polygon' in params:
+        bounding_box = polygon_support.get_bounding_box(params['polygon'].value)
+    params['url'] = createURL(params)
+    params['bbox'] = Param("bbox", True, True, bounding_box)
 
 
 """
