@@ -601,6 +601,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
 
       // Get some values for non-point ROIs
       if(map.ROI_Type !== '' && map.ROI_Type != 'point' && map.ROI_Type != 'shapefile') {
+         $('#graphcreator-bbox').val(new OpenLayers.Format.WKT().extractGeometry(geom));
          area_deg = geom.getArea();
          area_km = (geom.getGeodesicArea()*1e-6);
          height_deg = bounds.getHeight();
@@ -621,13 +622,6 @@ gisportal.rightPanel.setupDrawingControls = function() {
             $('#dispROI').append('<p>Lon, Lat: ' + geom.x.toPrecision(4) + d + ', ' + geom.y.toPrecision(4) + d + '</p>');
             break;
          case 'box':
-            var bbox = bounds;
-            // If the graphing dialog is active, place the BBOX co-ordinates in it's BBOX text field
-            if ($('#graphcreator-bbox').size()){
-               $('#graphcreator-bbox').val(bbox.toBBOX(5, false));
-               gisportal.selection.bbox = bbox.toBBOX(5, false);
-               $(gisportal.selection).trigger('selection_updated', {bbox: true});
-            }
             $('#dispROI').html('<h3>Rectangular ROI</h4>');
             // Setup the JavaScript canvas object and draw our ROI on it
             $('#dispROI').append('<canvas id="ROIC" width="100" height="100"></canvas>');
@@ -680,8 +674,8 @@ gisportal.rightPanel.setupDrawingControls = function() {
             $('#dispROI').append('<p>Centroid Lat, Lon:' + ctrLat.toPrecision(4) + d + ', ' + ctrLon.toPrecision(4) + d + '</p>');
             $('#dispROI').append('<p>Projected Area: ' + area_km.toPrecision(4) + ' km<sup>2</p>');
             break;
-          case 'shapefile':
-//             Handled in gisportal.js (fillROIDisplay())
+         case 'shapefile':
+//             Handled in gisportal.js#fillROIDisplay()
             break;
       }
    }
@@ -712,18 +706,18 @@ gisportal.rightPanel.setupDrawingControls = function() {
 
    // So that changing the input box changes the visual selection box on map
    $('#gisportal-graphing').on('change', '#graphcreator-bbox', function() {
-      var values = $('#graphcreator-bbox').val().split(',');
-      values[0] = gisportal.utils.clamp(values[0], -180, 180); // Long
-      values[2] = gisportal.utils.clamp(values[2], -180, 180); // Long
-      values[1] = gisportal.utils.clamp(values[1], -90, 90); // Lat
-      values[3] = gisportal.utils.clamp(values[3], -90, 90); // Lat
-      $('#graphcreator-bbox').val(values[0] + ',' + values[1] + ',' + values[2] + ',' + values[3]);
-      var feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(values[0], values[1], values[2], values[3]).toGeometry());
-      feature.layer = map.layers[map.layers.length -1];
-      var features = map.layers[map.layers.length -1].features;
-      if (features[0]) map.layers[map.layers.length -1].features[0].destroy();
-      map.layers[map.layers.length -1].features[0] = feature;
-      map.layers[map.layers.length -1].redraw();
+//      var values = $('#graphcreator-bbox').val().split(',');
+//      values[0] = gisportal.utils.clamp(values[0], -180, 180); // Long
+//      values[2] = gisportal.utils.clamp(values[2], -180, 180); // Long
+//      values[1] = gisportal.utils.clamp(values[1], -90, 90); // Lat
+//      values[3] = gisportal.utils.clamp(values[3], -90, 90); // Lat
+//      $('#graphcreator-bbox').val(values[0] + ',' + values[1] + ',' + values[2] + ',' + values[3]);
+//      var feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(values[0], values[1], values[2], values[3]).toGeometry());
+//      feature.layer = map.layers[map.layers.length -1];
+//      var features = map.layers[map.layers.length -1].features;
+//      if (features[0]) map.layers[map.layers.length -1].features[0].destroy();
+//      map.layers[map.layers.length -1].features[0] = feature;
+//      map.layers[map.layers.length -1].redraw();
    });
 
    // TRAC Ticket #58: Fixes flaky non-selection of jQuery UI buttons (http://bugs.jqueryui.com/ticket/7665)
@@ -1028,11 +1022,6 @@ gisportal.rightPanel.setupGraphingTools = function() {
             graphType: graphcreatorGalleryElement.find('input[name="gallery"]:checked').val(),
             bins: $('#graphcreator-bins').val(),
             time: dateRange,
-            geometryType: gisportal.geometryType,
-            bbox: $('#graphcreator-bbox').val(),
-            poylgon: '', // todo - continue here
-            shapefile: $('#shapefile_chooser').find('option:selected').val(),
-            shapeName: $('#shapename_chooser').find('option:selected').val(),
             depth: depthDirection(),
             graphXAxis: graphXAxis,
             graphYAxis: graphYAxis,
@@ -1055,13 +1044,12 @@ gisportal.rightPanel.setupGraphingTools = function() {
             var error = function (request, errorType, exception) {
                 console.log('Failed to retrieve stored graph from user');
             };
-            gisportal.genericAsync('POST', gisportal.graphLocation, { graph: JSON.stringify(graphObject)}, success, error, 'json', {});
 
             var options = {};
             options.title = title;
             options.provider = gisportal.layers[graphcreatorCoverageElement.find('option:selected').val()].providerTag;
             options.labelCount = $('#graph-settings-labels').val();
-            gisportal.graphs.data(graphParams, options);
+            gisportal.graphs.data(graphParams, $('#graphcreator-bbox').val(), options);
         } else {
             gisportal.gritter.showNotification('dataNotSelected', null);
         }
