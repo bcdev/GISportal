@@ -1207,6 +1207,22 @@ gisportal.drawShape = function(shapefile, shapename) {
             var feature = new OpenLayers.Feature.Vector(polygon);
             features.push(feature);
         });
+        var wktSupport = new OpenLayers.Format.WKT();
+        if (features.length > 1) {
+            var wkt = 'MULTIPOLYGON( ';
+            features.forEach(function(feature, i) {
+                var currentPolygon = wktSupport.extractGeometry(feature.geometry);
+                currentPolygon = currentPolygon.replace('POLYGON', '');
+                wkt += currentPolygon;
+                if (i < features.length - 1) {
+                    wkt += ', ';
+                }
+            });
+            wkt += ')';
+        } else {
+            var wkt = wktSupport.extractGeometry(features[0].geometry);
+        }
+        $('#graphcreator-bbox').val(wkt);
         vectorLayer.addFeatures(features);
         gisportal.fillROIDisplay(subshapes, features, data['bounds'].split(','));
     };
@@ -1233,25 +1249,25 @@ gisportal.fillROIDisplay = function(subshapes, features, b) {
         bounds.bottom = parseFloat(b[1]);
         bounds.right = parseFloat(b[2]);
 
-        var area_km = (geom.getGeodesicArea()*1e-6);
+        var area_km = geom.getGeodesicArea() * 1e-6;
         var height_deg = bounds.getHeight();
         var width_deg = bounds.getWidth();
-        var scale = (width_deg > height_deg) ? 90/width_deg : 90/height_deg;
+        var scale = (width_deg > height_deg) ? 90 / width_deg : 90 / height_deg;
 
         var points = [];
         subshape.forEach(function (point) {
             points.push(new OpenLayers.Geometry.Point(point[0], point[1]))
         });
         ctx.beginPath();
-        var x0 = 5 + (points[0].x-bounds.left)*scale;
-        var y0 = 5 + (bounds.top-points[0].y)*scale;
-        ctx.moveTo(x0,y0);
-        for(var i=1,j=points.length; i<j; i++){
-            var x = 5 + (points[i].x-bounds.left) * scale;
-            var y = 5 + (bounds.top-points[i].y) * scale;
+        var x0 = 5 + (points[0].x-bounds.left) * scale;
+        var y0 = 5 + (bounds.top-points[0].y) * scale;
+        ctx.moveTo(x0, y0);
+        for(var pointIndex = 1, j = points.length; pointIndex < j; pointIndex++){
+            var x = 5 + (points[pointIndex].x-bounds.left) * scale;
+            var y = 5 + (bounds.top-points[pointIndex].y) * scale;
             ctx.lineTo(x, y);
         }
-        ctx.lineTo(x0,y0);
+        ctx.lineTo(x0, y0);
         ctx.stroke();
         ctx.fill();
         ctx.closePath();

@@ -259,14 +259,15 @@ var colours = ["rgb(0,0,0)",
 gisportal.graphs = {};
 
 // Options currently requires a title
-gisportal.graphs.data = function(params, options)  {
-   var request = $.param( params );    
+gisportal.graphs.data = function(params, wkt, options)  {
+   var request = $.param( params );
    // Get graph
    $.ajax({
-      type: 'GET',
+      type: 'POST',
       url: gisportal.wcsLocation + request,
       dataType: 'json',
       asyc: true,
+      headers: {wkt: wkt},
       success: function(data) {
          console.log(data);
          gisportal.graphs.create(data, options);

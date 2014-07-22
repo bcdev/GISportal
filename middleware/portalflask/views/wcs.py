@@ -12,7 +12,6 @@ import urllib2
 import os
 import tempfile
 import numpy as np
-import netCDF4 as netCDF
 
 portal_wcs = Blueprint('portal_wcs', __name__)
 
@@ -20,46 +19,32 @@ portal_wcs = Blueprint('portal_wcs', __name__)
 Gets wcs data from a specified server, then performs a requested function
 on the received data, before jsonifying the output and returning it.
 """
-@portal_wcs.route('/wcs', methods=['GET'])
+@portal_wcs.route('/wcs', methods=['POST'])
 def getWcsData():
 
-   geometry_graph_to_method = {
-       'box': {
-           'histogram': (histogram, True),
-           'timeseries': (timeseries, True),
-           'hovmollerLon': (hovmoller, True),
-           'hovmollerLat': (hovmoller, True)
-       },
-       'shapefile': {
-           'histogram': (get_histogram_for_shapefile, False),
-           'timeseries': (get_timeseries_for_shapefile, False),
-           'hovmollerLon': (get_hovmoller_for_shapefile, False),
-           'hovmollerLat': (get_hovmoller_for_shapefile, False)
-       },
-       'wkt': {
-           'histogram': (get_histogram_for_wkt, False),
-           'timeseries': (get_timeseries_for_wkt, False),
-           'hovmollerLon': (get_hovmoller_for_wkt, False),
-           'hovmollerLat': (get_hovmoller_for_wkt, False)
-       }
-
+   graph_to_method = {
+        'histogram': get_histogram,
+        'timeseries': get_timeseries,
+        'hovmollerLon': get_hovmoller,
+        'hovmollerLat': get_hovmoller
    }
+
+   wkt = request.headers['wkt']
 
    g.graphError = ""
 
-   params = getParams() # Gets any parameters
-   params = checkParams(params) # Checks what parameters where entered
+   params = getParams(wkt)  # Gets any parameters
+   params = checkParams(params)  # Checks what parameters where entered
 
    params['url'] = createURL(params)
-   current_app.logger.debug('Processing request...') # DEBUG
+   current_app.logger.debug('Processing request...')  # DEBUG
    current_app.logger.debug(params['url'].value)
    graph_type = params['graphType'].value
-   geometry_type = params['geometryType'].value
 
-   method = geometry_graph_to_method[geometry_type][graph_type]
-   output = getDataSafe(params, method=method[0], open_dataset=method[1])
+   method = graph_to_method[graph_type]
+   output = getDataSafe(params, method)
 
-   current_app.logger.debug('Jsonifying response...') # DEBUG
+   current_app.logger.debug('Jsonifying response...')  # DEBUG
    
    try:
       jsonData = jsonify(output=output, type=params['graphType'].value, coverage=params['coverage'].value, error=g.graphError)
@@ -74,50 +59,7 @@ def getWcsData():
 
 
 @check_for_permission(['admins'])
-def get_timeseries_for_shapefile(params):
-    import beampy  # import here, because importing may take a while
-
-    ncfile_name = params['file_name']
-    variable_name = params['coverage'].value
-    shapefile_name = params['shapefile'].value
-    shape_name = params['shapeName'].value
-
-    shape = shapefile_support.get_shape(shapefile_name, shape_name)
-    product = beampy.ProductIO.readProduct(ncfile_name)
-
-    return graph_support.get_timeseries(product, variable_name, shape)
-
-
-@check_for_permission(['admins'])
-def get_histogram_for_shapefile(params):
-    import beampy  # import here, because importing may take a while
-    ncfile_name = params['file_name']
-    variable_name = params['coverage'].value
-    shapefile_name = params['shapefile'].value
-    shape_name = params['shapeName'].value
-
-    product = beampy.ProductIO.readProduct(ncfile_name)
-    mask = shapefile_support.create_mask(shapefile_name, shape_name, product)
-    data = graph_support.get_band_data_as_array(variable_name, product, mask)
-    return {'histogram': get_histogram(data)}
-
-
-@check_for_permission(['admins'])
-def get_hovmoller_for_shapefile(params):
-    import beampy  # import here, because importing may take a while
-
-    ncfile_name = params['file_name']
-    variable_name = params['graphZAxis'].value
-    shapefile_name = params['shapefile'].value
-    shape_name = params['shapeName'].value
-
-    product = beampy.ProductIO.readProduct(ncfile_name)
-    mask = shapefile_support.create_mask(shapefile_name, shape_name, product)
-    return graph_support.get_hovmoller(product, variable_name, mask, params['graphXAxis'].value, params['graphYAxis'].value)
-
-
-@check_for_permission(['admins'])
-def get_histogram_for_wkt(params):
+def get_histogram(params):
     import beampy  # import here, because importing may take a while
     ncfile_name = params['file_name']
     variable_name = params['coverage'].value
@@ -126,11 +68,11 @@ def get_histogram_for_wkt(params):
     mask = geometry_support.create_mask(wkt)
     product = beampy.ProductIO.readProduct(ncfile_name)
     data = graph_support.get_band_data_as_array(variable_name, product, mask)
-    return {'histogram': get_histogram(data)}
+    return {'histogram': histogram(data)}
 
 
 @check_for_permission(['admins'])
-def get_hovmoller_for_wkt(params):
+def get_hovmoller(params):
     import beampy  # import here, because importing may take a while
     ncfile_name = params['file_name']
     variable_name = params['graphZAxis'].value
@@ -138,11 +80,14 @@ def get_hovmoller_for_wkt(params):
 
     product = beampy.ProductIO.readProduct(ncfile_name)
     mask = geometry_support.create_mask(wkt)
-    return graph_support.get_hovmoller(product, variable_name, mask, params['graphXAxis'].value, params['graphYAxis'].value)
+    hovmoller = graph_support.get_hovmoller(product, variable_name, mask, params['graphXAxis'].value,
+                                            params['graphYAxis'].value)
+    product.dispose()
+    return hovmoller
 
 
 @check_for_permission(['admins'])
-def get_timeseries_for_wkt(params):
+def get_timeseries(params):
     import beampy  # import here, because importing may take a while
 
     ncfile_name = params['file_name']
@@ -152,13 +97,15 @@ def get_timeseries_for_wkt(params):
     shape = geometry_support.get_shape(wkt)
     product = beampy.ProductIO.readProduct(ncfile_name)
 
-    return graph_support.get_timeseries(product, variable_name, shape)
+    timeseries = graph_support.get_timeseries(product, variable_name, shape)
+    product.dispose()
+    return timeseries
 
 
 """
 Gets any parameters.
 """
-def getParams():
+def getParams(wkt):
    # Required for url
    nameToParam = {}
    nameToParam["baseURL"] = Param("baseURL", False, False, request.args.get('baseurl'))
@@ -174,11 +121,8 @@ def getParams():
    nameToParam["vertical"] = Param("vertical", True, True, request.args.get('depth', None))
    
    # Geometry spec
-   nameToParam["geometryType"] = Param("geometryType", False, False, request.args.get('geometryType', None))
-   nameToParam["wkt"] = Param("wkt", True, False, request.args.get('wkt', None))
-   nameToParam["shapefile"] = Param("shapefile", True, False, request.args.get('shapefile', None))
-   nameToParam["shapeName"] = Param("shapeName", True, False, request.args.get('shapeName', None))
-   nameToParam["bbox"] = Param("bbox", False, True, get_bounding_box(nameToParam))
+   nameToParam["wkt"] = Param("wkt", True, False, wkt)
+   nameToParam["bbox"] = Param("bbox", False, True, geometry_support.get_bounding_box(nameToParam['wkt'].value))
 
    # Custom
    nameToParam["graphType"] = Param("graphType", False, False, request.args.get('graphType'))
@@ -191,18 +135,6 @@ def getParams():
    nameToParam["graphZFunc"] = Param("graphZFunc", True, False, request.args.get('graphZFunc'))
    
    return nameToParam
-
-
-def get_bounding_box(params):
-    geometry_type = params['geometryType'].value
-    if geometry_type == 'box':
-        return params['geometry']
-    elif geometry_type == 'shapefile':
-        return shapefile_support.get_bounding_box(params['shapefile'].value, params['shapeName'].value)
-    elif geometry_type == 'wkt':
-        return geometry_support.get_bounding_box(params['wkt'].value)
-    else:
-        raise ValueError('Unknown geometry type \'' + geometry_type + '\'')
 
 
 """
@@ -263,13 +195,6 @@ def saveOutTempFile(resp):
    return temp.name
 
 
-def openNetCDFFile(fileName, format):
-   current_app.logger.debug('Opening netCDF file...')
-   rootgrp = netCDF.Dataset(fileName, 'r', format=format)
-   current_app.logger.debug('NetCDF file opened')
-   return rootgrp
-
-
 def expandBbox(params):
    # TODO: try except for malformed bbox
    current_app.logger.debug('Expanding Bbox...')
@@ -296,16 +221,11 @@ def expandBbox(params):
 """
 Generic method for getting data from a wcs server
 """
-def getData(params, method, open_dataset=True):
+def getData(params, method):
    resp = contactWCSServer(params['url'].value)
    fileName = saveOutTempFile(resp)
    params['file_name'] = fileName
-   if open_dataset:
-      rootgrp = openNetCDFFile(fileName, params['format'].value)
-      output = method(rootgrp, params)
-      rootgrp.close()
-   else:
-      output = method(params)
+   output = method(params)
    os.remove(fileName)
    current_app.logger.debug('Process complete, returning data for transmission...')
    return output
@@ -336,9 +256,9 @@ def getPointData(params, method):
    return {}
 
 
-def getDataSafe(params, method, open_dataset=True):
+def getDataSafe(params, method):
    try:
-      return getData(params, method, open_dataset)
+      return getData(params, method)
    except urllib2.URLError as e:
       print(e)
       if hasattr(e, 'code'): # check for the code attribute from urllib2.urlopen
@@ -353,300 +273,29 @@ def getDataSafe(params, method, open_dataset=True):
       abort(400) # return 400 if we can't get an exact code
 
 
-"""
-Performs a basic set of statistical functions on the provided data.
-"""
-def timeseries(dataset, params):
-   data = np.array(dataset.variables[params['coverage'].value])
+def histogram(arr):
+    maskedarr = np.ma.masked_array(arr, [np.isnan(x) for x in arr])
+    bins = request.args.get('bins', None) # TODO move to get params
+    numbers = []
+    current_app.logger.debug('before bins') # DEBUG
 
-   # Create a masked array ignoring nan's
-   masked_array = np.ma.masked_array(data, [np.isnan(x) for x in data])
-   time = get_coordinate_variable(dataset, 'Time')
+    if bins == None or not bins:
+        bins = np.linspace(float(np.min(maskedarr)), float(np.max(maskedarr)), 11)  # Create ten evenly spaced bins
+        current_app.logger.debug('bins generated') # DEBUG
+        N, bins = np.histogram(maskedarr, bins) # Create the histogram
+    else:
+        values = bins.split(',')
+        for i,v in enumerate(values):
+            values[i] = float(values[i]) # Cast string to float
+        bins = np.array(values)
+        current_app.logger.debug('bins converted') # DEBUG
+        N,bins = np.histogram(maskedarr, bins) # Create the histogram
 
-   if time == None:
-      g.graphError = "could not find time dimension"
-      return
+    current_app.logger.debug('histogram created') # DEBUG
+    for i in range(len(bins)-1): # Iter over the bins
+        if np.isnan(bins[i]) or np.isnan(bins[i+1] or np.isnan(N[i])):
+            g.graphError = 'no valid data available to use'
+            return
 
-   times = np.array(time)
-   output = {}
-
-   units = get_units(dataset.variables[params['coverage'].value])
-   output['units'] = units
-
-   current_app.logger.debug('starting basic calc') # DEBUG
-
-   #mean = get_mean(maskedArray)
-   #median = get_median(maskedArray)
-   #std = get_std(maskedArray)
-   #min = get_min(maskedArray)
-   #max = get_max(maskedArray)
-   timeUnits = get_units(time)
-   start = None
-   if timeUnits:
-      start = (netCDF.num2date(times[0], time.units, calendar='standard')).isoformat()
-   else:
-      start = ''.join(times[0])
-
-   #=========================================================================
-   # if np.isnan(max) or np.isnan(min) or np.isnan(std) or np.isnan(mean) or np.isnan(median):
-   #   output = {}
-   #   g.graphError = "no valid data available to use"
-   # else:
-   #   output['global'] = {'mean': mean, 'median': median,'std': std, 'min': min, 'max': max, 'time': start}
-   #=========================================================================
-
-   output['global'] = {'time': start}
-   current_app.logger.debug('starting iter of dates') # DEBUG
-
-   output['data'] = {}
-
-   for i, row in enumerate(masked_array):
-      #current_app.logger.debug(row)
-      if timeUnits:
-         date = netCDF.num2date(time[i], time.units, calendar='standard').isoformat()
-      else:
-         date = ''.join(times[i])
-      mean = get_mean(row)
-      median = get_median(row)
-      std = get_std(row)
-      min = get_min(row)
-      max = get_max(row)
-
-      if np.isnan(max) or np.isnan(min) or np.isnan(std) or np.isnan(mean) or np.isnan(median):
-         pass
-      else:
-         output['data'][date] = {'mean': mean, 'median': median,'std': std, 'min': min, 'max': max}
-
-   if len(output['data']) < 1:
-      g.graphError = "no valid data available to use"
-      return output
-
-   current_app.logger.debug('Finished basic') # DEBUG
-
-   return output
-
-
-def hovmoller(dataset, params):
-   xAxisVar = params['graphXAxis'].value
-   yAxisVar = params['graphYAxis'].value
-   zAxisVar = params['graphZAxis'].value
-
-   xVar = get_coordinate_variable(dataset, xAxisVar)
-   xArr = np.array(xVar)
-   yVar = get_coordinate_variable(dataset, yAxisVar)
-   yArr = np.array(yVar)
-   zArr = np.array(dataset.variables[zAxisVar])
-   
-   if xVar == None:
-      g.graphError = "could not find %s dimension" % xAxisVar
-      return
-   if yVar == None:
-      g.graphError = "could not find %s dimension" % yAxisVar
-      return
-   
-   # Create a masked array ignoring nan's
-   zMaskedArray = np.ma.masked_invalid(zArr)
-      
-   time = None
-   lat = None
-   lon = None
-   
-   if xAxisVar == 'Time':
-      times = xArr
-      time = xVar
-      lat = yArr
-   else:        
-      lon = xArr
-      times = yArr
-      time = yVar
-
-   output = {}
-   
-   timeUnits = get_units(time)
-   start = None
-   if timeUnits:
-      start = (netCDF.num2date(times[0], time.units, calendar='standard')).isoformat()
-   else: 
-      start = ''.join(times[0])
-   
-   output['global'] = {'time': start}
-   
-   output['data'] = []
- 
-   numDimensions = len(zMaskedArray.shape)
-   
-   direction = None 
-   if lat != None:
-      direction = 'lat'
-   elif lon != None:
-      direction = 'lon'
-      if numDimensions == 4:
-         zMaskedArray = zMaskedArray.swapaxes(2,3)
-      else:
-         zMaskedArray = zMaskedArray.swapaxes(1,2) # Make it use Lon instead of Lat
-   
-
-   # If 4 dimensions, assume depth and switch with time
-   if numDimensions == 4:
-      depth = np.array(get_depth(dataset))
-      if len(depth.shape) > 1:
-         current_app.logger.debug('WARNING: There are multiple depths.')
-      else:
-         # Presume 1 depth, set to contents of depth
-         # This way, it will enumerate over correct array
-         # whether depth or not
-         zMaskedArray = zMaskedArray.swapaxes(0,1)[0]
-         
-         output['depth'] = float(depth[0])
- 
-
-   for i, timelatlon in enumerate(zMaskedArray):
-      date = None    
-      if timeUnits:
-         date = netCDF.num2date(time[i], time.units, calendar='standard').isoformat()
-      else:     
-         date = ''.join(times[i])
-      
-      for j, row in enumerate(timelatlon):
-         
-         if direction == "lat":
-            pos = lat[j]
-         elif direction == "lon":
-            pos = lon[j]
-         
-         mean = get_mean(row)
-         
-         if np.isnan(mean):
-            mean = 0
-
-         output['data'].append([date, float(pos), mean])
-            
-   if len(output['data']) < 1:
-      g.graphError = "no valid data available to use"
-      error_handler.setError('2-07', None, g.user.id, "views/wcs.py:hovmoller - No valid data available to use.")
-      return output
-
-   return output
-
-  
-'''
-Creates a histogram from the provided data. If no bins are created it creates its own.
-'''
-def histogram(dataset, params):
-   var = np.array(dataset.variables[params['coverage'].value]) # Get the coverage as a numpy array
-   return {'histogram': get_histogram(var)}
-
-
-'''
-Returns the raw data.
-'''
-def raw(dataset, params):
-   var = np.array(dataset.variables[params['coverage'].value]) # Get the coverage as a numpy array
-   return {'rawdata': var.tolist()}
-
-'''
-Returns the median value from the provided array.
-'''
-def get_median(arr):
-   return float(np.ma.median(arr))
-
-'''
-Returns the mean value from the provided array.
-'''
-def get_mean(arr):
-   return float(np.mean(arr))
-
-'''
-Returns the std value from the provided array.
-'''
-def get_std(arr):
-   return float(np.std(arr.compressed()))
-
-'''
-Returns the minimum value from the provided array. 
-'''
-def get_min(arr):
-   return float(np.min(arr)) # Get the min ignoring nan's, then cast to float
-
-'''
-Returns the maximum value from the provided array.
-'''
-def get_max(arr):
-   return float(np.max(arr)) # Get the max ignoring nan's, then cast to float
-
-'''
-Returns a histogram created from the provided array. If no bins
-are provided, some are created using the min and max values of the array.
-'''
-def get_histogram(arr):
-   maskedarr = np.ma.masked_array(arr, [np.isnan(x) for x in arr])
-   bins = request.args.get('bins', None) # TODO move to get params
-   numbers = []
-   current_app.logger.debug('before bins') # DEBUG
-   
-   if bins == None or not bins:
-      max = get_max(maskedarr)
-      min = get_min(maskedarr)
-      bins = np.linspace(min, max, 11) # Create ten evenly spaced bins 
-      current_app.logger.debug('bins generated') # DEBUG
-      N,bins = np.histogram(maskedarr, bins) # Create the histogram
-   else:
-      values = bins.split(',')
-      for i,v in enumerate(values):
-         values[i] = float(values[i]) # Cast string to float
-      bins = np.array(values)
-      current_app.logger.debug('bins converted') # DEBUG
-      N,bins = np.histogram(maskedarr, bins) # Create the histogram
-   
-   current_app.logger.debug('histogram created') # DEBUG
-   for i in range(len(bins)-1): # Iter over the bins       
-      if np.isnan(bins[i]) or np.isnan(bins[i+1] or np.isnan(N[i])):
-         g.graphError = 'no valid data available to use'
-         return       
-      
-      numbers.append((bins[i] + (bins[i+1] - bins[i])/2, float(N[i]))) # Get a number halfway between this bin and the next
-   return {'Numbers': numbers, 'Bins': bins.tolist()}
-
-
-'''
-Utility function to find the time dimension from a netcdf file. Needed as the
-time dimension will not always have the same name or the same attributes.
-'''
-def get_coordinate_variable(dataset, axis):
-   for i, key in enumerate(dataset.variables):
-      var = dataset.variables[key]
-      current_app.logger.debug('========== key:' + key + ' ===========') # DEBUG
-      for name in var.ncattrs():
-         current_app.logger.debug(name) # DEBUG
-         if name == '_CoordinateAxisType' and var._CoordinateAxisType == axis:
-            return var
-   
-   return None
-
-
-def get_depth(dataset):
-   for i, key in enumerate(dataset.variables):
-      var = dataset.variables[key]
-      if '_CoordinateAxisType' in var.ncattrs() and '_CoordinateZisPositive' in var.ncattrs():
-         #if var._CoordinateAxisType == 'Height' and var._CoordinateZisPositive == 'down':
-         if var._CoordinateAxisType == 'Height':
-            return var
-   return None
-
-
-def get_dimension(dataset, dimName):
-   for i, key in enumerate(dataset.dimensions):
-      current_app.logger.debug(key)
-      dimension = dataset.dimensions[key]
-      if key == dimName:
-         return len(dimension)
-   
-   return None
-
-
-def get_units(variable):
-   for name in variable.ncattrs():
-      if name == "units":
-         return variable.units
-      
-   return ''
+        numbers.append((bins[i] + (bins[i+1] - bins[i])/2, float(N[i])))  # Get a number halfway between this bin and the next
+    return {'Numbers': numbers, 'Bins': bins.tolist()}

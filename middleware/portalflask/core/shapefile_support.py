@@ -18,8 +18,8 @@ def get_shape(shapefile_name, shape_name):
 def get_shape_names(shapefile_name):
     if not os.path.exists(get_shape_path() + shapefile_name):
         return None
-    shapefile = sf.Reader(get_shape_path() + shapefile_name)
-    index = get_name_index(shapefile.fields) - 1 # '- 1' because fields count a deletion flag, which is not present in records
+    shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name)
+    index = get_name_index(shapefile.fields) - 1  # '- 1' because fields count a deletion flag, which is not present in records
     shape_names = []
     for shape_record in shapefile.shapeRecords():
         shape_names.append(shape_record.record[index])
@@ -80,7 +80,7 @@ def get_name_index(fields):
 
 
 def get_record(shape_name, shapefile):
-    index = get_name_index(shapefile.fields) - 1 # '- 1' because fields count a deletion flag, which is not present in records
+    index = get_name_index(shapefile.fields) - 1  # '- 1' because fields count a deletion flag, which is not present in records
     records = shapefile.shapeRecords()
     for rec in records:
         if rec.record[index] == shape_name:
@@ -106,33 +106,3 @@ def get_shape_for_record(record):
         start_index = end_index
 
     return shape
-
-
-def create_mask(shapefile_name, shape_name, product):
-    FeatureUtils = jpy.get_type('org.esa.beam.util.FeatureUtils')
-    File = jpy.get_type('java.io.File')
-    Util = jpy.get_type('org.esa.beam.statistics.output.Util')
-    DefaultFeatureCollection = jpy.get_type('org.geotools.feature.DefaultFeatureCollection')
-    VectorDataNode = jpy.get_type('org.esa.beam.framework.datamodel.VectorDataNode')
-    ProgressMonitor = jpy.get_type('com.bc.ceres.core.ProgressMonitor')
-    Color = jpy.get_type('java.awt.Color')
-
-    shapefile_path = get_shape_path() + shapefile_name
-    shapefile = File(shapefile_path)
-    features = FeatureUtils.loadFeatureCollectionFromShapefile(shapefile)
-    feature_iterator = features.features()
-    while feature_iterator.hasNext():
-        simple_feature = feature_iterator.next()
-        name = Util.getFeatureName(simple_feature)
-        if name == shape_name:
-            break
-
-    feature_iterator.close()
-    fc = DefaultFeatureCollection(simple_feature.getIdentifier().getID(), simple_feature.getType())
-    fc.add(simple_feature)
-
-    product_features = FeatureUtils.clipFeatureCollectionToProductBounds(fc, product, None, ProgressMonitor.NULL)
-
-    vdn = VectorDataNode(shape_name, product_features)
-    product.getVectorDataGroup().add(vdn)
-    return product.addMask('valid', vdn, 'desc', Color.black, 0.0)
