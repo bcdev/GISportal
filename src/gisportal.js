@@ -1188,44 +1188,27 @@ gisportal.removeShapes = function() {
 
 gisportal.drawShape = function(shapefile, shapename) {
     var create_shape = function(data) {
-        var subshapes = data['geometry'];
-        if (subshapes == null) {
+        var wkt = data['geometry'];
+        if (wkt == null) {
             return;
         }
-        var features = [];
+        var wktSupport = new OpenLayers.Format.WKT();
         var vectorLayer = map.getLayersBy('controlID', 'poiLayer')[0];
         vectorLayer.removeAllFeatures();
-        subshapes.forEach(function(subshape, i) {
-            var points = [];
-            subshape.forEach(function (point) {
-                points.push(new OpenLayers.Geometry.Point(point[0], point[1]))
-            });
-            var ring = new OpenLayers.Geometry.LinearRing(points);
-            var polygon = new OpenLayers.Geometry.Polygon([ring]);
-
-            var feature = new OpenLayers.Feature.Vector(polygon);
-            features.push(feature);
-        });
-        var wktSupport = new OpenLayers.Format.WKT();
-        if (features.length > 1) {
-            var wkt = 'MULTIPOLYGON( ';
-            features.forEach(function(feature, i) {
-                var currentPolygon = wktSupport.extractGeometry(feature.geometry);
-                currentPolygon = currentPolygon.replace('POLYGON', '');
-                wkt += currentPolygon;
-                if (i < features.length - 1) {
-                    wkt += ', ';
-                }
-            });
-            wkt += ')';
-        } else {
-            var wkt = wktSupport.extractGeometry(features[0].geometry);
-        }
         $('#graphcreator-bbox').val(wkt);
-        vectorLayer.addFeatures(features);
-        gisportal.fillROIDisplay(subshapes, features, data['bounds'].split(','));
-    };
-    gisportal.genericAsync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile + '/' + shapename, null, create_shape, null, 'json', {})
+        var features = wktSupport.read(wkt);
+        var featureList = [];
+        if (wkt.toLowerCase().indexOf('multipolygon') != -1) {
+           features.geometry.components.forEach(function(polygon) {
+              featureList.push(new OpenLayers.Feature.Vector(polygon));
+           });
+        } else {
+           featureList = [features];
+        }
+        vectorLayer.addFeatures(featureList);
+        gisportal.fillROIDisplay(wkt, featureList, data['bounds'].split(','));
+   };
+   gisportal.genericAsync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile + '/' + shapename, null, create_shape, null, 'json', {})
 };
 
 gisportal.fillROIDisplay = function(subshapes, features, b) {
@@ -1239,9 +1222,9 @@ gisportal.fillROIDisplay = function(subshapes, features, b) {
     ctx.fillStyle = '#CCCCCC';
 
     var current_area = 0;
-
-    subshapes.forEach(function(subshape, i) {
-        var geom = features[i].geometry;
+    // todo - fix it!
+    features.forEach(function(feature, i) {
+        var geom = feature.geometry;
         var bounds = geom.getBounds();
         bounds.top = parseFloat(b[3]);
         bounds.left = parseFloat(b[0]);
@@ -1254,7 +1237,7 @@ gisportal.fillROIDisplay = function(subshapes, features, b) {
         var scale = (width_deg > height_deg) ? 90 / width_deg : 90 / height_deg;
 
         var points = [];
-        subshape.forEach(function (point) {
+        geom.components[0].components.forEach(function (point) {
             points.push(new OpenLayers.Geometry.Point(point[0], point[1]))
         });
         ctx.beginPath();
