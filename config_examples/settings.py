@@ -7,6 +7,7 @@ SECRET_KEY = 'p7i0-22@0eheas^kzw3=1qfug_x+5)5)8u4v=2iyiwwx1eh)37'
 
 OPENID_FOLDER = '/home/rsgadmin/cache/portal/openID'
 DATABASE_URI = 'sqlite:///' + OPENID_FOLDER + '/user_storage.db'
+SHAPEFILE_PATH = '/home/thomass/temp/' #Complete Path to shapefile folder. Needs to begin and end with a /
 
 
 LOG_LEVEL = "DEBUG"

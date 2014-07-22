@@ -3,19 +3,22 @@ import os
 import shapefile as sf
 from beampy import jpy
 import numpy as np
+from flask import current_app, g
+
+def get_shape_path():
+    return str(current_app.config.get('SHAPEFILE_PATH')) + str(g.user.username) + "/"
 
 
 def get_shape(shapefile_name, shape_name):
-    shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name) # todo replace hard-coded dir
+    shapefile = sf.Reader(get_shape_path() + shapefile_name)
     record = get_record(shape_name, shapefile)
     return get_shape_for_record(record)
 
 
 def get_shape_names(shapefile_name):
-    # todo - replace hard-coded path
-    if not os.path.exists('/home/thomass/temp/' + shapefile_name):
+    if not os.path.exists(get_shape_path() + shapefile_name):
         return None
-    shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name)
+    shapefile = sf.Reader(get_shape_path() + shapefile_name)
     index = get_name_index(shapefile.fields) - 1 # '- 1' because fields count a deletion flag, which is not present in records
     shape_names = []
     for shape_record in shapefile.shapeRecords():
@@ -24,10 +27,9 @@ def get_shape_names(shapefile_name):
 
 
 def get_bounding_box(shapefile_name, shape_name):
-    # todo - replace hard-coded path
-    if not os.path.exists('/home/thomass/temp/' + shapefile_name):
+    if not os.path.exists(get_shape_path() + shapefile_name):
         return None
-    shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name)
+    shapefile = sf.Reader(get_shape_path() + shapefile_name)
     record = get_record(shape_name, shapefile)
     shape_bbox = record.shape.bbox
     result_bbox = ''
@@ -40,9 +42,9 @@ def get_bounding_box(shapefile_name, shape_name):
 
 
 def get_shape_geometry(shapefile_name, shape_name):
-    if not os.path.exists('/home/thomass/temp/' + shapefile_name):
+    if not os.path.exists(get_shape_path() + shapefile_name):
         return None
-    shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name)
+    shapefile = sf.Reader(get_shape_path() + shapefile_name)
     name_index = get_name_index(shapefile.fields) - 1
 
     for index, shape_record in enumerate(shapefile.shapeRecords()):
@@ -115,7 +117,7 @@ def create_mask(shapefile_name, shape_name, product):
     ProgressMonitor = jpy.get_type('com.bc.ceres.core.ProgressMonitor')
     Color = jpy.get_type('java.awt.Color')
 
-    shapefile_path = '/home/thomass/temp/' + shapefile_name
+    shapefile_path = get_shape_path() + shapefile_name
     shapefile = File(shapefile_path)
     features = FeatureUtils.loadFeatureCollectionFromShapefile(shapefile)
     feature_iterator = features.features()

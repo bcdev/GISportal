@@ -114,7 +114,9 @@ def permissions(allowed_user_groups):
 @check_for_permission(['admins'])
 def get_shapefile_names():
     print('get_shapefile_names')
-    files = [f for f in os.listdir('/home/thomass/temp') if os.path.basename(f).endswith('.shp')]
+    if not os.path.exists(shapefile_support.get_shape_path()):
+        return jsonify(shapefiles=[])
+    files = [f for f in os.listdir(shapefile_support.get_shape_path()) if os.path.basename(f).endswith('.shp')]
     return jsonify(shapefiles=files)
 
 

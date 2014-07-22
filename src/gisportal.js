@@ -922,6 +922,9 @@ gisportal.login = function() {
    gisportal.refreshOpLayers();
    gisportal.updateShapefiles();
    gisportal.updateShapes();
+   $('#shapefile_chooser').removeAttr('disabled').trigger('chosen:updated').hide();
+   $('#shapename_chooser').trigger('chosen:updated').hide();
+   $('#shape_chooser').show();
 };
 
 /**
@@ -934,6 +937,10 @@ gisportal.logout = function() {
    gisportal.refreshOpLayers();
    gisportal.updateShapefiles();
    gisportal.updateShapes();
+   gisportal.removeShapes();
+   $('#shapefile_chooser').attr('disabled', 'disabled').trigger('chosen:updated');
+   $('#shapename_chooser').attr('disabled', 'disabled').trigger('chosen:updated');
+   $('#shape_chooser').hide();
 };
 
 
@@ -1173,15 +1180,12 @@ gisportal.updateShapes = function() {
 };
 
 gisportal.removeShapes = function() {
-    layers = map.getLayersBy('controlID', 'poiLayer');
-    console.log(layers);
+    var layers = map.getLayersBy('controlID', 'poiLayer');
     layers.forEach(function (entry) {
-        console.log(entry['id']);
-        //$('#' + entry['id']).remove();
-        map.removeLayer(entry);
-
+        entry.removeAllFeatures();
     });
-}
+    $('#dispROI').empty().append('No Selection');
+};
 
 gisportal.drawShape = function(shapefile, shapename) {
     var create_shape = function(data) {
@@ -1314,6 +1318,7 @@ gisportal.zoomOverall = function()  {
 gisportal.submit_shapefile_upload_form = function() {
     var percent = $('.percent');
     var bar = $('.bar');
+    var name = document.getElementById('shapefile_upload_button').value.split("\\").slice(-1)[0].split(".")[0] + ".shp";
     $('#uploadshapefile').ajaxForm({
         beforeSend: function() {
             var percentVal = '0%';
@@ -1331,6 +1336,10 @@ gisportal.submit_shapefile_upload_form = function() {
             bar.width(percentVal);
             percent.html(percentVal);
             gisportal.updateShapefiles();
+            $('#shapefile_chooser').val(name).trigger('chosen:updated');
+            gisportal.updateShapes();
+            $('#shapename_chooser').trigger('chosen:updated');
+            gisportal.drawShape($('#shapefile_chooser').val(), $('#shapename_chooser').val());
         }
     });
     $('#uploadshapefile').submit();
