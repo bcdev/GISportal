@@ -21,6 +21,7 @@ portal_upload = Blueprint('portal_upload', __name__)
 def shapefile_upload():
     shapefiles = request.files.getlist('shapefile[]')
     if len(shapefiles) == 0:
+        # todo -- not supposed to come here; if this is keeps not being printed out, remove the whole if-clause
         print('Apparently uploaded empty list of files...?')
         return '200'
 
