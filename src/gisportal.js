@@ -922,9 +922,6 @@ gisportal.login = function() {
    gisportal.refreshOpLayers();
    gisportal.updateShapefiles();
    gisportal.updateShapes();
-   $('#shapefile_chooser').removeAttr('disabled').trigger('chosen:updated').hide();
-   $('#shapename_chooser').trigger('chosen:updated').hide();
-   $('#shape_chooser').show();
 };
 
 /**
@@ -938,9 +935,6 @@ gisportal.logout = function() {
    gisportal.updateShapefiles();
    gisportal.updateShapes();
    gisportal.removeShapes();
-   $('#shapefile_chooser').attr('disabled', 'disabled').trigger('chosen:updated');
-   $('#shapename_chooser').attr('disabled', 'disabled').trigger('chosen:updated');
-   $('#shape_chooser').hide();
 };
 
 
@@ -1101,7 +1095,7 @@ gisportal.setupShapefileDropdown = function() {
     var config = {
         '.chosen-select'           : {"disable_search": true, "inherit_select_classes": true, "width": "220px"},
         '.chosen-select-region' : {disable_search_threshold:10, "inherit_select_classes": true, "width": "220px", no_results_text:'No region found!'}
-    }
+    };
     for (var selector in config) {
         $(selector).chosen(config[selector]).ready(function() {
             if (selector == ".chosen-select-region") {
@@ -1115,7 +1109,7 @@ gisportal.setupShapefileDropdown = function() {
             $('#shapefile_upload_button').focus().click();
         }
     });
-}
+};
 
 gisportal.updateShapefiles = function() {
     var $shapefileChooser = $('#shapefile_chooser');
@@ -1144,7 +1138,6 @@ gisportal.updateShapefiles = function() {
 };
 
 gisportal.updateShapes = function() {
-    var shapefile_name = $('#shapefile_chooser').find('option:selected').val();
     var $shapenameChooser = $('#shapename_chooser');
 
     var clear_shapes = function() {
@@ -1152,6 +1145,12 @@ gisportal.updateShapes = function() {
             $($shapenameChooser.find('option[value="' + this.value + '"]')).remove();
         });
     };
+
+    var shapefile_name = $('#shapefile_chooser').find('option:selected').val();
+    if (shapefile_name == 'upload') {
+        clear_shapes();
+        return;
+    }
 
     var set_shapes = function(data, opts) {
         clear_shapes();

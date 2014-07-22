@@ -49,6 +49,7 @@ function findCssTargets(jQueryCriteria) {
 }
 
 function onRetrieveActionsSuccess(data, opt) {
+    actions = [];
     for (var i = 0; i < data.action_registry.length; i++) {
         var action = data.action_registry[i];
         var localAction = new Action();
