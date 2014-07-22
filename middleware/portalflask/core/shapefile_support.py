@@ -5,10 +5,6 @@ from beampy import jpy
 import numpy as np
 from flask import current_app, g
 
-def get_shape_path():
-    return str(current_app.config.get('SHAPEFILE_PATH')) + str(g.user.username) + "/"
-
-
 def get_shape(shapefile_name, shape_name):
     shapefile = sf.Reader(get_shape_path() + shapefile_name)
     record = get_record(shape_name, shapefile)
@@ -18,7 +14,7 @@ def get_shape(shapefile_name, shape_name):
 def get_shape_names(shapefile_name):
     if not os.path.exists(get_shape_path() + shapefile_name):
         return None
-    shapefile = sf.Reader('/home/thomass/temp/' + shapefile_name)
+    shapefile = sf.Reader(get_shape_path() + shapefile_name)
     index = get_name_index(shapefile.fields) - 1  # '- 1' because fields count a deletion flag, which is not present in records
     shape_names = []
     for shape_record in shapefile.shapeRecords():
@@ -106,3 +102,7 @@ def get_shape_for_record(record):
         start_index = end_index
 
     return shape
+
+
+def get_shape_path():
+    return str(current_app.config.get('SHAPEFILE_PATH')) + str(g.user.username) + "/"
