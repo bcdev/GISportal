@@ -16,6 +16,8 @@
 
 package com.bc.openid;
 
+import com.sun.security.auth.module.LdapLoginModule;
+
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -25,10 +27,13 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -67,48 +72,44 @@ public class LdapAuth extends AuthenticationHandler {
         try (MyInitialLdapContext context = new MyInitialLdapContext(env)) {
             SearchResult userEntry = getUserEntry(username, context);
             setUserModel(username, userEntry);
-
-            try {
-                checkUsernameAndPassword(password, userEntry);
-            } catch (NamingException e) {
-                e.printStackTrace();
-                getLogger().apply("Wrong combination of username and password. Reason: " + e.getMessage());
-                throw new AuthenticationException(username, "Wrong combination of username and password", e);
-            }
-
-            Object uidNumber = userEntry.getAttributes().get("uidNumber").get(0);
-            List<String> groupNames = getGroupNames(context, uidNumber);
+            checkUsernameAndPassword(userEntry.getAttributes().get("cn").get(0).toString(), password);
+            Object gidNumber = userEntry.getAttributes().get("gidNumber").get(0);
+            List<String> groupNames = getGroupNames(context, gidNumber.toString());
             userModel.setGroupNames(groupNames.toArray(new String[groupNames.size()]));
         } catch (NamingException e) {
             throw new AuthenticationException(username, e);
         }
     }
 
-    private void checkUsernameAndPassword(String password, SearchResult userEntry) throws NamingException {
-        Hashtable<String, Object> env = new Hashtable<>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, ldapUrl(host, port));
-        env.put(Context.SECURITY_AUTHENTICATION, "DIGEST-MD5"); // todo - make configurable
-        try {
-            byte[] md5 = MessageDigest.getInstance("MD5").digest(password.getBytes("UTF-8"));
-            StringBuilder builder = new StringBuilder();
-            for (byte b : md5) {
-                builder.append(Integer.toHexString((b & 0xFF) | 0x100).substring(1,3));
+    private void checkUsernameAndPassword(String username, String password) throws AuthenticationException {
+        LdapLoginModule ldapLoginModule = new LdapLoginModule();
+
+        HashMap<String, Object> options = new HashMap<>();
+        options.put("userProvider", ldapUrl(host, port));
+        options.put("authIdentity", "uid={USERNAME},ou=" + userOu + "," + ldapPath);
+        options.put("useSSL", "false");
+        options.put(Context.SECURITY_AUTHENTICATION, "simple");
+
+        ldapLoginModule.initialize(new Subject(), callbacks -> {
+            for (Callback callback : callbacks) {
+                if (callback instanceof NameCallback) {
+                    ((NameCallback) callback).setName(username);
+                } else if (callback instanceof PasswordCallback) {
+                    ((PasswordCallback) callback).setPassword(password.toCharArray());
+                }
             }
-            env.put(Context.SECURITY_CREDENTIALS, builder.toString());
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+        }, new HashMap<>(), options);
+
+        try {
+            ldapLoginModule.login();
+            ldapLoginModule.commit();
+        } catch (LoginException e) {
             e.printStackTrace();
+            throw new AuthenticationException("Wrong combination of username and password.", e);
         }
-        String dn = "cn=" + userEntry.getAttributes().get("cn").get(0).toString() + ",ou=users," + ldapPath;
-        env.put("com.sun.jndi.ldap.trace.ber", System.err);
-        env.put(Context.SECURITY_PRINCIPAL, dn);
-        env.put("java.naming.security.sasl.authorizationId", dn);
-//        env.put(Context.SECURITY_PRINCIPAL, dn);
-        System.out.println(env);
-        new InitialLdapContext(env, new Control[0]);
     }
 
-    private List<String> getGroupNames(MyInitialLdapContext context, Object uidNumber) throws NamingException, AuthenticationException {
+    private List<String> getGroupNames(MyInitialLdapContext context, String gidNumber) throws NamingException, AuthenticationException {
         SearchControls groupSearch = new SearchControls();
         groupSearch.setSearchScope(SearchControls.SUBTREE_SCOPE);
         NamingEnumeration groups = context.search("ou=" + groupOu + "," + ldapPath, "(objectClass=posixGroup)", groupSearch);
@@ -119,9 +120,9 @@ public class LdapAuth extends AuthenticationHandler {
             SearchResult group = (SearchResult) groups.next();
             Attributes groupAttributes = group.getAttributes();
             String groupName = groupAttributes.get("cn").get(0).toString();
-            Attribute memberUids = groupAttributes.get("memberUid");
-            for (int i = 0; i < memberUids.size(); i++) {
-                if (memberUids.get(i).equals(uidNumber)) {
+            Attribute gidIds = groupAttributes.get("gidNumber");
+            for (int i = 0; i < gidIds.size(); i++) {
+                if (gidIds.get(i).equals(gidNumber)) {
                     groupNames.add(groupName);
                 }
             }
@@ -131,7 +132,7 @@ public class LdapAuth extends AuthenticationHandler {
 
     private SearchResult getUserEntry(String username, MyInitialLdapContext context) throws NamingException, AuthenticationException {
         SearchControls searchControls = new SearchControls();
-        searchControls.setReturningAttributes(new String [] {"givenName", "sn", "mail", "cn", "uidNumber"});
+        searchControls.setReturningAttributes(null);
         String filter = "(uid=" + username + ")";
 
         NamingEnumeration<SearchResult> results = context.search("ou=" + userOu + "," + ldapPath, filter, searchControls);
@@ -142,7 +143,7 @@ public class LdapAuth extends AuthenticationHandler {
                 throw new AuthenticationException(username, "Matched multiple users for username: '" + username + "'");
             }
         } else {
-            throw new AuthenticationException(username, "Wrong combination of username and password");
+            throw new AuthenticationException(username, "User not found");
         }
         return userEntry;
     }
@@ -152,6 +153,8 @@ public class LdapAuth extends AuthenticationHandler {
         Attribute mailAttribute = userEntry.getAttributes().get("mail");
         if (mailAttribute != null) {
             userModel.setEmailAddress(mailAttribute.get().toString());
+        } else {
+            userModel.setEmailAddress("");
         }
         String fullName = "";
         Attribute givenNameAttribute = userEntry.getAttributes().get("givenName");

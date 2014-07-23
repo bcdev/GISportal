@@ -3,9 +3,6 @@ package com.bc.openid;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -28,16 +25,6 @@ public class LdapAuthTest {
         parameters.put("com.bc.openid.authentication.ldap.user-ou", "users");
         parameters.put("com.bc.openid.authentication.ldap.group-ou", "groups");
         auth.configure(parameters);
-    }
-
-    @Test
-    public void testName() throws Exception {
-        // Create initial context
-        DirContext ctx = new InitialDirContext();
-
-        // Read supportedSASLMechanisms from root DSE
-        Attributes attrs = ctx.getAttributes("ldap://auth.bc.local:389");
-        System.out.println("LdapAuthTest.testName");
     }
 
     @Test

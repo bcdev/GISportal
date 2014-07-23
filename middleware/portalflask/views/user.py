@@ -37,8 +37,8 @@ def create_or_login(resp):
    print('in create or login')
 
    generic_identity = resp.identity_url
-   email = resp.email
-   user_identity = generic_identity + '?id=' + hashlib.md5(email).hexdigest()
+   nickname = resp.nickname
+   user_identity = generic_identity + '?id=' + hashlib.md5(nickname).hexdigest()
    session['openid'] = user_identity
    user = User.query.filter_by(openid=user_identity).first()
 
@@ -61,29 +61,23 @@ def create_user():
    if request.method == 'POST':
       print ('in post')
       email = request.form['email']
-      if '@' not in email:
-         print('Error: invalid email address')
-      else:
-         group_names = request.form['groups'].split()
-         username = request.form['username'].split()
-         full_name = request.args.get('full_name', None)
-         add_user_to_db(email, username, full_name, group_names)
-         db_session.commit()
-         print('Profile successfully created')
-         return redirect(oid.get_next_url())
+      group_names = request.form['groups'].split()
+      username = request.form['username'].split()
+      full_name = request.args.get('full_name', None)
+      add_user_to_db(email, username, full_name, group_names)
+      db_session.commit()
+      print('Profile successfully created')
+      return redirect(oid.get_next_url())
    elif request.method == 'GET':
       print('in get')
       email = request.args.get('email', None)
-      if '@' not in email:
-          print(u'Error: you have to enter a valid email address')
-      else:
-         group_names = request.args.get('groups', None).split()
-         username = request.args.get('username', None)
-         full_name = request.args.get('full_name', None)
-         add_user_to_db(email, username, full_name, group_names)
-         db_session.commit()
-         print('Profile successfully created')
-         return redirect(url_for('portal_user.index'))
+      group_names = request.args.get('groups', None).split()
+      username = request.args.get('username', None)
+      full_name = request.args.get('full_name', None)
+      add_user_to_db(email, username, full_name, group_names)
+      db_session.commit()
+      print('Profile successfully created')
+      return redirect(url_for('portal_user.index'))
    print('returning')
    return redirect(url_for('portal_user.index'))
 
