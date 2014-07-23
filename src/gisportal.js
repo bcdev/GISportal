@@ -1078,6 +1078,7 @@ gisportal.main = function() {
 
    gisportal.setupShapefileDropdown();
    gisportal.setupWKTBoxAnimation();
+   gisportal.setGraphRequirementCheck();
 
    // Grab the url of any state.
    var stateID = gisportal.utils.getURLParameter('state');
@@ -1091,6 +1092,37 @@ gisportal.main = function() {
       console.log('Loading Default State...');
    }
 };
+
+gisportal.setGraphRequirementCheck = function () {
+    $('#graphcreator-bbox').on('change','textarea',function(){
+        console.log('test');
+        var wkt = $('#graphcreator-bbox').val();
+        if (wkt.length == 0) {
+            $('#graphcreator-bbox').animate({
+                'border-color': 'red'
+            });
+        } else {
+            $('#graphcreator-bbox').animate({
+                'border-color': 'rgb(200, 200, 200)'
+            });
+        }
+    })
+
+    $('#graphcreator-coverage').change(function () {
+        var layer = $('#graphcreator-coverage').val();
+
+        if (layer == null) {
+            $('#graphcreator-coverage').animate({
+                'border-color': 'red'
+            });
+        } else {
+            $('#graphcreator-coverage').animate({
+                'border-color': 'black'
+            });
+        }
+    });
+
+}
 
 gisportal.setupWKTBoxAnimation = function() {
     $('#graphcreator-bbox').parent().focusin(function () {

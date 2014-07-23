@@ -587,6 +587,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
 
    // Function called once a ROI has been drawn on the map
    function ROIAdded(feature) {
+
       gisportal.switchBackToPan();
 
       // Get the geometry of the drawn feature
@@ -617,6 +618,11 @@ gisportal.rightPanel.setupDrawingControls = function() {
          width_km = OpenLayers.Util.distVincenty(new OpenLayers.LonLat(bounds.left,ctrLat),new OpenLayers.LonLat(bounds.right,ctrLat));
          radius_deg = ((bounds.getWidth() + bounds.getHeight())/4);
       }
+
+       console.log('blub');
+       $('#graphcreator-bbox').animate({
+           'border-color': 'rgb(200, 200, 200)'
+       });
 
       switch(map.ROI_Type) {
          case 'point':
@@ -1009,6 +1015,32 @@ gisportal.rightPanel.setupGraphingTools = function() {
             return elevation;
         };
 
+
+        var wkt = $('#graphcreator-bbox').val();
+        var layer = $('#graphcreator-coverage').val();
+        if (wkt.length == 0) {
+            $('#graphcreator-bbox').animate({
+                'border-color': 'red'
+            });
+        } else {
+            $('#graphcreator-bbox').animate({
+                'border-color': 'rgb(200, 200, 200)'
+            });
+        }
+        if (layer == null) {
+            $('#graphcreator-coverage').animate({
+                'border-color': 'red'
+            });
+        } else {
+            $('#graphcreator-coverage').animate({
+                'border-color': 'black'
+            });
+        }
+        if (wkt.length == 0 || layer == null) {
+            return 0;
+        }
+
+
         const graphcreatorCoverageElement = $('#graphcreator-coverage');
         var graphParams = {
             baseurl: $('#graphcreator-baseurl').val(),
@@ -1046,7 +1078,7 @@ gisportal.rightPanel.setupGraphingTools = function() {
             options.labelCount = $('#graph-settings-labels').val();
             gisportal.graphs.data(graphParams, $('#graphcreator-bbox').val(), options);
         } else {
-            gisportal.gritter.showNotification('dataNotSelected', null);
+//            gisportal.gritter.showNotification('dataNotSelected', null);
         }
     };
 
