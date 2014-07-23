@@ -513,6 +513,7 @@ gisportal.rightPanel.setup = function() {
         gisportal.updateShapes();
         updateShapenameDropdown();
     };
+
    $('#shapefile_chooser').change(shapefileDropdownHandler);
    $('#shapename_chooser').change(updateShapenameDropdown);
    $('#shapefile_upload_button').change(gisportal.submit_shapefile_upload_form);
@@ -624,6 +625,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
             $('#dispROI').append('<p>Lon, Lat: ' + geom.x.toPrecision(4) + d + ', ' + geom.y.toPrecision(4) + d + '</p>');
             break;
          case 'box':
+            $('li#ROIButtonSet label[role="button"]').attr('aria-pressed', 'false').removeClass('ui-state-active');
             $('#dispROI').html('<h3>Rectangular ROI</h4>');
             // Setup the JavaScript canvas object and draw our ROI on it
             $('#dispROI').append('<canvas id="ROIC" width="100" height="100"></canvas>');
@@ -640,6 +642,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
             $('#dispROI').append('<p>Projected Area: ' + area_km.toPrecision(4) + ' km<sup>2</sup></p>');
             break;
          case 'circle':
+             $('li#ROIButtonSet label[role="button"]').attr('aria-pressed', 'false').removeClass('ui-state-active');
             $('#dispROI').html('<h3>Circular ROI</h4>');
             $('#dispROI').append('<img src="./img/circleROI.png" title ="Circular Region Of Interest" alt="Map Point" />');
             $('#dispROI').append('<p>Radius: ' + radius_deg.toPrecision(4) + d + '</p>');
@@ -649,6 +652,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
             $('#dispROI').append('<p>Projected Area: ' + area_km.toPrecision(4) + ' km<sup>2</sup></p>');
             break;
          case 'polygon':
+             $('li#ROIButtonSet label[role="button"]').attr('aria-pressed', 'false').removeClass('ui-state-active');
             // Get the polygon vertices
             var vertices = geom.getVertices();
             $('#dispROI').html('<h3>Custom Polygon ROI</h4>');
@@ -708,18 +712,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
 
    // So that changing the input box changes the visual selection box on map
    $('#gisportal-graphing').on('change', '#graphcreator-bbox', function() {
-//      var values = $('#graphcreator-bbox').val().split(',');
-//      values[0] = gisportal.utils.clamp(values[0], -180, 180); // Long
-//      values[2] = gisportal.utils.clamp(values[2], -180, 180); // Long
-//      values[1] = gisportal.utils.clamp(values[1], -90, 90); // Lat
-//      values[3] = gisportal.utils.clamp(values[3], -90, 90); // Lat
-//      $('#graphcreator-bbox').val(values[0] + ',' + values[1] + ',' + values[2] + ',' + values[3]);
-//      var feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(values[0], values[1], values[2], values[3]).toGeometry());
-//      feature.layer = map.layers[map.layers.length -1];
-//      var features = map.layers[map.layers.length -1].features;
-//      if (features[0]) map.layers[map.layers.length -1].features[0].destroy();
-//      map.layers[map.layers.length -1].features[0] = feature;
-//      map.layers[map.layers.length -1].redraw();
+        //TODO Implement
    });
 
    // TRAC Ticket #58: Fixes flaky non-selection of jQuery UI buttons (http://bugs.jqueryui.com/ticket/7665)
