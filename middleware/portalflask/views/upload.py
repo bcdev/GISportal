@@ -17,7 +17,7 @@ from actions import check_for_permission
 portal_upload = Blueprint('portal_upload', __name__)
 
 @portal_upload.route('/shapefile_upload', methods=['POST'])
-@check_for_permission(['admins'])
+@check_for_permission(['bc', 'coastcolour'])
 def shapefile_upload():
     shapefiles = request.files.getlist('shapefile[]')
     if len(shapefiles) == 0:

@@ -83,7 +83,7 @@ def create_user():
 
 
 @portal_user.route('/get_user', methods=['POST'])
-@check_for_permission(['admins'])
+@check_for_permission(['bc'])
 def get_user():
     if g.user is not None:
         groupstring = ''
@@ -105,7 +105,7 @@ def permissions(allowed_user_groups):
 
 
 @portal_user.route('/get_shapefile_names', methods=['POST'])
-@check_for_permission(['admins'])
+@check_for_permission(['bc', 'coastcolour'])
 def get_shapefile_names():
     print('get_shapefile_names')
     if not os.path.exists(shapefile_support.get_shape_path()):
@@ -115,7 +115,7 @@ def get_shapefile_names():
 
 
 @portal_user.route('/get_shape_names/<shapefile_name>', methods=['POST'])
-@check_for_permission(['admins'])
+@check_for_permission(['bc', 'coastcolour'])
 def get_shape_names(shapefile_name):
     print('get_shape_names')
     shape_names = shapefile_support.get_shape_names(shapefile_name)
@@ -123,7 +123,7 @@ def get_shape_names(shapefile_name):
 
 
 @portal_user.route('/get_shapefile_geometry/<shapefile_name>/<shape_name>', methods=['POST'])
-@check_for_permission(['admins'])
+@check_for_permission(['bc', 'coastcolour'])
 def get_shapefile_geometry(shapefile_name, shape_name):
     print('get_shape_geometry')
     return jsonify(geometry=shapefile_support.get_shape_geometry(shapefile_name, shape_name), bounds=shapefile_support.get_bounding_box(shapefile_name, shape_name))

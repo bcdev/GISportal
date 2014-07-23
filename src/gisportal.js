@@ -1078,7 +1078,7 @@ gisportal.main = function() {
 
    gisportal.setupShapefileDropdown();
    gisportal.setupWKTBoxAnimation();
-   gisportal.setGraphRequirementCheck();
+   gisportal.setupPlotRequirementsCheck();
 
    // Grab the url of any state.
    var stateID = gisportal.utils.getURLParameter('state');
@@ -1093,7 +1093,7 @@ gisportal.main = function() {
    }
 };
 
-gisportal.setGraphRequirementCheck = function () {
+gisportal.setupPlotRequirementsCheck = function () {
     $('#graphcreator-bbox').on('change','textarea',function(){
         console.log('test');
         var wkt = $('#graphcreator-bbox').val();
@@ -1106,7 +1106,7 @@ gisportal.setGraphRequirementCheck = function () {
                 'border-color': 'rgb(200, 200, 200)'
             });
         }
-    })
+    });
 
     $('#graphcreator-coverage').change(function () {
         var layer = $('#graphcreator-coverage').val();
@@ -1121,8 +1121,7 @@ gisportal.setGraphRequirementCheck = function () {
             });
         }
     });
-
-}
+};
 
 gisportal.setupWKTBoxAnimation = function() {
     $('#graphcreator-bbox').parent().focusin(function () {
@@ -1139,7 +1138,7 @@ gisportal.setupWKTBoxAnimation = function() {
         map.ROI_Type = 'multipolygon';
         gisportal.create_shape({ 'geometry': $('#graphcreator-bbox').val(), 'bounds': '' })
     });
-}
+};
 
 gisportal.setupShapefileDropdown = function() {
     var config = {

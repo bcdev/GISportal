@@ -1,11 +1,8 @@
 from flask import Blueprint, abort, request, jsonify, g, current_app
 from portalflask.core.param import Param
 from portalflask.core import error_handler
-import portalflask.core.shapefile_support as shapefile_support
 import portalflask.core.geometry_support as geometry_support
 import portalflask.core.graph_support as graph_support
-
-from portalflask.views.actions import check_for_permission
 
 import urllib
 import urllib2
@@ -58,35 +55,33 @@ def getWcsData():
    return jsonData
 
 
-@check_for_permission(['admins'])
 def get_histogram(params):
     import beampy  # import here, because importing may take a while
     ncfile_name = params['file_name']
     variable_name = params['coverage'].value
-    wkt = params['wkt']
+    wkt = params['wkt'].value
 
-    mask = geometry_support.create_mask(wkt)
     product = beampy.ProductIO.readProduct(ncfile_name)
+    mask = geometry_support.create_mask(product, wkt)
     data = graph_support.get_band_data_as_array(variable_name, product, mask)
+    product.dispose()
     return {'histogram': histogram(data)}
 
 
-@check_for_permission(['admins'])
 def get_hovmoller(params):
     import beampy  # import here, because importing may take a while
     ncfile_name = params['file_name']
     variable_name = params['graphZAxis'].value
-    wkt = params['wkt']
+    wkt = params['wkt'].value
 
     product = beampy.ProductIO.readProduct(ncfile_name)
-    mask = geometry_support.create_mask(wkt)
+    mask = geometry_support.create_mask(product, wkt)
     hovmoller = graph_support.get_hovmoller(product, variable_name, mask, params['graphXAxis'].value,
                                             params['graphYAxis'].value)
     product.dispose()
     return hovmoller
 
 
-@check_for_permission(['admins'])
 def get_timeseries(params):
     import beampy  # import here, because importing may take a while
 

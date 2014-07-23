@@ -620,7 +620,6 @@ gisportal.rightPanel.setupDrawingControls = function() {
          radius_deg = ((bounds.getWidth() + bounds.getHeight())/4);
       }
 
-       console.log('blub');
        $('#graphcreator-bbox').animate({
            'border-color': 'rgb(200, 200, 200)'
        });
@@ -1079,7 +1078,7 @@ gisportal.rightPanel.setupGraphingTools = function() {
             options.labelCount = $('#graph-settings-labels').val();
             gisportal.graphs.data(graphParams, $('#graphcreator-bbox').val(), options);
         } else {
-//            gisportal.gritter.showNotification('dataNotSelected', null);
+            console.log('Must never come here');  // todo -- remove this in case it is never printed (as expected)
         }
     };
 
