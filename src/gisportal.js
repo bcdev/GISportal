@@ -1077,6 +1077,7 @@ gisportal.main = function() {
    }
 
    gisportal.setupShapefileDropdown();
+   gisportal.setupWKTBoxAnimation();
 
    // Grab the url of any state.
    var stateID = gisportal.utils.getURLParameter('state');
@@ -1090,6 +1091,21 @@ gisportal.main = function() {
       console.log('Loading Default State...');
    }
 };
+
+gisportal.setupWKTBoxAnimation = function() {
+    $('#graphcreator-bbox').parent().focusin(function () {
+        if ($('#graphcreator-bbox').val() != '') {
+            $('#graphcreator-bbox').animate({
+                'rows': "5"
+            });
+        }
+    });
+    $('#graphcreator-bbox').parent().focusout(function () {
+        $('#graphcreator-bbox').animate({
+            'rows': "1"
+        });
+    });
+}
 
 gisportal.setupShapefileDropdown = function() {
     var config = {

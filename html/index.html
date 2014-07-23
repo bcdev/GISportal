@@ -300,10 +300,10 @@
                <button class="js-updateRange hidden">Update Range</button>
             </div>
             <div>
-               <label for="graphcreator-bbox">Bbox:</label>
+               <label for="graphcreator-bbox">Geometry (WKT):</label>
             </div>
-            <div>
-               <input id="graphcreator-bbox" title="Bbox in lon,lat,lon,lat format" placeholder="lon,lat,lon,lat" type="text" name="graphcreator-bbox"/>
+            <div style="position: relative">
+               <textarea rows="1" cols="70" id="graphcreator-bbox" title="WKT formatted geometry" placeholder="WKT" name="graphcreator-bbox" onClick="this.setSelectionRange(0, this.value.length)"/>
             </div>
          </div>
       </div>

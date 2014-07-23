@@ -1258,6 +1258,13 @@ div.olMapViewport {
    bottom: 10px;   
 }
 
+#graphcreator-bbox {
+    width: 325px;
+    margin-right: 0; margin-left: 3px;
+    padding: 0;
+    resize: none;
+}
+
 /* Custom style for dropdown (chosen.js) (Everything with !important to overwrite chosen.min.css) */
 .chosen-container {
     width: 220px !important;
