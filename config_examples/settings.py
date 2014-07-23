@@ -35,8 +35,7 @@ ACTION_REGISTRY = [
         'actionDescription' : 'use shapefile features',
         'jQueryCriteria' : [
             {'tag': 'label', 'attributes' : {'for' : 'shapefile_button'}},
-            {'id': 'shapefile_chooser_chosen'},
-            {'id': 'shapename_chooser_chosen'}
+            {'id': 'shape_chooser'}
         ],
         'allowedUserGroups' : ['admins']
     }
