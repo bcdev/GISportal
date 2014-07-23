@@ -521,10 +521,11 @@ gisportal.rightPanel.setup = function() {
 
    $('input[name="roi_button_group"]').change(function() {
        if ($('input[name="roi_button_group"]:checked').val() === 'shapefile') {
-           $('#shape_chooser').find('select').prop('disabled', false);
+           $('#shapefile_chooser').prop('disabled', false);
        } else {
-           $('#shape_chooser').find('select').prop('disabled', 'disabled');
+           $('#shapefile_chooser').prop('disabled', 'disabled');
        }
+       $('#shapefile_chooser').trigger('chosen:updated');
        gisportal.updateShapefiles();
        gisportal.updateShapes();
        gisportal.geometryType = $('#ROIButtonSet').find('input[name=roi_button_group]:checked').val();
