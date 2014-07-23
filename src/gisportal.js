@@ -1231,7 +1231,7 @@ gisportal.drawShape = function(shapefile, shapename) {
 };
 
 gisportal.fillROIDisplay = function(subshapes, features, b) {
-    $('#dispROI').html('<h3>Shapefile ROI</h4>');
+    $('#dispROI').html('<h3>Shapefile ROI</h3>');
     // Setup the JavaScript canvas object and draw our ROI on it
     $('#dispROI').append('<canvas id="ROIC" width="100" height="100"></canvas>');
 
@@ -1255,10 +1255,7 @@ gisportal.fillROIDisplay = function(subshapes, features, b) {
         var width_deg = bounds.getWidth();
         var scale = (width_deg > height_deg) ? 90 / width_deg : 90 / height_deg;
 
-        var points = [];
-        geom.components[0].components.forEach(function (point) {
-            points.push(new OpenLayers.Geometry.Point(point[0], point[1]))
-        });
+        var points = geom.components[0].components;
         ctx.beginPath();
         var x0 = 5 + (points[0].x-bounds.left) * scale;
         var y0 = 5 + (bounds.top-points[0].y) * scale;
