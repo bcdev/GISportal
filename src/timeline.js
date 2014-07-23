@@ -284,10 +284,8 @@ gisportal.TimeLine = function(id, options) {
 
 // Handle browser window resize event to dynamically scale the timeline chart along the x-axis
 gisportal.TimeLine.prototype.redraw = function() {
-   console.log("redraw");
    
    var self = this;  // Useful for when the scope/meaning of "this" changes
-   console.log('------ ' + this.xScale.domain());
    // Recalculate the x and y scales before redraw
     this.xScale.range([0, this.width]);
    //this.xScale.domain([self.minDate, self.maxDate]).range([0, this.width]);
@@ -468,7 +466,7 @@ gisportal.TimeLine.prototype.redraw = function() {
              }
              return x;
           })
-          .attr("y", function(d) { console.log("d.y: " + d.y); return d.y; })
+          .attr("y", function(d) { return d.y; })
           .attr("width", function(d, i) { 
              var width = 0;
              if (new Date(d.selectedStart) < new Date(d.selectedEnd))  {
