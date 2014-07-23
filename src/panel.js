@@ -603,7 +603,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
       var area_deg, area_km, height_deg, width_deg, height_km, width_km, radius_deg, ctrLat, ctrLon = 0;
 
       // Get some values for non-point ROIs
-      if(map.ROI_Type !== '' && map.ROI_Type != 'point' && map.ROI_Type != 'shapefile') {
+      if(map.ROI_Type !== '' && map.ROI_Type != 'point' && map.ROI_Type != 'shapefile' && map.ROI_Type != 'multipolygon') {
          $('#graphcreator-bbox').val(new OpenLayers.Format.WKT().extractGeometry(geom));
          area_deg = geom.getArea();
          area_km = (geom.getGeodesicArea()*1e-6);

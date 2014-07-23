@@ -1104,6 +1104,8 @@ gisportal.setupWKTBoxAnimation = function() {
         $('#graphcreator-bbox').animate({
             'rows': "1"
         });
+        map.ROI_Type = 'multipolygon';
+        gisportal.create_shape({ 'geometry': $('#graphcreator-bbox').val(), 'bounds': '' })
     });
 }
 
@@ -1202,29 +1204,30 @@ gisportal.removeShapes = function() {
     $('#dispROI').empty().append('No Selection');
 };
 
+gisportal.create_shape = function(data) {
+    var wkt = data['geometry'];
+    if (wkt == null) {
+        return;
+    }
+    var wktSupport = new OpenLayers.Format.WKT();
+    var vectorLayer = map.getLayersBy('controlID', 'poiLayer')[0];
+    vectorLayer.removeAllFeatures(); console.log(wkt);
+    $('#graphcreator-bbox').val(wkt);
+    var features = wktSupport.read(wkt);
+    var featureList = [];
+    if (wkt.toLowerCase().indexOf('multipolygon') != -1) {
+        features.geometry.components.forEach(function(polygon) {
+            featureList.push(new OpenLayers.Feature.Vector(polygon));
+        });
+    } else {
+        featureList = [features];
+    }
+    vectorLayer.addFeatures(featureList);
+    gisportal.fillROIDisplay(wkt, featureList, data['bounds'].split(','));
+};
+
 gisportal.drawShape = function(shapefile, shapename) {
-    var create_shape = function(data) {
-        var wkt = data['geometry'];
-        if (wkt == null) {
-            return;
-        }
-        var wktSupport = new OpenLayers.Format.WKT();
-        var vectorLayer = map.getLayersBy('controlID', 'poiLayer')[0];
-        vectorLayer.removeAllFeatures();
-        $('#graphcreator-bbox').val(wkt);
-        var features = wktSupport.read(wkt);
-        var featureList = [];
-        if (wkt.toLowerCase().indexOf('multipolygon') != -1) {
-           features.geometry.components.forEach(function(polygon) {
-              featureList.push(new OpenLayers.Feature.Vector(polygon));
-           });
-        } else {
-           featureList = [features];
-        }
-        vectorLayer.addFeatures(featureList);
-        gisportal.fillROIDisplay(wkt, featureList, data['bounds'].split(','));
-   };
-   gisportal.genericAsync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile + '/' + shapename, null, create_shape, null, 'json', {})
+   gisportal.genericAsync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile + '/' + shapename, null, gisportal.create_shape, null, 'json', {})
 };
 
 gisportal.fillROIDisplay = function(subshapes, features, b) {
