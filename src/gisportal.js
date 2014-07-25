@@ -1142,8 +1142,8 @@ gisportal.setupWKTBoxAnimation = function() {
 
 gisportal.setupShapefileDropdown = function() {
     var config = {
-        '.chosen-select'        : {"disable_search": true, "inherit_select_classes": true, "width": "220px"},
-        '.chosen-select-region' : {"disable_search_threshold":10, "inherit_select_classes": true, "width": "220px", "no_results_text":'No region found!'}
+        '.chosen-select'        : {"disable_search": true, "inherit_select_classes": true, "width": "150px"},
+        '.chosen-select-region' : {"disable_search_threshold":10, "inherit_select_classes": true, "width": "150px", "no_results_text":'No region found!'}
     };
     for (var selector in config) {
         $(selector).chosen(config[selector]).ready(function() {

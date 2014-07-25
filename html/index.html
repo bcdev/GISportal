@@ -552,31 +552,43 @@
                <ul>
                   <!-- Placeholder ROI radio buttons -->
                   <li id="ROIButtonSet">
-                     <!-- <input type="radio" id="point" name="radio" value="point" />
-                     <label class="iconBtn" for="point" title="Draw Point: Click in the map to draw a point as a region of interest centred on the click point."></label>-->
-                     <input type="radio" id="box" name="roi_button_group" value="box" />
-                     <label class="iconBtn" for="box" title="Draw Box: Click and drag on the map to draw a rectangle as a region of interest with the click point at its top-left."></label>
-                     
-                     <input type="radio" id="circle" name="roi_button_group" value="circle" />
-                     <label class="iconBtn" for="circle" title="Draw Circle: Click and drag on the map to draw a circle as a region of interest with the click point at its centre."></label>
+                      <table style="width: 100%">
+                          <tbody style="width: 100%">
+                                <tr>
+                                    <td style="width: 45%">
+                                        <!-- <input type="radio" id="point" name="radio" value="point" />
+                                        <label class="iconBtn" for="point" title="Draw Point: Click in the map to draw a point as a region of interest centred on the click point."></label>-->
+                                        <input type="radio" id="box" name="roi_button_group" value="box" />
+                                        <label class="iconBtn" for="box" title="Draw Box: Click and drag on the map to draw a rectangle as a region of interest with the click point at its top-left."></label>
 
-                     <input type="radio" id="polygon" name="roi_button_group" value="polygon" />
-                     <label class="iconBtn" for="polygon" title="Draw Polygon: Click repeatedly on the map to draw a polygon as a region of interest. Double-click to finish drawing the polygon"></label>
+                                        <input type="radio" id="circle" name="roi_button_group" value="circle" />
+                                        <label class="iconBtn" for="circle" title="Draw Circle: Click and drag on the map to draw a circle as a region of interest with the click point at its centre."></label>
 
-                     <input type="radio" id="shapefile_button" name="roi_button_group" value="shapefile" />
-                     <label class="iconBtn" for="shapefile_button" title="Select or upload ESRI shapefile"></label>
+                                        <input type="radio" id="polygon" name="roi_button_group" value="polygon" />
+                                        <label class="iconBtn" for="polygon" title="Draw Polygon: Click repeatedly on the map to draw a polygon as a region of interest. Double-click to finish drawing the polygon"></label>
 
-                      <form id="shape_chooser">
-                          <select id="shapefile_chooser" data-placeholder="Select a shapefile" class="chosen-select" disabled>
-                              <option value="none"></option>
-                              <option value="upload">Upload ESRI shapefile...</option>
-                          </select>
-                          <select id="shapename_chooser" data-placeholder="No shapes" size="1" class="chosen-select-region" disabled>
-                          </select>
-                      </form>
-                      <form id="uploadshapefile" style="display: none" class="uploadshapefile" method="post" enctype="multipart/form-data">
-                          <input type="file" id="shapefile_upload_button" name="shapefile[]" multiple />
-                      </form>
+                                        <input type="radio" id="shapefile_button" name="roi_button_group" value="shapefile" />
+                                        <label class="iconBtn" for="shapefile_button" title="Select or upload ESRI shapefile"></label>
+                                    </td>
+                                    <td style="width: 55%">
+                                        <form id="shape_chooser">
+                                            <select id="shapefile_chooser" data-placeholder="Select a shapefile" class="chosen-select" style="display: inline" disabled>
+                                                <option value="none"></option>
+                                                <option value="upload">Upload ESRI shapefile...</option>
+                                            </select>
+                                            <select id="shapename_chooser" data-placeholder="No shapes" size="1" class="chosen-select-region" disabled>
+                                            </select>
+                                        </form>
+                                        <form id="uploadshapefile" style="display: none" class="uploadshapefile" method="post" enctype="multipart/form-data">
+                                            <input type="file" id="shapefile_upload_button" name="shapefile[]" multiple />
+                                        </form>
+                                    </td>
+                                </tr>
+                          </tbody>
+                      </table>
+
+
+
 
                       <!-- todo: move CSS -->
                      <div class="progress" style="display: none">
