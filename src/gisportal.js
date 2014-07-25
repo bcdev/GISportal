@@ -802,13 +802,11 @@ gisportal.saveState = function(state) {
    // TODO: Refactor as per #123
    state.layerSelector.filters = [];
    $.each($('.ft-field[data-name]'), function(i, item) {
-      console.log('category:', item);
       var tags = [];
       $.each($('.ft-selected li span', item), function(i, e)  {
          tags.push($(e).text()); 
       });
-      console.log('tags', tags);
-      state.layerSelector.filters.push({ 
+      state.layerSelector.filters.push({
          "category" : $(item).data('name'),
          "tags" : tags
       });
