@@ -1265,13 +1265,17 @@ div.olMapViewport {
     resize: none;
 }
 
+#shape_chooser {
+    display: inline-block;
+}
+
 /* Custom style for dropdown (chosen.js) (Everything with !important to overwrite chosen.min.css) */
 .chosen-container {
-    width: 220px !important;
+    width: 150px !important;
 }
 
 .chosen-drop {
-    width: 220px !important;
+    width: 150px !important;
     margin-top: -3px !important;
     background: #EEEEEE !important;
     border-bottom: #000000 1px solid !important;
