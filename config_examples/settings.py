@@ -20,7 +20,7 @@ LOG_PATH = ''
 ERROR_LEVEL = "W"
 
 # The URL of the openID relying party
-OPENID_RP_URL = 'http://opec-portal-test2:8585/openid-server/provider/discovery/gis-portal'
+OPENID_RP_URL = 'http://opec-portal-test:8585/openid-server/provider/discovery/gis-portal'
 
 ACTION_REGISTRY = [
     {   'actionIdentifier' : 'userInfoAction',
