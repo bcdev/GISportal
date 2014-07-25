@@ -555,7 +555,7 @@
                       <table style="width: 100%">
                           <tbody style="width: 100%">
                                 <tr>
-                                    <td style="width: 45%">
+                                    <td style="width: 100%">
                                         <!-- <input type="radio" id="point" name="radio" value="point" />
                                         <label class="iconBtn" for="point" title="Draw Point: Click in the map to draw a point as a region of interest centred on the click point."></label>-->
                                         <input type="radio" id="box" name="roi_button_group" value="box" />
@@ -570,7 +570,7 @@
                                         <input type="radio" id="shapefile_button" name="roi_button_group" value="shapefile" />
                                         <label class="iconBtn" for="shapefile_button" title="Select or upload ESRI shapefile"></label>
                                     </td>
-                                    <td style="width: 55%">
+                                    <td>
                                         <form id="shape_chooser">
                                             <select id="shapefile_chooser" data-placeholder="Select a shapefile" class="chosen-select" style="display: inline" disabled>
                                                 <option value="none"></option>
@@ -641,13 +641,14 @@
    </div>
    <!-- Share Options Panel, appears after the share options button has been clicked  -->
    <div class="toolbar" id="shareOptions">
-   	<h3>Share Your Data! Track Your Progress!</h3>
       <div id="gisportal-openid-content" class="hidden">
-         <button id="gisportal-openid-getlink">Save Progress</button>
-         <label for="gisportal-openid-shareurl">Paste Link:</label>
-         <input type="text" readonly  id="gisportal-openid-shareurl">
+         <button id="gisportal-openid-getlink">Save state</button>
+         <input type="text" readonly placeholder="Share state link" id="gisportal-openid-shareurl" class="hidden"/>
 
-         <button id="gisportal-openid-logout">Log out</button>
+         <div id="gisportal-button-logout">
+            <button id="gisportal-openid-logout">Log out</button>
+         </div>
+
       </div>
    </div>
    <!-- Walkthrough menu, appears after the info button has been clicked -->
