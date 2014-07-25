@@ -51,6 +51,9 @@ gisportal.gritter.showNotification = function(nN, data) {
    var uid;
    
    var message = gisportal.gritter._notifications[nN];
+   if (message == undefined) {
+       return 0;
+   }
    // Check for a title
    if(typeof message.title === 'undefined')
       message.title = function() {

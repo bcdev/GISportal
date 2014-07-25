@@ -40,7 +40,7 @@ h3 {
 }
 
 /* style the ROI canvas */
-canvas { 
+canvas {
 }
 
 sup {
@@ -350,6 +350,12 @@ ul li {
    background-image: url("../img/gallery_histogram.png");
 }
 
+/* Custom CSS for the upload button as chrome doesn't like hidden upload buttons */
+#shapefile_upload_button {
+    position:absolute;
+    top:-100px;
+}
+
 /*---------------------------------------------------------------------------*/
 /* TODO: Change to class? */
 #layerAccordion {
@@ -453,7 +459,7 @@ a.active.triggerR {
     background:#B74F1B;
     /*border: #333333;*/
     border: #B74F1B;
-    overflow: hidden;
+    /*overflow: hidden; Disabled because it destroyes the dropdown*/
 }
 
 .panel-toolbar fieldset {
@@ -1154,7 +1160,9 @@ div.olMapViewport {
 .ui-icon-drawpoint  { background-image: url(../img/selectionPoint.png) !important; background-position: 0px; height: 26px; width: 26px;margin: -12px -2px !important; }
 .ui-icon-drawbox  { background-image: url(../img/selectionBox.png) !important; background-position: 0px; height: 26px; width: 26px;margin: -12px -2px !important; }
 .ui-icon-drawcircle  { background-image: url(../img/selectionCircle.png) !important; background-position: 0px; height: 26px; width: 26px;margin: -12px -2px !important; }
-.ui-icon-drawpoly  { background-image: url(../img/selectionPoly.png) !important; background-position: 0px; height: 26px; width: 26px;margin: -12px -2px !important; }
+.ui-icon-drawpoly  { background-image: url(../img/selectionPoly.png) !important; background-position: 0px; height: 26px; width: 26px !important; margin: -12px -2px !important; }
+.ui-icon-uploadshapefile { background-image: url(../img/uploadShapefile.png) !important; background-position: 0px; height: 26px; width: 26px; margin: -12px -2px !important;}
+
 
 /* Used gisportal as a namespace to limit damage of any future jquery ui updates */
 .ui-icon-gisportal-globe { background-image: url(../img/globe.png) !important; background-position: 0px; height: 32px; width: 32px;margin: -16px -4px !important; }
@@ -1248,4 +1256,72 @@ div.olMapViewport {
    position: absolute;
    right: 10px;
    bottom: 10px;   
+}
+
+#graphcreator-bbox {
+    width: 325px;
+    margin-right: 0; margin-left: 3px;
+    padding: 0;
+    resize: none;
+}
+
+#shape_chooser {
+    display: inline-block;
+}
+
+/* Custom style for dropdown (chosen.js) (Everything with !important to overwrite chosen.min.css) */
+.chosen-container {
+    width: 150px !important;
+}
+
+.chosen-drop {
+    width: 150px !important;
+    margin-top: -3px !important;
+    background: #EEEEEE !important;
+    border-bottom: #000000 1px solid !important;
+    border-left: #000000 1px solid !important;
+    border-right: #000000 1px solid !important;
+}
+
+.search-choice-close {
+    margin-right: -19px;
+}
+
+.chosen-container-single .chosen-single abbr {
+    top: 3px !important;
+}
+
+.active-result {
+    width: 100%;
+    color: #707070;
+}
+
+.chosen-container-single .chosen-single {
+    background: #EEEEEE !important;
+    border: #000000 1px solid !important;
+    height: 16px !important;
+    border-radius: 5px !important;
+    line-height: 16px !important;
+}
+
+a.chosen-single > .ui-button-text {
+    padding: 2px !important;
+    text-align: left !important;
+}
+
+.no-results {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+a.chosen-single > div > b {
+    background-position-y: -1px !important;
+}
+
+.chosen-results {
+    padding-top: 5px !important;
+}
+
+.chosen-container {
+    padding-top: 3px;
 }

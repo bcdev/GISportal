@@ -16,6 +16,8 @@
 
 package com.bc.openid;
 
+import com.sun.security.auth.module.LdapLoginModule;
+
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -25,7 +27,13 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -38,17 +46,24 @@ import java.util.Map;
 public class LdapAuth extends AuthenticationHandler {
 
     private static final String DEFAULT_PORT = "389";
-    private static final String KEY_HOST = "com.bc.openid.authentication.param.host";
-    private static final String KEY_PORT = "com.bc.openid.authentication.param.port";
+    private static final String KEY_HOST = "com.bc.openid.authentication.host";
+    private static final String KEY_PORT = "com.bc.openid.authentication.port";
+    private static final String KEY_LDAP_PATH = "com.bc.openid.authentication.ldap.path";
+    private static final String KEY_LDAP_USER_OU = "com.bc.openid.authentication.ldap.user-ou";
+    private static final String KEY_LDAP_GROUP_OU = "com.bc.openid.authentication.ldap.group-ou";
 
     private String host;
     private String port;
 
     private UserModel userModel;
+    private String ldapPath;
+    private String userOu;
+    private String groupOu;
 
 
     @Override
     protected void authenticateImpl(String username, String password) throws AuthenticationException {
+        getLogger().apply("authenticating user " + username);
         Hashtable<String, String> env = new Hashtable<>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, ldapUrl(host, port));
@@ -57,36 +72,47 @@ public class LdapAuth extends AuthenticationHandler {
         try (MyInitialLdapContext context = new MyInitialLdapContext(env)) {
             SearchResult userEntry = getUserEntry(username, context);
             setUserModel(username, userEntry);
-
-            try {
-                checkUsernameAndPassword(password, userEntry);
-            } catch (NamingException e) {
-                throw new AuthenticationException(username, "Wrong combination of username and password", e);
-            }
-
-            Object uidNumber = userEntry.getAttributes().get("uidNumber").get(0);
-            List<String> groupNames = getGroupNames(context, uidNumber);
+            checkUsernameAndPassword(userEntry.getAttributes().get("cn").get(0).toString(), password);
+            Object gidNumber = userEntry.getAttributes().get("gidNumber").get(0);
+            List<String> groupNames = getGroupNames(context, gidNumber.toString());
             userModel.setGroupNames(groupNames.toArray(new String[groupNames.size()]));
         } catch (NamingException e) {
             throw new AuthenticationException(username, e);
         }
     }
 
-    private void checkUsernameAndPassword(String password, SearchResult userEntry) throws NamingException {
-        Hashtable<String, String> env = new Hashtable<>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, ldapUrl(host, port));
-        env.put(Context.SECURITY_AUTHENTICATION, "simple");
-        env.put(Context.SECURITY_CREDENTIALS, password);
-        String dn = "cn=" + userEntry.getAttributes().get("cn").get(0).toString() + ",ou=users,dc=opec,dc=bc,dc=com";
-        env.put(Context.SECURITY_PRINCIPAL, dn);
-        new InitialLdapContext(env, new Control[0]);
+    private void checkUsernameAndPassword(String username, String password) throws AuthenticationException {
+        LdapLoginModule ldapLoginModule = new LdapLoginModule();
+
+        HashMap<String, Object> options = new HashMap<>();
+        options.put("userProvider", ldapUrl(host, port));
+        options.put("authIdentity", "uid={USERNAME},ou=" + userOu + "," + ldapPath);
+        options.put("useSSL", "false");
+        options.put(Context.SECURITY_AUTHENTICATION, "simple");
+
+        ldapLoginModule.initialize(new Subject(), callbacks -> {
+            for (Callback callback : callbacks) {
+                if (callback instanceof NameCallback) {
+                    ((NameCallback) callback).setName(username);
+                } else if (callback instanceof PasswordCallback) {
+                    ((PasswordCallback) callback).setPassword(password.toCharArray());
+                }
+            }
+        }, new HashMap<>(), options);
+
+        try {
+            ldapLoginModule.login();
+            ldapLoginModule.commit();
+        } catch (LoginException e) {
+            e.printStackTrace();
+            throw new AuthenticationException("Wrong combination of username and password.", e);
+        }
     }
 
-    private static List<String> getGroupNames(MyInitialLdapContext context, Object uidNumber) throws NamingException, AuthenticationException {
+    private List<String> getGroupNames(MyInitialLdapContext context, String gidNumber) throws NamingException, AuthenticationException {
         SearchControls groupSearch = new SearchControls();
         groupSearch.setSearchScope(SearchControls.SUBTREE_SCOPE);
-        NamingEnumeration groups = context.search("ou=groups,dc=opec,dc=bc,dc=com", "(objectClass=posixGroup)", groupSearch);
+        NamingEnumeration groups = context.search("ou=" + groupOu + "," + ldapPath, "(objectClass=posixGroup)", groupSearch);
 
         List<String> groupNames = new ArrayList<>();
 
@@ -94,9 +120,9 @@ public class LdapAuth extends AuthenticationHandler {
             SearchResult group = (SearchResult) groups.next();
             Attributes groupAttributes = group.getAttributes();
             String groupName = groupAttributes.get("cn").get(0).toString();
-            Attribute memberUids = groupAttributes.get("memberUid");
-            for (int i = 0; i < memberUids.size(); i++) {
-                if (memberUids.get(i).equals(uidNumber)) {
+            Attribute gidIds = groupAttributes.get("gidNumber");
+            for (int i = 0; i < gidIds.size(); i++) {
+                if (gidIds.get(i).equals(gidNumber)) {
                     groupNames.add(groupName);
                 }
             }
@@ -104,12 +130,12 @@ public class LdapAuth extends AuthenticationHandler {
         return groupNames;
     }
 
-    private static SearchResult getUserEntry(String username, MyInitialLdapContext context) throws NamingException, AuthenticationException {
+    private SearchResult getUserEntry(String username, MyInitialLdapContext context) throws NamingException, AuthenticationException {
         SearchControls searchControls = new SearchControls();
-        searchControls.setReturningAttributes(new String [] {"givenName", "sn", "mail", "cn", "uidNumber"});
+        searchControls.setReturningAttributes(null);
         String filter = "(uid=" + username + ")";
 
-        NamingEnumeration<SearchResult> results = context.search("ou=users,dc=opec,dc=bc,dc=com", filter, searchControls);
+        NamingEnumeration<SearchResult> results = context.search("ou=" + userOu + "," + ldapPath, filter, searchControls);
         SearchResult userEntry;
         if (results.hasMoreElements()) {
             userEntry = results.nextElement();
@@ -117,7 +143,7 @@ public class LdapAuth extends AuthenticationHandler {
                 throw new AuthenticationException(username, "Matched multiple users for username: '" + username + "'");
             }
         } else {
-            throw new AuthenticationException(username, "Wrong combination of username and password");
+            throw new AuthenticationException(username, "User not found");
         }
         return userEntry;
     }
@@ -127,6 +153,8 @@ public class LdapAuth extends AuthenticationHandler {
         Attribute mailAttribute = userEntry.getAttributes().get("mail");
         if (mailAttribute != null) {
             userModel.setEmailAddress(mailAttribute.get().toString());
+        } else {
+            userModel.setEmailAddress("");
         }
         String fullName = "";
         Attribute givenNameAttribute = userEntry.getAttributes().get("givenName");
@@ -150,11 +178,30 @@ public class LdapAuth extends AuthenticationHandler {
     @Override
     public void configure(Map<String, String> parameters) {
         host = parameters.get(KEY_HOST);
+
         String port = parameters.get(KEY_PORT);
         if (port == null || port.equals("")) {
             port = DEFAULT_PORT;
         }
         this.port = port;
+
+        if (!parameters.containsKey(KEY_LDAP_PATH)) {
+            throw new IllegalArgumentException("Mandatory key '" + KEY_LDAP_PATH + "' missing in config.");
+        }
+        ldapPath = parameters.get(KEY_LDAP_PATH);
+
+        if (!parameters.containsKey(KEY_LDAP_USER_OU)) {
+            throw new IllegalArgumentException("Mandatory key '" + KEY_LDAP_USER_OU + "' missing in config.");
+        }
+        userOu = parameters.get(KEY_LDAP_USER_OU);
+
+        if (!parameters.containsKey(KEY_LDAP_GROUP_OU)) {
+            throw new IllegalArgumentException("Mandatory key '" + KEY_LDAP_GROUP_OU + "' missing in config.");
+        }
+        groupOu = parameters.get(KEY_LDAP_GROUP_OU);
+
+
+
     }
 
     private static String ldapUrl(String host, String port) {

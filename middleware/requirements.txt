@@ -7,3 +7,6 @@ lxml
 PyYAML
 flask_script
 BeautifulSoup
+pygeoif
+jpy
+beampy

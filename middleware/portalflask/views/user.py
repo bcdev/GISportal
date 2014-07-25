@@ -1,11 +1,12 @@
 import hashlib
-import hashlib
+import os
 
 from portalflask.models.database import db_session
 from portalflask.models.user import User
 from portalflask.models.usergroup import UserGroup
 from portalflask import oid
 from portalflask.core.group_extension import GroupExtension, GROUPS_KEY
+import portalflask.core.shapefile_support as shapefile_support
 
 from actions import check_for_permission
 from flask import Blueprint, render_template, redirect, url_for, g, session, request, jsonify, current_app
@@ -36,8 +37,8 @@ def create_or_login(resp):
    print('in create or login')
 
    generic_identity = resp.identity_url
-   email = resp.email
-   user_identity = generic_identity + '?id=' + hashlib.md5(email).hexdigest()
+   nickname = resp.nickname
+   user_identity = generic_identity + '?id=' + hashlib.md5(nickname).hexdigest()
    session['openid'] = user_identity
    user = User.query.filter_by(openid=user_identity).first()
 
@@ -60,35 +61,29 @@ def create_user():
    if request.method == 'POST':
       print ('in post')
       email = request.form['email']
-      if '@' not in email:
-         print('Error: invalid email address')
-      else:
-         group_names = request.form['groups'].split()
-         username = request.form['username'].split()
-         full_name = request.args.get('full_name', None)
-         add_user_to_db(email, username, full_name, group_names)
-         db_session.commit()
-         print('Profile successfully created')
-         return redirect(oid.get_next_url())
+      group_names = request.form['groups'].split()
+      username = request.form['username'].split()
+      full_name = request.args.get('full_name', None)
+      add_user_to_db(email, username, full_name, group_names)
+      db_session.commit()
+      print('Profile successfully created')
+      return redirect(oid.get_next_url())
    elif request.method == 'GET':
       print('in get')
       email = request.args.get('email', None)
-      if '@' not in email:
-          print(u'Error: you have to enter a valid email address')
-      else:
-         group_names = request.args.get('groups', None).split()
-         username = request.args.get('username', None)
-         full_name = request.args.get('full_name', None)
-         add_user_to_db(email, username, full_name, group_names)
-         db_session.commit()
-         print('Profile successfully created')
-         return redirect(url_for('portal_user.index'))
+      group_names = request.args.get('groups', None).split()
+      username = request.args.get('username', None)
+      full_name = request.args.get('full_name', None)
+      add_user_to_db(email, username, full_name, group_names)
+      db_session.commit()
+      print('Profile successfully created')
+      return redirect(url_for('portal_user.index'))
    print('returning')
    return redirect(url_for('portal_user.index'))
 
 
 @portal_user.route('/get_user', methods=['POST'])
-@check_for_permission(['admins'])
+@check_for_permission(['bc'])
 def get_user():
     if g.user is not None:
         groupstring = ''
@@ -109,11 +104,42 @@ def permissions(allowed_user_groups):
     return jsonify(is_accessible=False)
 
 
+@portal_user.route('/get_shapefile_names', methods=['POST'])
+@check_for_permission(['bc', 'coastcolour'])
+def get_shapefile_names():
+    print('get_shapefile_names')
+    if not os.path.exists(shapefile_support.get_shape_path()):
+        return jsonify(shapefiles=[])
+    files = [f for f in os.listdir(shapefile_support.get_shape_path()) if os.path.basename(f).endswith('.shp')]
+    return jsonify(shapefiles=files)
+
+
+@portal_user.route('/get_shape_names/<shapefile_name>', methods=['POST'])
+@check_for_permission(['bc', 'coastcolour'])
+def get_shape_names(shapefile_name):
+    print('get_shape_names')
+    shape_names = shapefile_support.get_shape_names(shapefile_name)
+    return jsonify(shape_names=shape_names)
+
+
+@portal_user.route('/get_shapefile_geometry/<shapefile_name>/<shape_name>', methods=['POST'])
+@check_for_permission(['bc', 'coastcolour'])
+def get_shapefile_geometry(shapefile_name, shape_name):
+    print('get_shape_geometry')
+    return jsonify(geometry=shapefile_support.get_shape_geometry(shapefile_name, shape_name), bounds=shapefile_support.get_bounding_box(shapefile_name, shape_name))
+
+
 @portal_user.route('/logout', methods=['GET','POST'])
 def logout():
+   print('logging out user \'' + g.user.username + '\'')
    session.pop('openid', None)
    g.user = None
    return "200", 200
+
+
+@portal_user.route('/is_logged_in', methods=['GET'])
+def is_logged_in():
+   return jsonify(logged_in=g.user is not None)
 
 
 def add_user_to_db(email, username, full_name, group_names):
@@ -123,5 +149,5 @@ def add_user_to_db(email, username, full_name, group_names):
         if not group_is_already_in_db:
             db_session.add(UserGroup(group_name))
     db_session.commit()
-    user_groups = UserGroup.query.filter(UserGroup.group_name in group_names)
+    user_groups = UserGroup.query.filter(UserGroup.group_name.in_(group_names)).all()
     db_session.add(User(email=email, openid=session['openid'], username=username, full_name=full_name, groups=user_groups))

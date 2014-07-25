@@ -148,8 +148,15 @@ gisportal.openid.logout = function() { gisportal.genericAsync('GET', gisportal.o
 };
 
 gisportal.openid.is_logged_in = function() {
-    var userName = $('#user_name').text();
-    return userName != "" && userName != 'null' && userName != undefined;
+    var is_logged_in;
+    var ajax_result = function(data, opts) {
+        is_logged_in = data['logged_in'];
+    };
+    var on_error = function (request, errorType, exception) {
+        console.log(request, errorType, exception)
+    };
+    gisportal.genericSync('GET', gisportal.middlewarePath + '/is_logged_in', null, ajax_result, on_error, 'json', {});
+    return is_logged_in;
 };
 
 gisportal.openid.openPopup = function(urlToOpen) {

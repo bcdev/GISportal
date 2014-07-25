@@ -19,8 +19,11 @@ public class LdapAuthTest {
     public void setUp() throws Exception {
         auth = new LdapAuth();
         HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("com.bc.openid.authentication.param.host", "opec-portal-test");
-        parameters.put("com.bc.openid.authentication.param.port", "389");
+        parameters.put("com.bc.openid.authentication.host", "opec-portal-test");
+        parameters.put("com.bc.openid.authentication.port", "389");
+        parameters.put("com.bc.openid.authentication.ldap.path", "dc=opec,dc=bc,dc=com");
+        parameters.put("com.bc.openid.authentication.ldap.user-ou", "users");
+        parameters.put("com.bc.openid.authentication.ldap.group-ou", "groups");
         auth.configure(parameters);
     }
 
@@ -45,7 +48,7 @@ public class LdapAuthTest {
         assertEquals("cc@host.com", userModel.getEmailAddress());
         assertEquals("Coasti Colourinho", userModel.getFullName());
         assertEquals("ccolourinho", userModel.getUsername());
-        assertArrayEquals(new String[] {"cc_users"}, userModel.getGroupNames());
+        assertArrayEquals(new String[]{"cc_users"}, userModel.getGroupNames());
     }
 
     @Test

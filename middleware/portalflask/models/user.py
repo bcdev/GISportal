@@ -14,8 +14,8 @@ class User(Base):
    __tablename__ = 'user'
    id = Column(Integer, index=True, primary_key=True)
    username = Column(String(60), index=True, unique=True)
-   full_name = Column(String(120), index=True, unique=True)
-   email = Column(String(120), index=True, unique=True)
+   full_name = Column(String(120), index=True)
+   email = Column(String(120), index=True)
    openid = Column(String(200), index=True, unique=True)
    last_login = Column(DateTime, unique=False)
 

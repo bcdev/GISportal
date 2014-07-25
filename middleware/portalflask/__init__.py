@@ -8,6 +8,7 @@ from core.group_extension import GroupExtension
 from openid.extensions.sreg import SRegResponse
 
 import sys
+import os
 import settings as settings
 
 def create_app(path):
@@ -16,13 +17,16 @@ def create_app(path):
    print path
    
    setup_version(app)
-   
+
    #=== SETUP LOGGING ===#
    setup_logging(app, path)
    
    #=== SETUP CONFIG ===#
    setup_config(app)
-   
+
+   #=== SETUP beampy ===# (must be placed after config setup)
+   setup_beampy()
+
    #=== SETUP DATABASE ===#
    app.config['DATABASE_URI'] = settings.DATABASE_URI
 
@@ -91,6 +95,18 @@ def setup_logging(app, path):
 def setup_config(app):
    app.config.from_object(settings)
    app.logger.debug("In debug mode: %s" % app.debug)
+   os.environ['JAVA_HOME'] = settings.JAVA_HOME
+   os.environ['JDK_HOME'] = settings.JDK_HOME
+   os.environ['PATH'] = settings.PATH_extension + ':' + os.getenv('PATH', '')
+   os.environ['LD_LIBRARY_PATH'] = settings.LD_LIBRARY_PATH_extension + ':' + os.getenv('LD_LIBRARY_PATH', '')
+   os.environ['BEAM_HOME'] = settings.BEAM_HOME
+
+
+def setup_beampy():
+    import beampy
+    import jpy
+    SystemUtils = jpy.get_type('org.esa.beam.util.SystemUtils')
+    SystemUtils.init3rdPartyLibs(None)
 
 
 # Alternative method to using 'setup_routing' above
@@ -105,6 +121,7 @@ def setup_blueprints(app):
    from views.wfs import portal_wfs
    from views.wcs import portal_wcs
    from views.actions import portal_actions
+   from views.upload import portal_upload
 
    app.register_blueprint(portal_user)
    app.register_blueprint(portal_state)
@@ -113,6 +130,7 @@ def setup_blueprints(app):
    app.register_blueprint(portal_wfs)
    app.register_blueprint(portal_wcs)
    app.register_blueprint(portal_actions)
+   app.register_blueprint(portal_upload)
 
 path = sys.path[0]
 app = create_app(path)

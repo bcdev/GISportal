@@ -543,7 +543,7 @@
          this.updateQueryField( f, a );
          this.updateActiveClass( f );
          this.updatePanel( f );
-      };
+      }
 
 
       // YUCK YUCK YUCK, as per #122 and #123
@@ -552,7 +552,6 @@
       $('.ft-tags li').show();
       for (var i = 0; i < query.length; i++) {
          var category = query[i].category;
-         console.log("category: ", category);
          for(var j = 0; j < query[i].tags.length; j++)  {
             $('.ft-field[data-name="' + category + '"] span:contains('+query[i].tags[j]+')').parent().hide();
          }

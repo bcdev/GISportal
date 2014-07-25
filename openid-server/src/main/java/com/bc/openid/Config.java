@@ -57,7 +57,7 @@ class Config {
         }
         Map<String, String> parameters = new HashMap<>();
         properties.entrySet().stream()
-                .filter(entry -> entry.getKey().toString().startsWith("com.bc.openid.authentication.param"))
+                .filter(entry -> entry.getKey().toString().startsWith("com.bc.openid.authentication"))
                 .forEach(entry -> parameters.put(entry.getKey().toString(), entry.getValue().toString()));
 
         handler.configure(parameters);

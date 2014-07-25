@@ -7,12 +7,12 @@ gisportal.leftPanel = {};
 gisportal.leftPanel.open = function() {
    $(".lPanel").show("fast");
    $(".triggerL").addClass("active");
-}
+};
 
 gisportal.leftPanel.toggle = function() {
    $(".lPanel").toggle("fast");
    $(".triggerL").toggleClass("active");
-}
+};
 
 gisportal.leftPanel.setup = function() {
    //$('#refLayers').multiOpenAccordion({
@@ -431,6 +431,8 @@ gisportal.leftPanel.loadState = function(state) {
  */
 gisportal.rightPanel = {};
 
+gisportal.current_area = 0;
+
 gisportal.rightPanel.open = function() {
    $(".rPanel").show("fast");
    $(".triggerR").addClass("active");
@@ -491,6 +493,43 @@ gisportal.rightPanel.setup = function() {
    $('#box').button({ icons: { primary: 'ui-icon-drawbox'} });
    $('#circle').button({ icons: { primary: 'ui-icon-drawcircle'} });
    $('#polygon').button({ icons: { primary: 'ui-icon-drawpoly'} });
+   $('#shapefile_button').button({ icons: { primary: 'ui-icon-uploadshapefile'} });
+
+    var updateShapenameDropdown = function () {
+        var shapefile = $('#shapefile_chooser').val();
+        var selectedValue = $('#shapename_chooser').val();
+        if (shapefile != 'upload') {
+            gisportal.drawShape(shapefile, selectedValue);
+        }
+    };
+
+    var shapefileDropdownHandler = function () {
+        var selectedValue = $('#shapefile_chooser').val();
+        if (selectedValue == 'none') {
+            var vectorLayer = map.getLayersBy('controlID', 'poiLayer')[0];
+            vectorLayer.removeAllFeatures();
+            $('#dispROI').html('No Selection');
+        }
+        gisportal.updateShapes();
+        updateShapenameDropdown();
+    };
+
+   $('#shapefile_chooser').change(shapefileDropdownHandler);
+   $('#shapename_chooser').change(updateShapenameDropdown);
+   $('#shapefile_upload_button').change(gisportal.submit_shapefile_upload_form);
+   $('#uploadshapefile').attr('action', gisportal.middlewarePath + '/shapefile_upload');
+
+   $('input[name="roi_button_group"]').change(function() {
+       if ($('input[name="roi_button_group"]:checked').val() === 'shapefile') {
+           $('#shapefile_chooser').prop('disabled', false);
+       } else {
+           $('#shapefile_chooser').prop('disabled', 'disabled');
+       }
+       $('#shapefile_chooser').trigger('chosen:updated');
+       gisportal.updateShapefiles();
+       gisportal.updateShapes();
+       gisportal.geometryType = $('#ROIButtonSet').find('input[name=roi_button_group]:checked').val();
+   });
 
    // Data Analysis panel tabs and accordions
    $("#gisportal-tab-analyses").multiOpenAccordion({ collapsible: true, heightStyle: 'content', active: [-1, -1, -1, -1] });
@@ -519,6 +558,9 @@ gisportal.rightPanel.setup = function() {
 
 };
 
+gisportal.switchBackToPan = function() {
+    $('label[for="pan"], #pan').click();
+};
 /**
  * Sets up the drawing controls to allow for the selection
  * of ROI's.
@@ -533,9 +575,6 @@ gisportal.rightPanel.setupDrawingControls = function() {
          fillOpacity : 0.3,
          pointRadius: 5
       },
-      preFeatureInsert : function(feature) {
-         this.removeAllFeatures();
-      },
       onFeatureInsert : function(feature) {
          ROIAdded(feature);
       },
@@ -549,12 +588,11 @@ gisportal.rightPanel.setupDrawingControls = function() {
 
    // Function called once a ROI has been drawn on the map
    function ROIAdded(feature) {
-      // Switch back to pan
-      $('label[for="pan"], #pan').click();
+
+      gisportal.switchBackToPan();
 
       // Get the geometry of the drawn feature
-      var geom = new OpenLayers.Geometry();
-      geom = feature.geometry;
+      var geom = feature.geometry;
 
       // Special HTML character for the degree symbol
       var d = '&deg;';
@@ -567,7 +605,8 @@ gisportal.rightPanel.setupDrawingControls = function() {
       var area_deg, area_km, height_deg, width_deg, height_km, width_km, radius_deg, ctrLat, ctrLon = 0;
 
       // Get some values for non-point ROIs
-      if(map.ROI_Type !== '' && map.ROI_Type != 'point') {
+      if(map.ROI_Type !== '' && map.ROI_Type != 'point' && map.ROI_Type != 'shapefile' && map.ROI_Type != 'multipolygon') {
+         $('#graphcreator-bbox').val(new OpenLayers.Format.WKT().extractGeometry(geom));
          area_deg = geom.getArea();
          area_km = (geom.getGeodesicArea()*1e-6);
          height_deg = bounds.getHeight();
@@ -581,20 +620,18 @@ gisportal.rightPanel.setupDrawingControls = function() {
          radius_deg = ((bounds.getWidth() + bounds.getHeight())/4);
       }
 
+       $('#graphcreator-bbox').animate({
+           'border-color': 'rgb(200, 200, 200)'
+       });
+
       switch(map.ROI_Type) {
          case 'point':
-            $('#dispROI').html('<h3>Point ROI</h4>');
+            $('#dispROI').html('<h3>Point ROI</h3>');
             $('#dispROI').append('<img src="./img/pointROI.png" title ="Point Region Of Interest" alt="Map Point" />');
             $('#dispROI').append('<p>Lon, Lat: ' + geom.x.toPrecision(4) + d + ', ' + geom.y.toPrecision(4) + d + '</p>');
             break;
          case 'box':
-            var bbox = bounds;
-            // If the graphing dialog is active, place the BBOX co-ordinates in it's BBOX text field
-            if ($('#graphcreator-bbox').size()){
-               $('#graphcreator-bbox').val(bbox.toBBOX(5, false));
-               gisportal.selection.bbox = bbox.toBBOX(5, false);
-               $(gisportal.selection).trigger('selection_updated', {bbox: true});
-            }
+            $('li#ROIButtonSet label[role="button"]').attr('aria-pressed', 'false').removeClass('ui-state-active');
             $('#dispROI').html('<h3>Rectangular ROI</h4>');
             // Setup the JavaScript canvas object and draw our ROI on it
             $('#dispROI').append('<canvas id="ROIC" width="100" height="100"></canvas>');
@@ -611,6 +648,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
             $('#dispROI').append('<p>Projected Area: ' + area_km.toPrecision(4) + ' km<sup>2</sup></p>');
             break;
          case 'circle':
+             $('li#ROIButtonSet label[role="button"]').attr('aria-pressed', 'false').removeClass('ui-state-active');
             $('#dispROI').html('<h3>Circular ROI</h4>');
             $('#dispROI').append('<img src="./img/circleROI.png" title ="Circular Region Of Interest" alt="Map Point" />');
             $('#dispROI').append('<p>Radius: ' + radius_deg.toPrecision(4) + d + '</p>');
@@ -620,6 +658,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
             $('#dispROI').append('<p>Projected Area: ' + area_km.toPrecision(4) + ' km<sup>2</sup></p>');
             break;
          case 'polygon':
+             $('li#ROIButtonSet label[role="button"]').attr('aria-pressed', 'false').removeClass('ui-state-active');
             // Get the polygon vertices
             var vertices = geom.getVertices();
             $('#dispROI').html('<h3>Custom Polygon ROI</h4>');
@@ -647,44 +686,39 @@ gisportal.rightPanel.setupDrawingControls = function() {
             $('#dispROI').append('<p>Centroid Lat, Lon:' + ctrLat.toPrecision(4) + d + ', ' + ctrLon.toPrecision(4) + d + '</p>');
             $('#dispROI').append('<p>Projected Area: ' + area_km.toPrecision(4) + ' km<sup>2</p>');
             break;
+         case 'shapefile':
+//             Handled in gisportal.js#fillROIDisplay()
+            break;
       }
    }
 
-   gisportal.mapControls.point = new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Point);
    gisportal.mapControls.box = new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.RegularPolygon, {handlerOptions:{sides: 4, irregular: true, persist: false }});
    gisportal.mapControls.circle = new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.RegularPolygon, {handlerOptions:{sides: 50}, persist: false});
    gisportal.mapControls.polygon = new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.Polygon);
 
-   //map.addControls([gisportal.mapControls.point, gisportal.mapControls.box, gisportal.mapControls.circle, gisportal.mapControls.polygon]);
-   map.addControls([gisportal.mapControls.point, gisportal.mapControls.box]);
+   map.addControls([gisportal.mapControls.box, gisportal.mapControls.circle, gisportal.mapControls.polygon]);
    // Function which can toggle OpenLayers drawing controls based on the value of the clicked control
-   function toggleDrawingControl(element) {
-      gisportal.toggleControl(element);
+   function toggleDrawingControl(element, removePanControl) {
+      if (removePanControl) {
+          gisportal.toggleControl(element);
+      }
       vectorLayer.removeAllFeatures();
       map.ROI_Type = element.value;
-      // DEBUG
-      //console.info(map.ROI_Type);
    }
 
    // Manually Handle drawing control radio buttons click event - each button has a class of "iconBtn"
-   $('#ROIButtonSet input:radio').click(function(e) {
-      toggleDrawingControl(this);
+   $('#ROIButtonSet').find('input:radio').click(function(e) {
+      var removePanControl = true;
+      if (this['id'].indexOf('shapefile') !== -1) {
+          gisportal.switchBackToPan();
+          removePanControl = false;
+      }
+      toggleDrawingControl(this, removePanControl);
    });
 
    // So that changing the input box changes the visual selection box on map
    $('#gisportal-graphing').on('change', '#graphcreator-bbox', function() {
-      var values = $('#graphcreator-bbox').val().split(',');
-      values[0] = gisportal.utils.clamp(values[0], -180, 180); // Long
-      values[2] = gisportal.utils.clamp(values[2], -180, 180); // Long
-      values[1] = gisportal.utils.clamp(values[1], -90, 90); // Lat
-      values[3] = gisportal.utils.clamp(values[3], -90, 90); // Lat
-      $('#graphcreator-bbox').val(values[0] + ',' + values[1] + ',' + values[2] + ',' + values[3]);
-      var feature = new OpenLayers.Feature.Vector(new OpenLayers.Bounds(values[0], values[1], values[2], values[3]).toGeometry());
-      feature.layer = map.layers[map.layers.length -1];
-      var features = map.layers[map.layers.length -1].features;
-      if (features[0]) map.layers[map.layers.length -1].features[0].destroy();
-      map.layers[map.layers.length -1].features[0] = feature;
-      map.layers[map.layers.length -1].redraw();
+        //TODO Implement
    });
 
    // TRAC Ticket #58: Fixes flaky non-selection of jQuery UI buttons (http://bugs.jqueryui.com/ticket/7665)
@@ -981,15 +1015,40 @@ gisportal.rightPanel.setupGraphingTools = function() {
             return elevation;
         };
 
+
+        var wkt = $('#graphcreator-bbox').val();
+        var layer = $('#graphcreator-coverage').val();
+        if (wkt.length == 0) {
+            $('#graphcreator-bbox').animate({
+                'border-color': 'red'
+            });
+        } else {
+            $('#graphcreator-bbox').animate({
+                'border-color': 'rgb(200, 200, 200)'
+            });
+        }
+        if (layer == null) {
+            $('#graphcreator-coverage').animate({
+                'border-color': 'red'
+            });
+        } else {
+            $('#graphcreator-coverage').animate({
+                'border-color': 'black'
+            });
+        }
+        if (wkt.length == 0 || layer == null) {
+            return 0;
+        }
+
+
         const graphcreatorCoverageElement = $('#graphcreator-coverage');
         var graphParams = {
             baseurl: $('#graphcreator-baseurl').val(),
             coverage: gisportal.layers[graphcreatorCoverageElement.find('option:selected').val()].origName ||
                       graphcreatorCoverageElement.find('option:selected').val(),
-            type: graphcreatorGalleryElement.find('input[name="gallery"]:checked').val(),
+            graphType: graphcreatorGalleryElement.find('input[name="gallery"]:checked').val(),
             bins: $('#graphcreator-bins').val(),
             time: dateRange,
-            bbox: $('#graphcreator-bbox').val(),
             depth: depthDirection(),
             graphXAxis: graphXAxis,
             graphYAxis: graphYAxis,
@@ -1012,15 +1071,14 @@ gisportal.rightPanel.setupGraphingTools = function() {
             var error = function (request, errorType, exception) {
                 console.log('Failed to retrieve stored graph from user');
             };
-            gisportal.genericAsync('POST', gisportal.graphLocation, { graph: JSON.stringify(graphObject)}, success, error, 'json', {});
 
             var options = {};
             options.title = title;
             options.provider = gisportal.layers[graphcreatorCoverageElement.find('option:selected').val()].providerTag;
             options.labelCount = $('#graph-settings-labels').val();
-            gisportal.graphs.data(graphParams, options);
+            gisportal.graphs.data(graphParams, $('#graphcreator-bbox').val(), options);
         } else {
-            gisportal.gritter.showNotification('dataNotSelected', null);
+            console.log('Must never come here');  // todo -- remove this in case it is never printed (as expected)
         }
     };
 
