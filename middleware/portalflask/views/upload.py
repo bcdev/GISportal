@@ -28,7 +28,6 @@ def shapefile_upload():
     shapefile_name = secure_filename(shapefiles[0].filename)
     shapefile_name = shapefile_name[:shapefile_name.index('.')] + '.shp'
     path = str(os.path.join(shapefile_support.get_shape_path(), shapefile_name))
-    print(path)
     already_registered = Shapefile.query.filter(Shapefile.path == path).count() > 0
     if already_registered:
         print('Shapefile \''+  shapefile_name + '\' has already been uploaded before.')
@@ -41,7 +40,7 @@ def shapefile_upload():
         filename = secure_filename(file.filename)
         target = os.path.join(shapefile_support.get_shape_path(), filename)
         file.save(target)
-        print('successfully saved file \'' + target + '\'')
+        print('Successfully uploaded file \'' + target + '\'')
     persist(shapefile_name, path)
 
     return '200'
