@@ -386,7 +386,7 @@ gisportal.leftPanel.addDummyHelpLayer = function() {
 /**
  * Saves the state of the left panel
  */
-gisportal.leftPanel.saveState = function(state) {
+gisportal.leftPanel.saveStateTo = function(state) {
    state.leftPanel = {};
 
    // Panel Open?
@@ -1191,7 +1191,7 @@ gisportal.rightPanel.setupDataExport = function() {
 /**
  * Saves the state of the right panel
  */
-gisportal.rightPanel.saveState = function(state) {
+gisportal.rightPanel.saveStateTo = function(state) {
    state.rightPanel = {};
 
    // Panel Open?

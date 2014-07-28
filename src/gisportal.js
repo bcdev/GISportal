@@ -747,7 +747,7 @@ gisportal.loadNonLayerDependents = function() {
 
 /*===========================================================================*/
 
-gisportal.saveState = function(state) {
+gisportal.saveStateTo = function(state) {
    var state = state || {}; 
    // Save layers
    state.map = {};
@@ -945,15 +945,12 @@ gisportal.logout = function() {
 gisportal.getState = function() {
    var state = {};
    
-   // TODO: Get states from component.
-   state = gisportal.saveState(state);
-   state = gisportal.leftPanel.saveState(state);
-   state = gisportal.rightPanel.saveState(state);
+   state = gisportal.saveStateTo(state);
+   state = gisportal.leftPanel.saveStateTo(state);
+   state = gisportal.rightPanel.saveStateTo(state);
 
    // TODO: Merge state with default state.
-   
-   // TODO: Return state.
-   return state; 
+   return state;
 };
 
 gisportal.setState = function(state) {

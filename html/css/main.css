@@ -152,6 +152,14 @@ ul li {
 .toolbar img {
     border:none;
 }
+
+#gisportal-openid-shareurl {
+    font-size: 0.9em;
+    font-family: Tahoma, Geneva, sans-serif;
+    height: 10px;
+    width: 200px;
+}
+
 /*
 #mapOptionsBtn {
    height:32px;
