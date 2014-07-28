@@ -56,8 +56,6 @@ gisportal.numOpLayers = 0;
 // Stores the current user selection. Any changes should trigger the correct event.
 // Could be changed to an array later to support multiple user selections
 gisportal.selection = {};
-gisportal.selection.layer = undefined;
-gisportal.selection.bbox = undefined;
 gisportal.selection.time = undefined;
 
 gisportal.layerSelector = null;
@@ -1089,29 +1087,30 @@ gisportal.main = function() {
 };
 
 gisportal.setupPlotRequirementsCheck = function () {
-    $('#graphcreator-bbox').on('change','textarea',function(){
-        console.log('test');
-        var wkt = $('#graphcreator-bbox').val();
+    var $graphcreatorBbox = $('#graphcreator-bbox');
+    $graphcreatorBbox.on('change', 'textarea' ,function() {
+        var wkt = $graphcreatorBbox.val();
         if (wkt.length == 0) {
-            $('#graphcreator-bbox').animate({
+            $graphcreatorBbox.animate({
                 'border-color': 'red'
             });
         } else {
-            $('#graphcreator-bbox').animate({
+            $graphcreatorBbox.animate({
                 'border-color': 'rgb(200, 200, 200)'
             });
         }
     });
 
-    $('#graphcreator-coverage').change(function () {
-        var layer = $('#graphcreator-coverage').val();
+    var $graphcreatorCoverage = $('#graphcreator-coverage');
+    $graphcreatorCoverage.change(function () {
+        var layer = $graphcreatorCoverage.val();
 
         if (layer == null) {
-            $('#graphcreator-coverage').animate({
+            $graphcreatorCoverage.animate({
                 'border-color': 'red'
             });
         } else {
-            $('#graphcreator-coverage').animate({
+            $graphcreatorCoverage.animate({
                 'border-color': 'black'
             });
         }
@@ -1119,19 +1118,20 @@ gisportal.setupPlotRequirementsCheck = function () {
 };
 
 gisportal.setupWKTBoxAnimation = function() {
-    $('#graphcreator-bbox').parent().focusin(function () {
-        if ($('#graphcreator-bbox').val() != '') {
-            $('#graphcreator-bbox').animate({
+    var $graphcreatorBbox = $('#graphcreator-bbox');
+    $graphcreatorBbox.parent().focusin(function () {
+        if ($graphcreatorBbox.val() != '') {
+            $graphcreatorBbox.animate({
                 'rows': "5"
             });
         }
     });
-    $('#graphcreator-bbox').parent().focusout(function () {
-        $('#graphcreator-bbox').animate({
+    $graphcreatorBbox.parent().focusout(function () {
+        $graphcreatorBbox.animate({
             'rows': "1"
         });
         map.ROI_Type = 'multipolygon';
-        gisportal.create_shape({ 'geometry': $('#graphcreator-bbox').val(), 'bounds': '' })
+        gisportal.create_shape({ 'geometry': $graphcreatorBbox.val(), 'bounds': '' })
     });
 };
 
@@ -1238,8 +1238,9 @@ gisportal.create_shape = function(data) {
     }
     var wktSupport = new OpenLayers.Format.WKT();
     var vectorLayer = map.getLayersBy('controlID', 'poiLayer')[0];
-    vectorLayer.removeAllFeatures(); console.log(wkt);
+    vectorLayer.removeAllFeatures();
     $('#graphcreator-bbox').val(wkt);
+    $('#graphcreator-bbox').change();
     var features = wktSupport.read(wkt);
     var featureList = [];
     if (wkt.toLowerCase().indexOf('multipolygon') != -1) {
@@ -1249,18 +1250,23 @@ gisportal.create_shape = function(data) {
     } else {
         featureList = [features];
     }
-    vectorLayer.addFeatures(featureList);
-    gisportal.fillROIDisplay(wkt, featureList, data['bounds'].split(','));
+    if (features !== undefined) {
+        vectorLayer.addFeatures(featureList);
+        gisportal.fillROIDisplay(featureList, data['bounds'].split(','));
+    } else {
+        gisportal.fillROIDisplay([], null);
+    }
 };
 
 gisportal.drawShape = function(shapefile, shapename) {
    gisportal.genericAsync('post', gisportal.middlewarePath + '/get_shapefile_geometry/' + shapefile + '/' + shapename, null, gisportal.create_shape, null, 'json', {})
 };
 
-gisportal.fillROIDisplay = function(subshapes, features, b) {
-    $('#dispROI').html('<h3>Shapefile ROI</h3>');
+gisportal.fillROIDisplay = function(features, b) {
+    var canvas = $('#dispROI');
+    canvas.html('<h3>ROI</h3>');
     // Setup the JavaScript canvas object and draw our ROI on it
-    $('#dispROI').append('<canvas id="ROIC" width="100" height="100"></canvas>');
+    canvas.append('<canvas id="ROIC" width="100" height="100"></canvas>');
 
     var c = document.getElementById('ROIC');
     var ctx = c.getContext('2d');
@@ -1268,7 +1274,6 @@ gisportal.fillROIDisplay = function(subshapes, features, b) {
     ctx.fillStyle = '#CCCCCC';
 
     var current_area = 0;
-    // todo - fix it!
     features.forEach(function(feature, i) {
         var geom = feature.geometry;
         var bounds = geom.getBounds();
@@ -1299,7 +1304,9 @@ gisportal.fillROIDisplay = function(subshapes, features, b) {
         current_area += parseFloat(area_km);
     });
 
-    $('#dispROI').append('<p>Projected Area: ' + current_area.toPrecision(4) + ' km<sup>2</p>');
+    if (features.length > 0) {
+        canvas.append('<p>Projected Area: ' + current_area.toPrecision(4) + ' km<sup>2</p>');
+    }
 };
 
 gisportal.ajaxState = function(id) { 

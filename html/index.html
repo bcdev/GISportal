@@ -303,7 +303,7 @@
                <label for="graphcreator-bbox">Geometry (WKT):</label>
             </div>
             <div style="position: relative">
-               <textarea rows="1" cols="70" id="graphcreator-bbox" title="WKT formatted geometry" placeholder="WKT" name="graphcreator-bbox" onClick="this.setSelectionRange(0, this.value.length)"/>
+               <textarea rows="1" cols="70" id="graphcreator-bbox" title="WKT formatted geometry" placeholder="WKT" name="graphcreator-bbox" onClick="this.setSelectionRange(0, this.value.length)"></textarea>
             </div>
          </div>
       </div>
@@ -624,15 +624,18 @@
             <div id="gisportal-tab-export" class="gisportal-tab-content ui-corner-top" style="display: none;">
                <h3><a href="#">Data Tools</a></h3>
                <div id="dataTools">
-                  <div class="gisportal-list js-export-layer"><b>Selected Layer: </b> None</div>
-                  <div class="gisportal-list js-export-bbox"><b>Selected Bbox: </b> None</div>
-                  <div class="gisportal-list js-export-time"><b>Selected Time: </b> None</div>
-                  <div class="gisportal-list js-export-format"><b>Selected Format: </b>
+                  <label for="js-export-layer"><b>Selected layer: </b></label>
+                  <span class="gisportal-list" id="js-export-layer">None</span><br/>
+                  <label for="js-export-bbox"><b>Selected bounding box: </b></label>
+                  <span class="gisportal-list" id="js-export-bbox">None (full coverage)</span><br/>
+                  <label for="js-export-time"><b>Selected time range: </b></label>
+                  <span class="gisportal-list" id="js-export-time">None (full coverage)</span><br/>
+                  <div class="gisportal-list" id="js-export-format"><b>Selected Format: </b>
                      <select id="gisportal-dataexport-format" title="Format you wish to the data to be returned in">
                         <option value="NetCDF3" title="Returns a netcdf3 file">NetCDF3</option>
                      </select>
                   </div>
-                  <a class="js-export-url" href="#" target="_new">Download Data</a>
+                  <button id="js-export-submit" disabled>Download Data</button>
                </div>
             </div>
          </div>
