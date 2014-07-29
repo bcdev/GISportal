@@ -1154,7 +1154,7 @@ gisportal.setupShapefileDropdown = function() {
 
 gisportal.updateShapefiles = function() {
     var $shapefileChooser = $('#shapefile_chooser');
-    if (!$('#shapefile_button').is(":visible")) {
+    if ($('#shapefile_button').hasClass('ui-helper-hidden-accessible')) {
         return 0;
     }
     var clear_shapefiles = function() {
@@ -1192,7 +1192,7 @@ gisportal.updateShapes = function() {
     };
 
     var shapefile_name = $('#shapefile_chooser').find('option:selected').val();
-    if (shapefile_name == 'upload' || shapefile_name == 'none') {
+    if (shapefile_name == 'upload' || shapefile_name == 'none' || shapefile_name === undefined) {
         clear_shapes();
         return;
     }
