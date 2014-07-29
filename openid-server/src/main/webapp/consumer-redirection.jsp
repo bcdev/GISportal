@@ -3,6 +3,7 @@
 <html>
 <head>
     <title>OpenID Consumer Redirection</title>
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/style.css">
 </head>
 <body>
 <form name="openid-consumer-redirection" action="${destinationUrl}" method="post">
@@ -21,5 +22,8 @@
     <input type="hidden" name="_logoutAction" value="true"/>
     <button type="submit">Log out</button>
 </form>
+
+<jsp:include page="footer.jsp"/>
+
 </body>
 </html>

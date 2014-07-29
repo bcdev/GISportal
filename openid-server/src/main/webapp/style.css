@@ -1,0 +1,49 @@
+body {
+    background-color: #DCE1EB;
+    color:#000;
+}
+
+.text {
+    padding-left: 20px;
+    font-family: Verdana, sans-serif;
+    font-weight: bold;
+}
+
+.subtext {
+    font-size: smaller;
+    font-weight: normal;
+}
+
+.subsubtext {
+    font-size: x-small;
+    font-weight: normal;
+}
+
+.button {
+    font-size: 0.9em;
+    font-family: Tahoma, Geneva, sans-serif;
+    padding: 1px 6px;
+    background-color: buttonface;
+    box-sizing: border-box;
+}
+
+.table td {
+    padding: 5px 5px 5px 30px;
+}
+
+.buttonCell {
+    text-align: right;
+}
+
+#footer {
+    position: fixed;
+    bottom: 5px;
+    width: 100%;
+}
+
+img {
+    max-height: 16px;
+    width: auto;
+    position: absolute;
+    margin-top: 2px;
+}
