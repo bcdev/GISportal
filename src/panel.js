@@ -514,7 +514,7 @@ gisportal.rightPanel.setup = function() {
 
    $('#shapefile_chooser').change(shapefileDropdownHandler);
    $('#shapename_chooser').change(updateShapenameDropdown);
-   $('#shapefile_upload_button').change(gisportal.submit_shapefile_upload_form());
+   $('#shapefile_upload_button').change(gisportal.submit_shapefile_upload_form);
    $('#uploadshapefile').attr('action', gisportal.middlewarePath + '/shapefile_upload');
 
    $('input[name="roi_button_group"]').change(function() {

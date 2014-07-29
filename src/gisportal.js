@@ -1154,9 +1154,6 @@ gisportal.setupShapefileDropdown = function() {
 
 gisportal.updateShapefiles = function() {
     var $shapefileChooser = $('#shapefile_chooser');
-    if ($('#shapefile_button').hasClass('ui-helper-hidden-accessible')) {
-        return 0;
-    }
     var clear_shapefiles = function() {
         $shapefileChooser.find('option').each(function(index) {
             if (this.value !== 'upload' && this.value !== 'none') {
