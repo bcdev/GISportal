@@ -1283,9 +1283,12 @@ gisportal.topbar.setup = function() {
    // Making sure the correct controls are active
    gisportal.toggleControl($('#panZoom input:radio'));
 
-   // Manually Handle jQuery UI icon button click event - each button has a class of "iconBtn"
+   // Manually Handle jQuery UI icon button click event
    $('#panZoom input:radio').click(function(e) {
       gisportal.toggleControl(this);
+   });
+   $('#panZoom').find('button').click(function(e) {
+       gisportal.mapControls[e.currentTarget.id].trigger();
    });
 
    //--------------------------------------------------------------------------

@@ -578,6 +578,8 @@ gisportal.mapInit = function() {
    
    // Create map controls identified by key values which can be activated and deactivated
    gisportal.mapControls = {
+      zoomIn: new OpenLayers.Control.ZoomIn(),
+      zoomOut: new OpenLayers.Control.ZoomOut(),
       pan: new OpenLayers.Control.Navigation(),
       selector: new OpenLayers.Control.SelectFeature([], {
          hover: false,
