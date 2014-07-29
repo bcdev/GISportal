@@ -92,7 +92,9 @@ gisportal.openid.setup = function(containerID) {
    
 
    gisportal.openid.$saveButton.click(function() {
-      gisportal.openid.getLink();
+      var state = gisportal.getState();
+      var stateUrl = gisportal.openid.persistState(state);
+      $('#gisportal-openid-shareurl').val(location.origin + location.pathname + '?state=' + stateUrl);
    });
 
    gisportal.openid.$logoutButton.click(function()  {
@@ -120,18 +122,21 @@ gisportal.openid.set_userinfo_to_html = function() {
     gisportal.genericSync('POST', gisportal.middlewarePath + "/get_user", null, setUserinfo, nullifyUserInfo, 'json', {});
 };
 
-// getLink to state
-gisportal.openid.getLink = function()  {
-   gisportal.genericAsync('POST', gisportal.stateLocation, { state: JSON.stringify(gisportal.getState())}, function(data, opts) { 
-      if (data['output']['url']) {
-         console.log(data['output']);
-         $('#gisportal-openid-shareurl').val(location.origin + location.pathname + '?state=' + data['output']['url']);
-      }
-   }, 
-   function(request, errorType, exception) {
-      console.log(request, errorType, exception);
-      if (exception === 'UNAUTHORIZED') gisportal.openid.showLogin();
-   }, 'json', {});
+gisportal.openid.persistState = function(state)  {
+    var url = undefined;
+    var on_success = function (data, opts) {
+        if (data['output']['url']) {
+            console.log(data['output']);
+            url = data['output']['url'];
+        }
+    };
+
+    var on_error = function(request, errorType, exception) {
+        console.log(request, errorType, exception);
+    };
+
+    gisportal.genericSync('POST', gisportal.middlewarePath + '/persist_state', { state: JSON.stringify(state)}, on_success, on_error, 'json', {});
+    return url;
 };
 
 gisportal.openid.logout = function() { gisportal.genericAsync('GET', gisportal.openid.logoutLocation, null, function(data, opts) {

@@ -23,7 +23,6 @@ def index():
 @portal_user.route('/login', methods=['GET', 'POST'])
 @oid.loginhandler
 def login():
-   print('in login')
    # if we are already logged in, go back to were we came from
    if g.user is not None:
       return redirect(url_for('portal_user.index'))
@@ -34,8 +33,6 @@ def login():
 
 @oid.after_login
 def create_or_login(resp):
-   print('in create or login')
-
    generic_identity = resp.identity_url
    nickname = resp.nickname
    user_identity = generic_identity + '?id=' + hashlib.md5(nickname).hexdigest()
@@ -55,7 +52,6 @@ def create_or_login(resp):
 
 @portal_user.route('/create-user', methods=['GET', 'POST'])
 def create_user():
-   print('in create user')
    if g.user is not None or 'openid' not in session:
       raise ValueError('should never come here')
    if request.method == 'POST':
@@ -78,7 +74,6 @@ def create_user():
       db_session.commit()
       print('Profile successfully created')
       return redirect(url_for('portal_user.index'))
-   print('returning')
    return redirect(url_for('portal_user.index'))
 
 
@@ -107,7 +102,6 @@ def permissions(allowed_user_groups):
 @portal_user.route('/get_shapefile_names', methods=['POST'])
 @check_for_permission(['bc', 'coastcolour'])
 def get_shapefile_names():
-    print('get_shapefile_names')
     if not os.path.exists(shapefile_support.get_shape_path()):
         return jsonify(shapefiles=[])
     files = [f for f in os.listdir(shapefile_support.get_shape_path()) if os.path.basename(f).endswith('.shp')]
@@ -117,7 +111,6 @@ def get_shapefile_names():
 @portal_user.route('/get_shape_names/<shapefile_name>', methods=['POST'])
 @check_for_permission(['bc', 'coastcolour'])
 def get_shape_names(shapefile_name):
-    print('get_shape_names')
     shape_names = shapefile_support.get_shape_names(shapefile_name)
     return jsonify(shape_names=shape_names)
 
@@ -125,13 +118,11 @@ def get_shape_names(shapefile_name):
 @portal_user.route('/get_shapefile_geometry/<shapefile_name>/<shape_name>', methods=['POST'])
 @check_for_permission(['bc', 'coastcolour'])
 def get_shapefile_geometry(shapefile_name, shape_name):
-    print('get_shape_geometry')
     return jsonify(geometry=shapefile_support.get_shape_geometry(shapefile_name, shape_name), bounds=shapefile_support.get_bounding_box(shapefile_name, shape_name))
 
 
 @portal_user.route('/logout', methods=['GET','POST'])
 def logout():
-   print('logging out user \'' + g.user.username + '\'')
    session.pop('openid', None)
    g.user = None
    return "200", 200

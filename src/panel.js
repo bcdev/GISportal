@@ -293,8 +293,6 @@ gisportal.leftPanel.addLayerToGroup = function(layer, $group) {
       gisportal.updateLayerData(layer.id);
       gisportal.rightPanel.updateCoverageList();
 		$('#' + data.name + ' .gisportal-layer-dropdown').click(function(e)  { $(this).contextMenu({ x: e.clientX, y: e.clientY});  });
-		// Remove the dummy layer
-      //removeDummyHelpLayer()
    }
 };
 
@@ -386,7 +384,7 @@ gisportal.leftPanel.addDummyHelpLayer = function() {
 /**
  * Saves the state of the left panel
  */
-gisportal.leftPanel.saveState = function(state) {
+gisportal.leftPanel.saveStateTo = function(state) {
    state.leftPanel = {};
 
    // Panel Open?
@@ -437,13 +435,13 @@ gisportal.rightPanel.open = function() {
    $(".rPanel").show("fast");
    $(".triggerR").addClass("active");
 	$('#advanced-inputs-header').click();
-}
+};
 
 gisportal.rightPanel.toggle = function() {
 	$('#advanced-inputs-header').click();
 	$(".rPanel").toggle("fast");
    $(".triggerR").toggleClass("active");
-}
+};
 
 // coverageStateSelected is a boolean that is set when a state has
 // selected a coverage. This is so that the select box can be
@@ -472,7 +470,7 @@ gisportal.rightPanel.updateCoverageList = function()  {
    }
 
    $('#graphcreator-coverage').change();
-}
+};
 
 gisportal.rightPanel.setup = function() {
 
@@ -607,6 +605,7 @@ gisportal.rightPanel.setupDrawingControls = function() {
       // Get some values for non-point ROIs
       if(map.ROI_Type !== '' && map.ROI_Type != 'point' && map.ROI_Type != 'shapefile' && map.ROI_Type != 'multipolygon') {
          $('#graphcreator-bbox').val(new OpenLayers.Format.WKT().extractGeometry(geom));
+         $('#graphcreator-bbox').change();
          area_deg = geom.getArea();
          area_km = (geom.getGeodesicArea()*1e-6);
          height_deg = bounds.getHeight();
@@ -714,11 +713,6 @@ gisportal.rightPanel.setupDrawingControls = function() {
           removePanControl = false;
       }
       toggleDrawingControl(this, removePanControl);
-   });
-
-   // So that changing the input box changes the visual selection box on map
-   $('#gisportal-graphing').on('change', '#graphcreator-bbox', function() {
-        //TODO Implement
    });
 
    // TRAC Ticket #58: Fixes flaky non-selection of jQuery UI buttons (http://bugs.jqueryui.com/ticket/7665)
@@ -909,16 +903,11 @@ gisportal.rightPanel.setupGraphingTools = function() {
                 if (layer.controlID === 'refLayers') {
                     $('#advanced-inputs-header').parent().hide();
                     $('.js-reference').show();
-
-                    // TEMP CODE
-                    $('#graphcreator-reference-variable option:selected').attr('value', 'TEMP-CPHLPS01').html('TEMP-CPHLPS01');
                 }
                 else {
                     $('#advanced-inputs-header').parent().show();
                     $('.js-reference').hide();
                 }
-                if (gisportal.selection.bbox)
-                    $(gisportal.selection).trigger('selection_updated', {bbox: true});
             }
         }
     });
@@ -1089,10 +1078,10 @@ gisportal.rightPanel.setupGraphingTools = function() {
 gisportal.rightPanel.setupDataExport = function() {
 
    var dataExport = $('#dataTools');
-   var selectedLayer = $('.js-export-layer');
-   var selectedBbox = $('.js-export-bbox');
-   var selectedTime = $('.js-export-time');
-   var dataDownloadURL = $('.js-export-url');
+   var exportLayer = $('#js-export-layer');
+   var selectedBbox = $('#js-export-bbox');
+   var selectedTime = $('#js-export-time');
+   var submitButton = $('#js-export-submit');
 
    var url = null;
    var urlParams = {
@@ -1103,95 +1092,86 @@ gisportal.rightPanel.setupDataExport = function() {
       format: 'NetCDF3'
    };
 
-   var layerID = $('.selectedLayer:visible').attr('id');
-
-   // We need to check if a layer is selected
-   if(typeof layerID !== 'undefined') {
-      // Get the currently selected layer
-      var layer = gisportal.getLayerByID(layerID);
-      selectedLayer.html('<b>Selected Layer: </b>' + layer.displayTitle);
-
-      // Not using dot notation, so Closure doesn't change it.
-      urlParams['coverage'] = layer.urlName;
-      url = layer.wcsURL;
-      updateURL();
+   function updateSubmitButton() {
+       var wkt = $('#graphcreator-bbox').val();
+       var featureVector = new OpenLayers.Format.WKT().read(wkt);
+       var selectedLayer = gisportal.layers[$('#graphcreator-coverage').find('option:selected').val()];
+       if (featureVector !== undefined && selectedLayer !== undefined) {
+          var bounds = featureVector.geometry.getBounds();
+          var bbox = selectedLayer.boundingBox;
+          var bounds2 = new OpenLayers.Bounds(bbox.MinX, bbox.MinY, bbox.MaxX, bbox.MaxY);
+          if (bounds.intersectsBounds(bounds2)) {
+             submitButton.removeAttr("disabled");
+             return 0;
+          }
+       }
+       submitButton.attr("disabled", "disabled");
    }
 
- 	// Check for changes to the selected layer
-   $('.lPanel').bind('selectedLayer', function(e) {
-      var layer = gisportal.getLayerByID($('.selectedLayer:visible').attr('id'));
-      selectedLayer.html('<b>Selected Layer: </b>' + layer.displayTitle);
+   function updateSelectedLayer() {
+       var selectedLayer = gisportal.layers[$('#graphcreator-coverage').find('option:selected').val()];
+       if (selectedLayer === undefined) {
+           exportLayer.text('None');
+       } else {
+           exportLayer.text(selectedLayer.displayTitle);
+           // Not using dot notation, so Closure doesn't change it.
+           urlParams['coverage'] = selectedLayer.urlName;
+           url = selectedLayer.wcsURL;
+       }
+   }
 
-      // Not using dot notation, so Closure doesn't change it.
-      urlParams['coverage'] = layer.urlName;
-      url = layer.wcsURL;
-      updateURL();
+    function updateGeometry() {
+        var wkt = $('#graphcreator-bbox').val();
+        var featureVector = new OpenLayers.Format.WKT().read(wkt);
+        if (featureVector !== undefined) {
+           var bounds = featureVector.geometry.getBounds();
+           selectedBbox.text(bounds.left.toFixed(4) + ', ' + bounds.bottom.toFixed(4) + ', ' + bounds.right.toFixed(4) + ', ' + bounds.top.toFixed(4));
+           urlParams['bbox'] = bounds.left + ',' + bounds.bottom + ',' + bounds.right + ',' + bounds.top;
+           updateSubmitButton();
+           return 0;
+        }
+        selectedBbox.text('None (full coverage)');
+   }
+
+   function updateTimeRange() {
+       $('#gisportal-graphing').on('change', '.hasDatepicker', updateUrlTime);
+       $(gisportal).on('rangeUpdate.gisportal', updateUrlTime);
+
+       function updateUrlTime() {
+           gisportal.selection.time = urlParams['time'] = gisportal.rightPanel.getDateRange();
+           if (gisportal.selection.time !== '')  {
+               selectedTime.text(gisportal.selection.time);
+           }
+           else {
+               selectedTime.text('None (full coverage)');
+           }
+       }
+   }
+
+   // Run once for restoring state; register handler for upcoming changes
+   updateSelectedLayer();
+   updateGeometry();
+   updateTimeRange();
+
+   $('#graphcreator-coverage').change(function() {
+       updateSelectedLayer();
    });
 
-	// TODO: IMPROVE
-   $(gisportal.selection).bind('selection_updated', function(event, params) {
-      if(typeof params.bbox !== 'undefinded' && params.bbox) {
-         var layer = gisportal.layers[$('#graphcreator-coverage').val()];
-         var bbox = gisportal.selection.bbox.split(',');
-         updateUrlTime();
-         selectedLayer.html('<b>Selected Layer: </b>' + layer.displayTitle);
-         selectedBbox.html('<b>Selected Bbox: </b>' + bbox[0] + ', ' + bbox[1] + ', ' + bbox[2] + ', ' + bbox[3]);
-         urlParams['bbox'] = gisportal.selection.bbox;
-         urlParams['coverage'] = layer.urlName;
-         url = layer.wcsURL;
-         updateURL();
-      }
+   $('#graphcreator-bbox').change(function() {
+       updateGeometry();
+   });
 
-		$('#gisportal-graphing').on('change', '.hasDatepicker', updateUrlTime);
-		$(gisportal).on('rangeUpdate.gisportal', updateUrlTime);
-
-		function updateUrlTime() {
-         var layer = gisportal.layers[$('#graphcreator-coverage').val()];
-         gisportal.selection.time = urlParams['time'] = gisportal.rightPanel.getDateRange();
-         if (gisportal.selection.time !== '')  {
-            selectedTime.html('<b>Selected Time: </b>' + gisportal.selection.time);
-            url = layer.wcsURL;
-            updateURL();
-         }
-         else {
-            selectedTime.html('');
-         }
-		}
-
-	});
-
-   function updateURL() {
-      var request = $.param( urlParams );
-      dataDownloadURL.attr('href', url + request);
-   }
-
-   dataDownloadURL.click(function() {
-      // Check if there is data to download and catch spam clicks.
-      if($(this).attr('href') == '#' && $(this).text() != 'No Data To Download') {
-         dataDownloadURL.text('No Data To Download');
-         setTimeout(function() {
-            dataDownloadURL.text('Download Data');
-         }, 1000);
-
-         return false;
-      }
-      // If the text is hasn't changed then download the data.
-      else if($(this).text() == 'Download Data') {
-         // TODO: We could use this to keep track of what data the user has
-         // downloaded. They might need to see what they have or have not
-         // downloaded.
-      }
-      // Top check will fail if the user spam clicks, but we still need to 'return false'.
-      else {
-         return false;
-      }
+   submitButton.click(function() {
+      var request = $.param(urlParams);
+      link.attr('href', url + request);
+      window.open(url + request, 'download');
    });
 };
 
 /**
  * Saves the state of the right panel
  */
-gisportal.rightPanel.saveState = function(state) {
+gisportal.rightPanel.saveStateTo = function(state) {
    state.rightPanel = {};
 
    // Panel Open?
