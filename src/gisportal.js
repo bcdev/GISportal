@@ -670,14 +670,14 @@ gisportal.loadNonLayerDependents = function() {
    });
 
    // Set the max height of each of the accordions relative to the size of the window
-   $('#layerAccordion').css('max-height', $(document).height() - 300);
-   $('#gisportal-lPanel-operational').css('max-height', $(document).height() - 350);
-   $('#gisportal-lPanel-reference').css('max-height', $(document).height() - 350);
+   $('#layerAccordion').css('max-height', $(document).height() - 280);
+   $('#gisportal-lPanel-operational').css('max-height', $(document).height() - 330);
+   $('#gisportal-lPanel-reference').css('max-height', $(document).height() - 330);
    
    $(window).resize(function() {
-      $('#layerAccordion').css('max-height', $(window).height() - 300);
-      $('#gisportal-lPanel-operational').css('max-height', $(window).height() - 350);
-      $('#gisportal-lPanel-reference').css('max-height', $(window).height() - 350);
+      $('#layerAccordion').css('max-height', $(window).height() - 280);
+      $('#gisportal-lPanel-operational').css('max-height', $(window).height() - 330);
+      $('#gisportal-lPanel-reference').css('max-height', $(window).height() - 330);
    });
 
    
