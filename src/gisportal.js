@@ -578,12 +578,6 @@ gisportal.mapInit = function() {
    
    // Create map controls identified by key values which can be activated and deactivated
    gisportal.mapControls = {
-      zoomIn: new OpenLayers.Control.ZoomBox(
-         { out: false, alwaysZoom: true }
-      ),
-      zoomOut: new OpenLayers.Control.ZoomBox(
-         { out: true, alwaysZoom: true }
-      ),
       pan: new OpenLayers.Control.Navigation(),
       selector: new OpenLayers.Control.SelectFeature([], {
          hover: false,
@@ -913,7 +907,7 @@ gisportal.checkIfLayerFromState = function(layer) {
  */
 gisportal.login = function() {
    $('#mapInfoToggleBtn').button("enable");
-   gisportal.window.history.loadStateHistory();
+//   gisportal.window.history.loadStateHistory();
    gisportal.userManager.updateActions();
    gisportal.refreshOpLayers();
    gisportal.updateShapefiles();
@@ -925,7 +919,7 @@ gisportal.login = function() {
  */
 gisportal.logout = function() {
    $('#mapInfoToggleBtn').button("disable").prop("checked", false);
-   $('#gisportal-historyWindow').extendedDialog("close");
+//   $('#gisportal-historyWindow').extendedDialog("close");
    gisportal.userManager.updateActions();
    gisportal.refreshOpLayers();
    gisportal.updateShapefiles();
@@ -1051,7 +1045,7 @@ gisportal.main = function() {
    gisportal.userManager.updateActions();
 
    gisportal.layerSelector = new gisportal.window.layerSelector('gisportal-layerSelection .gisportal-tagMenu', 'gisportal-layerSelection .gisportal-selectable ul');
-   gisportal.historyWindow = new gisportal.window.history();
+//   gisportal.historyWindow = new gisportal.window.history();
 
    // Setup the gritter so we can use it for error messages
 //   gisportal.gritter.setup();
@@ -1158,6 +1152,9 @@ gisportal.setupShapefileDropdown = function() {
 
 gisportal.updateShapefiles = function() {
     var $shapefileChooser = $('#shapefile_chooser');
+    if (!$('#shapefile_button').is(":visible")) {
+        return 0;
+    }
     var clear_shapefiles = function() {
         $shapefileChooser.find('option').each(function(index) {
             if (this.value !== 'upload' && this.value !== 'none') {
@@ -1189,10 +1186,11 @@ gisportal.updateShapes = function() {
         $shapenameChooser.find('option').each(function(index) {
             $($shapenameChooser.find('option[value="' + this.value + '"]')).remove();
         });
+        $shapenameChooser.trigger('chosen:updated');
     };
 
     var shapefile_name = $('#shapefile_chooser').find('option:selected').val();
-    if (shapefile_name == 'upload') {
+    if (shapefile_name == 'upload' || shapefile_name == 'none') {
         clear_shapes();
         return;
     }

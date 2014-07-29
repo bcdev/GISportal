@@ -428,7 +428,7 @@
             <!-- Using fieldsets as no easy CSS alternative -->
             <fieldset>
                <legend>View Date</legend>
-               <input size="10" type="text" disabled name="viewDate" id="viewDate" placeholder="dd-mm-yyyy" />
+               <input size="10" type="text" name="viewDate" id="viewDate" placeholder="dd-mm-yyyy" />
             </fieldset>
          </li>
          <li class="divider"></li>
@@ -442,10 +442,8 @@
          </li>
          <li class="divider"></li>
          <li id="gisportal-toolbar-actions" class="gisportal-toolbar-buttonpane">
-            <!--<input type="checkbox" id="mapInfoToggleBtn" /><label class="gisportal-iconBigBtn" for="mapInfoToggleBtn" title="Toggle Map Info"></label>-->
             <input type="checkbox" id="shareMapToggleBtn" /><label class="gisportal-iconBigBtn" for="shareMapToggleBtn" title="Toggle Share Panel"></label>
             <input type="checkbox" id="layerPreloader" /><label class="gisportal-iconBigBtn" for="layerPreloader" title="Toggle Layer Selection Panel"></label>
-            <!--<input type="checkbox" id="gisportal-button-3d" /><label class="gisportal-iconBigBtn" for="gisportal-button-3d" title="Toggle 3D Mode"></label>-->
             <input type="checkbox" id="infoToggleBtn" /><label class="gisportal-iconBigBtn" for="infoToggleBtn" title="Toggle Information Box"></label>
             <input type="checkbox" id="userInfoToggleBtn" /><label class="gisportal-iconBigBtn" for="userInfoToggleBtn" title="Show user information" style="display: none"></label>
          </li>
@@ -573,7 +571,7 @@
                                     <td>
                                         <form id="shape_chooser">
                                             <select id="shapefile_chooser" data-placeholder="Select a shapefile" class="chosen-select" style="display: inline" disabled>
-                                                <option value="none"></option>
+                                                <option value="none">No shapefile</option>
                                                 <option value="upload">Upload ESRI shapefile...</option>
                                             </select>
                                             <select id="shapename_chooser" data-placeholder="No shapes" size="1" class="chosen-select-region" disabled>

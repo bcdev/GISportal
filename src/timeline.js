@@ -124,8 +124,7 @@ gisportal.TimeLine = function(id, options) {
    
    // Set initial y scale
    this.xScale = d3.time.scale().domain([this.minDate, this.maxDate]).range([0, this.width]);
-   console.log("xscale width:" + this.width);
-   this.yScale = d3.scale.linear().domain([0, this.timebars.length]).range([0, this.height]); 
+   this.yScale = d3.scale.linear().domain([0, this.timebars.length]).range([0, this.height]);
    
    //--------------------------------------------------------------------------
    
@@ -133,9 +132,6 @@ gisportal.TimeLine = function(id, options) {
    var isDragging = false;
    
    this.clickDate = function(d, i) {
-      console.log(d);
-      console.log(i);
-      console.log(this);
       // Stop the event firing if the drag event is fired.
       if(isDragging) {
          //isDragging = false;
@@ -162,7 +158,6 @@ gisportal.TimeLine = function(id, options) {
       
       // Filter the layer data to the selected date      
       gisportal.filterLayersByDate(self.selectedDate);
-      console.log('--->New clicked date/time = ' + self.selectedDate);  // Debugging
       $('#viewDate').change();
    };
   
@@ -170,7 +165,7 @@ gisportal.TimeLine = function(id, options) {
    // Set up the SVG chart area within the specified div; handle mouse zooming with a callback.
    this.zoom = d3.behavior.zoom()
                 .x(this.xScale)
-              .on('zoom', function() { isDragging = true; console.log(self.xScale.domain()); self.redraw(); console.log("ZOOM-2!"); });
+              .on('zoom', function() { isDragging = true;  self.redraw(); });
                  
 
    // Append the svg and add a class before attaching both events.
@@ -179,7 +174,7 @@ gisportal.TimeLine = function(id, options) {
       .attr('class', 'timeline')
       .call(self.zoom)
       .on('click', self.clickDate)
-      .on('mousedown', function() {  isDragging = false; console.log('mousedown || ' + isDragging); });
+      .on('mousedown', function() {  isDragging = false; });
 
 
    //--------------------------------------------------------------------------
@@ -225,7 +220,6 @@ gisportal.TimeLine = function(id, options) {
       
       // Move the graphical marker
       self.selectedDateLine.attr('x', function(d) { return d3.round(self.xScale(self.draggedDate) - 1.5); });
-      console.log('--->New drag date/time = ' + self.draggedDate);  // Debugging
    };
    
    this.dragDateEnd = function() {
@@ -237,7 +231,6 @@ gisportal.TimeLine = function(id, options) {
       
       // Filter the layer data to the selected date
       gisportal.filterLayersByDate(self.selectedDate);
-      console.log('--->New selected date/time = ' + self.selectedDate);  // Debugging
    };
 
    // Initialise the selected date-time marker and handle dragging via a callback
@@ -578,8 +571,6 @@ gisportal.TimeLine.prototype.zoomDate = function(startDate, endDate){
    var padding = (maxDate - minDate) * 0.05; 
    this.minDate = ((minDate instanceof Date) ? new Date(minDate.getTime() - padding) : this.minDate);
    this.maxDate = ((maxDate instanceof Date) ? new Date(maxDate.getTime() + padding) : this.maxDate);
-   console.log(minDate, maxDate);
-   console.log(this.xScale.domain());
    this.xScale.domain([this.minDate, this.maxDate]).range([0, this.width]);
    this.zoom.x(this.xScale); // This is absolutely required to programatically zoom and retrigger internals of zoom
    this.redraw();

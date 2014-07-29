@@ -496,7 +496,7 @@ gisportal.rightPanel.setup = function() {
     var updateShapenameDropdown = function () {
         var shapefile = $('#shapefile_chooser').val();
         var selectedValue = $('#shapename_chooser').val();
-        if (shapefile != 'upload') {
+        if (shapefile != 'upload' && shapefile != 'none') {
             gisportal.drawShape(shapefile, selectedValue);
         }
     };
@@ -514,7 +514,7 @@ gisportal.rightPanel.setup = function() {
 
    $('#shapefile_chooser').change(shapefileDropdownHandler);
    $('#shapename_chooser').change(updateShapenameDropdown);
-   $('#shapefile_upload_button').change(gisportal.submit_shapefile_upload_form);
+   $('#shapefile_upload_button').change(gisportal.submit_shapefile_upload_form());
    $('#uploadshapefile').attr('action', gisportal.middlewarePath + '/shapefile_upload');
 
    $('input[name="roi_button_group"]').change(function() {
@@ -1004,10 +1004,22 @@ gisportal.rightPanel.setupGraphingTools = function() {
             return elevation;
         };
 
+        function wktIntersectsLayer(wkt) {
+            var featureVector = new OpenLayers.Format.WKT().read(wkt);
+            var selectedLayer = gisportal.layers[$('#graphcreator-coverage').find('option:selected').val()];
+            if (featureVector !== undefined && selectedLayer !== undefined) {
+                var bounds = featureVector.geometry.getBounds();
+                var bbox = selectedLayer.boundingBox;
+                var bounds2 = new OpenLayers.Bounds(bbox.MinX, bbox.MinY, bbox.MaxX, bbox.MaxY);
+                return bounds.intersectsBounds(bounds2);
+            }
+            return false;
+        }
+
 
         var wkt = $('#graphcreator-bbox').val();
         var layer = $('#graphcreator-coverage').val();
-        if (wkt.length == 0) {
+        if (wkt.length == 0 || !wktIntersectsLayer(wkt)) {
             $('#graphcreator-bbox').animate({
                 'border-color': 'red'
             });
@@ -1025,12 +1037,11 @@ gisportal.rightPanel.setupGraphingTools = function() {
                 'border-color': 'black'
             });
         }
-        if (wkt.length == 0 || layer == null) {
+        if (wkt.length == 0 || !wktIntersectsLayer(wkt) || layer == null) {
             return 0;
         }
 
-
-        const graphcreatorCoverageElement = $('#graphcreator-coverage');
+        var graphcreatorCoverageElement = $('#graphcreator-coverage');
         var graphParams = {
             baseurl: $('#graphcreator-baseurl').val(),
             coverage: gisportal.layers[graphcreatorCoverageElement.find('option:selected').val()].origName ||
@@ -1044,31 +1055,24 @@ gisportal.rightPanel.setupGraphingTools = function() {
             graphZAxis: gisportal.layers[graphcreatorCoverageElement.find('option:checked').val()].origName
         };
 
-        if (graphParams.baseurl && graphParams.coverage) {
-            var title = $('#graphcreator-title').html() || graphParams.type + " of " +
-                                                           gisportal.layers[graphcreatorCoverageElement.find('option:checked').val()].displayTitle;
-            var graphObject = {};
-            graphObject.graphData = graphParams;
-            //graphObject.description = prompt("Please enter a description");
-            graphObject.description = title;
-            graphObject.title = title;
-
-            var success = function (data, opts) {
-                console.log('POSTED graph!');
-            };
-            // Async post the state
-            var error = function (request, errorType, exception) {
-                console.log('Failed to retrieve stored graph from user');
-            };
-
-            var options = {};
-            options.title = title;
-            options.provider = gisportal.layers[graphcreatorCoverageElement.find('option:selected').val()].providerTag;
-            options.labelCount = $('#graph-settings-labels').val();
-            gisportal.graphs.data(graphParams, $('#graphcreator-bbox').val(), options);
-        } else {
-            console.log('Must never come here');  // todo -- remove this in case it is never printed (as expected)
-        }
+        var title = $('#graphcreator-title').html() || graphParams.graphType + " of " +
+                                                       gisportal.layers[graphcreatorCoverageElement.find('option:checked').val()].displayTitle;
+        var graphObject = {};
+        graphObject.graphData = graphParams;
+        //graphObject.description = prompt("Please enter a description");
+        graphObject.description = title;
+        graphObject.title = title;
+        var success = function (data, opts) {
+           console.log('POSTED graph!');
+        };
+        // Async post the state
+        var error = function (request, errorType, exception) {
+           console.log('Failed to retrieve stored graph from user');
+        };
+        var options = {};
+        options.provider = gisportal.layers[graphcreatorCoverageElement.find('option:selected').val()].providerTag;
+        options.labelCount = $('#graph-settings-labels').val();
+        gisportal.graphs.data(graphParams, $('#graphcreator-bbox').val(), options);
     };
 
     // Create and display the graph
@@ -1229,19 +1233,14 @@ gisportal.topbar = {};
 
 gisportal.topbar.setup = function() {
 
-   // Add jQuery UI datepicker
    $('#viewDate').datepicker({
       showButtonPanel: true,
       dateFormat: 'dd-mm-yy',
       changeMonth: true,
       changeYear: true,
-      beforeShowDay: function(date) { return gisportal.allowedDays(date); },
       onSelect: function(dateText, inst) {
          var thedate = new Date(inst.selectedYear, inst.selectedMonth, inst.selectedDay);
-         // Synchronise date with the timeline
          gisportal.timeline.setDate(thedate);
-         // Filter the layer data to the selected date
-         //gisportal.filterLayersByDate(thedate);
       },
       yearRange: "1970:2020"
    });
@@ -1263,7 +1262,6 @@ gisportal.topbar.setup = function() {
          if($(element).val() == key) {
             $('#'+key).attr('checked', true);
             control.activate();
-
             if(key == 'pan') {
                gisportal.mapControls.selector.activate();
             }

@@ -411,13 +411,12 @@ gisportal.layer = function(microlayer, layerData) {
             //-----------------------------------------------------------------       
             
             layer.setVisibility(layer.selected);
-            console.info('Layer ' + layer.name + ' data available for date-time ' + layer.selectedDateTime + '. Layer selection and display: ' + layer.selected);
          }
          else {
             layer.currentDateTimes = [];
             layer.selectedDateTime = '';
             layer.setVisibility(false);
-            console.info('Layer ' + layer.name + ' no data available for date-time ' + uidate + '. Not displaying layer.');
+            console.log('Layer ' + layer.name + ' no data available for date-time ' + uidate + '. Not displaying layer.');
          }
       }
       layer.checkLayerState();

@@ -258,7 +258,6 @@ var colours = ["rgb(0,0,0)",
 
 gisportal.graphs = {};
 
-// Options currently requires a title
 gisportal.graphs.data = function(params, wkt, options)  {
    var request = $.param( params );
    // Get graph
@@ -313,7 +312,7 @@ gisportal.graphs.create = function(data, options) {
       
       var graphData = {
          id: 'wcsgraph' + Date.now(),
-         title: options.title || data.type + " of " + gisportal.layers[data.coverage].displayTitle,
+         title: data.type + " of " + gisportal.layers[data.coverage].displayTitle,
          data: [{
             data: d1.sort(gisportal.utils.sortDates),
             lines: { show: true },
@@ -358,7 +357,7 @@ gisportal.graphs.create = function(data, options) {
    
       var graphData = {
          id: 'wcsgraph' + Date.now(),
-         title: options.title || data.type + " of " + gisportal.layers[data.coverage].displayTitle,
+         title: data.type + " of " + gisportal.layers[data.coverage].displayTitle,
          data: [num],
          options: barOptions(barwidth),
          selectable: false
@@ -578,54 +577,6 @@ function generateLineData()
       }];
 }
 
-function generateCandleData()
-{
-   var d1 = [], price = 3.206, a, b, c;
-   
-   for (var i = -50; i < 50; i++) {
-      a = Math.random();
-      b = Math.random();
-      c = (Math.random() * (a + b)) - b;
-      d1.push([i, price, price + a, price - b, price + c]);
-      price = price + c;
-   }
-   
-   return [d1];
-}
-
-function generateBasicTimeData()
-{
-   var 
-      d1 = [], 
-      x, 
-      start = new Date("2009/01/01 01:00").getTime();
-   
-   for (var i = 0; i < 100; i++) {
-      x = start+(i*1000*3600*24*36.5);
-      d1.push([x, i+Math.random()*30+Math.sin(i/20+Math.random()*2)*20+Math.sin(i/10+Math.random())*10]);
-   }
-   
-   return [d1];
-}
-
-function lineOptions()
-{
-   return {
-      xaxis: { min: 0, max: 20 },
-      yaxis: { min: -10, max: 60 },
-      title: 'Example Graph',
-      mouse : {
-        track           : true, // Enable mouse tracking
-        lineColor       : 'purple',
-        relative        : true,
-        position        : 'ne',
-        sensibility     : 1,
-        trackDecimals   : 2,
-        trackFormatter  : function (o) { return 'x = ' + o.x +', y = ' + o.y; }
-      }
-   };
-}
-
 function barOptions(barwidth)
 {
    return {
@@ -635,7 +586,6 @@ function barOptions(barwidth)
          shadowsize: 0,
          barWidth: barwidth
       },
-      title: 'Example Graph',
       yaxis: {
          min: 0,
          autoscaleMargin: 1,
@@ -643,15 +593,6 @@ function barOptions(barwidth)
          title: 'Number of Points'
       },
       HtmlText: false
-   };
-}
-
-function candleOptions()
-{
-   return {
-      candles: { show: true, candleWidth: 0.6 },
-      xaxis: { noTicks: 10 },
-      title: 'Example Graph'
    };
 }
 
@@ -674,7 +615,6 @@ function basicTimeOptions(yaxisTitle)
          backgroundColor: '#D2E8FF' // A light blue background color.
       },
       HtmlText: false,
-      title: 'Time'
    };
 }
 

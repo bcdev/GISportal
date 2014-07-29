@@ -264,7 +264,6 @@ function validateScale(layer, newMin, newMax, reset) {
          var scaleRange = getScaleRange(min, max);
          $('#' + layer.id + '-range-slider').slider('option', 'min', scaleRange.min);
          $('#' + layer.id + '-range-slider').slider('option', 'max', scaleRange.max);
-         console.log("scale changed");
       }
       
       layer.minScaleVal = min;
