@@ -11,7 +11,6 @@
       "src/window.js",
       "src/windows/scalebar.js",
       "src/windows/graphcreator.js",
-      "src/windows/history.js",
       "src/windows/metadata.js",
       "src/windows/layerselector.js",
       "src/userManager.js",

@@ -7,6 +7,7 @@
       "html/js-libs/jquery-gritter/css/jquery.gritter.css",
       "html/css/timeline.css",
       "html/css/main.css",
+      "html/css/chosen.min.css",
       "html/css/walkthrough.css"
    ]
 }

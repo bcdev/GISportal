@@ -1315,7 +1315,6 @@ gisportal.topbar.setup = function() {
    $('#shareMapToggleBtn').click(function() {
       $('#shareOptions').toggle();
    });
-   addDialogClickHandler('mapInfoToggleBtn', $('#gisportal-historyWindow'));
    addDialogClickHandler('layerPreloader', $('#gisportal-layerSelection'));
    addDialogClickHandler('infoToggleBtn', $('#walkthrough-menu'));
    addDialogClickHandler('userInfoToggleBtn', $('#user-info-balloon'));
