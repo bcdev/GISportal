@@ -209,8 +209,6 @@ gisportal.genericSync = function(type, url, data, success, error, dataType, opts
  * Create all the base layers for the map.
  */
 gisportal.createBaseLayers = function() {
-   //gisportal.leftPanel.addGroupToPanel('baseLayerGroup', 'Base Layers', $('#baseLayers'));
-
    function createBaseLayer(name, url, opts) {
       var layer = new OpenLayers.Layer.WMS(
          name,
@@ -225,12 +223,11 @@ gisportal.createBaseLayers = function() {
       layer.name = name;
       map.addLayer(layer);
       gisportal.baseLayers[name] = layer;
-      //gisportal.leftPanel.addLayerToGroup(layer, $('#baseLayerGroup'));
    }
 
    createBaseLayer('GEBCO', 'http://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?', { layers: 'gebco_08_grid' });
    createBaseLayer('Metacarta Basic', 'http://vmap0.tiles.osgeo.org/wms/vmap0?', { layers: 'basic' });
-   createBaseLayer('Landsat', 'http://irs.gis-lab.info/?', { layers: 'landsat' });
+//   createBaseLayer('Landsat', 'http://irs.gis-lab.info/?', { layers: 'landsat' });
    createBaseLayer('Blue Marble', 'http://demonstrator.vegaspace.com/wmspub', {layers: "BlueMarble" });
 
    // Get and store the number of base layers
@@ -668,18 +665,6 @@ gisportal.loadNonLayerDependents = function() {
          $(".ui-dialog-normal").extendedDialog("option", "position", "center");
       }
    });
-
-   // Set the max height of each of the accordions relative to the size of the window
-   $('#layerAccordion').css('max-height', $(document).height() - 280);
-   $('#gisportal-lPanel-operational').css('max-height', $(document).height() - 330);
-   $('#gisportal-lPanel-reference').css('max-height', $(document).height() - 330);
-
-   $(window).resize(function() {
-      $('#layerAccordion').css('max-height', $(window).height() - 280);
-      $('#gisportal-lPanel-operational').css('max-height', $(window).height() - 330);
-      $('#gisportal-lPanel-reference').css('max-height', $(window).height() - 330);
-   });
-
 
    //--------------------------------------------------------------------------
 
