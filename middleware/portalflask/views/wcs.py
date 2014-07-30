@@ -186,7 +186,7 @@ def saveOutTempFile(resp):
    temp.write(resp.read())
    temp.close()
    resp.close()
-   current_app.logger.debug('Temporary file saved successfully')
+   current_app.logger.debug('Temporary file saved successfully at ' + str(temp.name))
    return temp.name
 
 

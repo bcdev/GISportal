@@ -10,7 +10,6 @@ import beampy
 import portalflask.core.graph_support as graph_support
 import portalflask.core.shapefile_support as shapefile_support
 import portalflask.core.geometry_support as geometry_support
-import portalflask.views.wcs as wcs
 
 
 class PortalTests(unittest.TestCase):

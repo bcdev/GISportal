@@ -150,10 +150,11 @@ def get_hovmoller(product, variable_name, mask, x_axis_var, y_axis_var):
 def get_depth(product):
     axis_root = get_axis_root(product, 'depth')
     has_axis_root = axis_root is not None
-    is_height_type = axis_root.getAttribute('_CoordinateAxisType').getData().getElemString() == 'Height'
-    is_positive_Z_coordinate = axis_root.getAttribute('_CoordinateZisPositive') is not None
-    if has_axis_root and is_height_type and is_positive_Z_coordinate:
-        return axis_root.getElement('Values').getAttributes()[0].getData().getElems()[0]
+    if has_axis_root:
+        is_height_type = axis_root.getAttribute('_CoordinateAxisType').getData().getElemString() == 'Height'
+        is_positive_Z_coordinate = axis_root.getAttribute('_CoordinateZisPositive') is not None
+        if is_height_type and is_positive_Z_coordinate:
+            return axis_root.getElement('Values').getAttributes()[0].getData().getElems()[0]
     return None
 
 
