@@ -1132,6 +1132,9 @@ gisportal.setupShapefileDropdown = function() {
 };
 
 gisportal.updateShapefiles = function() {
+    if (!gisportal.openid.is_logged_in()) {
+        return 0;
+    }
     var $shapefileChooser = $('#shapefile_chooser');
     var clear_shapefiles = function() {
         $shapefileChooser.find('option').each(function(index) {

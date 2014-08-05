@@ -61,8 +61,7 @@ gisportal.Walkthrough = function() {
 		      {
 		         id : 6,
 		         prev : 5,
-		         content: '<p>Step 6. Use the timeline at the bottom to quickly see the dates for which there is data available.</p><p>See \'Overview of the timeline\' for help on how to use it. This guide is now complete, please click on the X at the top right of the box to finish.</p>',
-		         //binding: '#timeline'
+		         content: '<p>Step 6. Use the timeline at the bottom to quickly see the dates for which there is data available.</p><p>See \'Overview of the timeline\' for help on how to use it. This guide is now complete, please click on the X at the top right of the box to finish.</p>'
 		      }
    		]
    	},
@@ -73,22 +72,19 @@ gisportal.Walkthrough = function() {
 		      {
 		         id : 0,
 		         next: 1,
-		         content: '<p>Step 1. At the bottom of the screen is the timeline, this is the main way of dealing with time on the portal.</p>',
-		         //binding: '#timeline'
+		         content: '<p>Step 1. At the bottom of the screen is the timeline, this is the main way of dealing with time on the portal.</p>'
 		      },
 		      {
 		         id : 1,
 		         next: 2,
 		         prev: 0,
-		         content: '<p>Step 2. The timeline grows as you select layers, for temporal data it shows each item as a line.</p>',
-		         //binding: '#timeline'
+		         content: '<p>Step 2. The timeline grows as you select layers, for temporal data it shows each item as a line.</p>'
 		      },
 		      {
 		         id : 2,
 		         next: 3,
 		         prev: 1,
 		         content: '<p>Step 3. You can change the timescale by zooming in or out using a scrollwheel or similar.</p>',
-		         //binding: '#timeline',
 		         commands: [
 		         	"gisportal.timeline.zoomDate(\"01/01/2000\", \"01/01/2003\");",
 		         	"gisportal.timeline.redraw();"
@@ -99,8 +95,7 @@ gisportal.Walkthrough = function() {
 		         next: 4,
 		         prev: 2,
 		         content: '<p>Step 4. Data ranges can be created within the data analysis panel. Once created (by pressing "New Range") a new bar will appear in the timeline.</p>',
-		         //binding: '.rPanel',
-		         commands: [ 
+		         commands: [
 		         	"gisportal.rightPanel.open();",
 						"$('#advanced-inputs-header').click();", 
 		         	"gisportal.timeline.addRangeBar('Range bar covering 2001');",
@@ -142,7 +137,14 @@ gisportal.Walkthrough = function() {
   		'steps' : [ 
          {
             id : 0,
-            content: '<p>IMPORTANT: PLEASE READ THE FOLLOWING CAREFULLY</p><p>This is a prototype.</p><p>Liability</p><p>Use by you of the data (which includes model outputs and simulations) provided by PML on this site is entirely at your own risk.  This data is provided “as is” without any warranty of any kind, either expressed or implied, including without limitation, any implied warranties as to its merchantability or its suitability for any use.  All implied conditions relating to the quality or suitability of the data and the medium on which it is provided, and all liabilities arising from the supply of the data (including any liability arising in negligence) are excluded to the fullest extent permitted by law.</p><p>Acknowledgement</p><p>In using the data you agree to acknowledge use of the data in the acknowledgement section of any resulting publication.</p><p>Copyright PML 2013 and 2014</p>',
+            content: '<p>DISCLAIMER</p>' +
+                     '<p>Use by you of the data (which includes model outputs and simulations) provided by PML on this site is entirely at your own risk.  This data is provided “as is” without any warranty of any kind, either expressed or implied, including without limitation, any implied warranties as to its merchantability or its suitability for any use.  All implied conditions relating to the quality or suitability of the data and the medium on which it is provided, and all liabilities arising from the supply of the data (including any liability arising in negligence) are excluded to the fullest extent permitted by law.</p>' +
+                     '<p>Acknowledgement</p>' +
+                     '<p>In using the data you agree to acknowledge use of the data in the acknowledgement section of any resulting publication.</p>' +
+                     '<p>Based on GIS portal by <a href="http://www.pml.ac.uk/">PML</a>.<br>' +
+                     'Original code at <a href="https://github.com/pmlrsg/GISportal">GitHub</a>.</p>' +
+                     '<p>Extended and tailored by <a href="http://www.brockmann-consult.de">Brockmann Consult GmbH</a></p>' +
+                     '<p>Contact: <a href="mailto:info@brockmann-consult.de>">info@brockmann-consult.de</a></p>'
          }
       ] 
    };

@@ -581,6 +581,27 @@ a.active.triggerR {
    font-size: 0.75em;
 }
 
+#walkthrough li {
+    font-family: Tahoma, sans-serif;
+    font-weight: bold;
+    color: rgb(87, 95, 110)
+}
+
+
+#walkthrough li.active {
+    background: rgba(201, 207, 234, 0.9) !important;
+}
+
+#walkthrough a:hover {
+    color: rgb(255, 255, 255);
+    text-decoration: underline;
+}
+
+#walkthrough a {
+    color: rgb(87, 95, 110);
+    text-decoration: none;
+}
+
 
 /* ======== Metadata ======== */
 
@@ -644,8 +665,9 @@ div .sensor-accordion {
 #shareOptions {
    display:none;
    top: 51px;
-   height:130px;
+   height:70px;
    width:300px;
+   padding-top: 10px;
    margin-left: -150px;
    -moz-border-radius-bottomleft: 15px;
    -moz-border-radius-bottomright: 15px;
@@ -750,8 +772,8 @@ div .sensor-accordion {
 }
 
 #gisportal-layerSelection > ul {
-   width: 100%;
-   height: 85%;
+   width: 440px;
+   height: 100%;
    margin: 0 auto;
    padding: 0;
    /*text-shadow: black 0 -1px;
@@ -781,22 +803,25 @@ div .sensor-accordion {
    display: inline-block;
    overflow-y: auto;
    vertical-align: top;
-   width: 74%;
+   width: 260px;
    height: 100%;
 }
 
 #gisportal-layerSelection .gisportal-selectable > ul {
    list-style: none; 
    padding: 0;
-   width: 100%;
+   width: 250px;
    height: 100%;
+   overflow-x: hidden;
 }
 
 #gisportal-layerSelection .gisportal-selectable > ul > li {
    position: relative;
    max-width: 200px;
+   min-width: 200px;
+   min-height: 48px;
    word-wrap: break-word;
-   display: inline-block; 
+   display: inline-block;
    *zoom: 1; 
    vertical-align: top;
    margin: 5px;
@@ -881,7 +906,7 @@ div .sensor-accordion {
    color: black;
    display:inline-block;
    vertical-align: top;
-   width: 25%;
+   width: 174px;
    height: 100%;
    /*background: rgba(17, 17, 17, 0.3);*/
    opacity: .80;

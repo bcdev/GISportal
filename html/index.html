@@ -341,15 +341,12 @@
 <script type="text/html" id="gisportal-template-login-box">
    <form action="/service/login" method="get" id="{{id}}">
       <input type="hidden" name="action" value="verify">
-      <fieldset>
-         <legend>Sign-in</legend>
           <div id="gisportal-openid-choice" style="display:block;">
             <div id="gisportal-openid-btns">
                {{#providers}} {{#provider}} {{/provider}} {{/providers}}
             </div>
             <div id="gisportal-openid-input"></div>
          </div>
-      </fieldset>
    </form>
 </script>
 <!-- Provider Box -->
@@ -665,7 +662,7 @@
    </div>
 
    <div id="gisportal-layerSelection" class="layer-selection unselectable tt" title="Variable Selection">
-      <ul>
+       <ul>
          <li class="gisportal-tagMenu"></li>       
          <li class="gisportal-selectable">
             <ul></ul>

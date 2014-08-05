@@ -8,11 +8,11 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
    
    $('#gisportal-layerSelection').extendedDialog({
       position: ['left', 'center'],
-      width: 650,
-      minWidth:650,
+      width: 460,
+      minWidth: 460,
       height: 500,
       minHeight: 500,
-      resizable: true,
+      resizable: false,
       autoOpen: true,
       showHelp: true,
       showMinimise: true,
@@ -44,6 +44,7 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
       block: ['data-id', 'data-title'],
       blockFieldMenu: ['name'],
       callback : function ( query, match, mismatch ) {
+         console.log("whwn is this sh*t ever called!?!??!");
          self.$container.quicksand($(match), {
             // all the parameters have sensible defaults
             // and in most cases can be optional
@@ -247,5 +248,10 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
        self.$container.empty();
        self.$container.append(listitems);
    };
+
+   $('#gisportal-layerSelection').find('.gisportal-tagMenu li').click(function() {
+       $('#gisportal-layerSelection').find('.gisportal-selectable ul li').css('display:inline-block')
+   });
+
 
 };
