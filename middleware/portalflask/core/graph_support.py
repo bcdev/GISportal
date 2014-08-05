@@ -73,8 +73,6 @@ def get_band_data_as_array(variable_name, product, mask):
 def get_hovmoller(product, variable_name, mask, x_axis_var, y_axis_var):
     x_arr = get_coordinate_variable(product, x_axis_var)
     y_arr = get_coordinate_variable(product, y_axis_var)
-    z_arr = np.zeros(product.getSceneRasterWidth() * product.getSceneRasterHeight())
-    mask_pixels = np.zeros(product.getSceneRasterWidth() * product.getSceneRasterHeight())
 
     if x_arr is None:
         # g.graphError = "could not find %s dimension" % x_axis_var
@@ -117,6 +115,8 @@ def get_hovmoller(product, variable_name, mask, x_axis_var, y_axis_var):
 
     if direction == 'lat':
         height = product.getSceneRasterHeight()
+        mask_pixels = np.zeros(product.getSceneRasterWidth())
+        z_arr = np.zeros(product.getSceneRasterWidth())
         for y in range(height):
             for time_index in range(len(bands)):
                 date = num2date(time[time_index], time_units, calendar='standard').isoformat() if time_units else ''.join(times[time_index])
@@ -128,6 +128,8 @@ def get_hovmoller(product, variable_name, mask, x_axis_var, y_axis_var):
                 output['data'].append([date, lat_value, mean])
     elif direction == "lon":
         width = product.getSceneRasterWidth()
+        mask_pixels = np.zeros(product.getSceneRasterHeight())
+        z_arr = np.zeros(product.getSceneRasterHeight())
         for x in range(width):
             for time_index in range(len(bands)):
                 date = num2date(time[time_index], time_units, calendar='standard').isoformat() if time_units else ''.join(times[time_index])
