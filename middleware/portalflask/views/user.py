@@ -4,9 +4,8 @@ import os
 from portalflask.models.database import db_session
 from portalflask.models.user import User
 from portalflask.models.usergroup import UserGroup
-from portalflask import oid
+from portalflask import oid, shapefile_support
 from portalflask.core.group_extension import GroupExtension, GROUPS_KEY
-import portalflask.core.shapefile_support as shapefile_support
 
 from actions import check_for_permission
 from flask import Blueprint, render_template, redirect, url_for, g, session, request, jsonify, current_app
@@ -102,23 +101,25 @@ def permissions(allowed_user_groups):
 @portal_user.route('/get_shapefile_names', methods=['POST'])
 @check_for_permission(['bc', 'coastcolour'])
 def get_shapefile_names():
-    if not os.path.exists(shapefile_support.get_shape_path()):
+    if not os.path.exists(get_shape_path()):
         return jsonify(shapefiles=[])
-    files = [f for f in os.listdir(shapefile_support.get_shape_path()) if os.path.basename(f).endswith('.shp')]
+    files = [f for f in os.listdir(get_shape_path()) if os.path.basename(f).endswith('.shp')]
     return jsonify(shapefiles=files)
 
 
 @portal_user.route('/get_shape_names/<shapefile_name>', methods=['POST'])
 @check_for_permission(['bc', 'coastcolour'])
 def get_shape_names(shapefile_name):
-    shape_names = shapefile_support.get_shape_names(shapefile_name)
+    shapefile_path = get_shape_path() + shapefile_name
+    shape_names = shapefile_support.get_shape_names(shapefile_path)
     return jsonify(shape_names=shape_names)
 
 
 @portal_user.route('/get_shapefile_geometry/<shapefile_name>/<shape_name>', methods=['POST'])
 @check_for_permission(['bc', 'coastcolour'])
 def get_shapefile_geometry(shapefile_name, shape_name):
-    return jsonify(geometry=shapefile_support.get_shape_geometry(shapefile_name, shape_name), bounds=shapefile_support.get_bounding_box(shapefile_name, shape_name))
+    shapefile_path = get_shape_path() + shapefile_name
+    return jsonify(geometry=shapefile_support.get_shape_geometry(shapefile_path, shape_name), bounds=shapefile_support.get_bounding_box(shapefile_path, shape_name))
 
 
 @portal_user.route('/logout', methods=['GET','POST'])
@@ -142,3 +143,7 @@ def add_user_to_db(email, username, full_name, group_names):
     db_session.commit()
     user_groups = UserGroup.query.filter(UserGroup.group_name.in_(group_names)).all()
     db_session.add(User(email=email, openid=session['openid'], username=username, full_name=full_name, groups=user_groups))
+
+
+def get_shape_path():
+    return str(current_app.config.get('SHAPEFILE_PATH')) + str(g.user.username) + "/"

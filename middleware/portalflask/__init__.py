@@ -138,8 +138,11 @@ app = create_app(path)
 oid = OpenID(app, settings.OPENID_FOLDER, extension_responses=[GroupExtension, SRegResponse])
 print path
 
-# register application views and blueprints  
-setup_blueprints(app)
-
 from portalflask.models.database import db_session
 from portalflask.models.user import User
+from portalflask.core.shapefile_support import ShapefileSupport, ShapefileDB
+
+shapefile_support = ShapefileSupport(ShapefileDB())
+
+# register application views and blueprints
+setup_blueprints(app)
