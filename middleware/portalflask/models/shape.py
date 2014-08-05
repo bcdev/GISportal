@@ -9,8 +9,11 @@ class Shape(Base):
     geometry = Column(String)
     bounding_box = Column(String)
     shapefile_id = Column(Integer, ForeignKey('shapefile.id'))
+    record_number = Column(Integer)
 
-    def __init__(self, name):
+
+    def __init__(self, record_number, name):
+        self.record_number = record_number
         self.name = name
 
 

@@ -2,9 +2,8 @@ from portalflask.models.database import db_session
 
 from portalflask.models.shapefile import Shapefile
 from portalflask.models.shape import Shape
-from portalflask.models.user import User
-from flask import current_app, g
-import portalflask.core.shapefile_support as shapefile_support
+from portalflask import shapefile_support
+from portalflask.views.user import get_shape_path
 
 import os
 
@@ -27,18 +26,18 @@ def shapefile_upload():
 
     shapefile_name = secure_filename(shapefiles[0].filename)
     shapefile_name = shapefile_name[:shapefile_name.index('.')] + '.shp'
-    path = str(os.path.join(shapefile_support.get_shape_path(), shapefile_name))
+    path = str(os.path.join(get_shape_path(), shapefile_name))
     already_registered = Shapefile.query.filter(Shapefile.path == path).count() > 0
     if already_registered:
         print('Shapefile \''+  shapefile_name + '\' has already been uploaded before.')
         return '200'
 
-    if not os.path.exists(shapefile_support.get_shape_path()):
-        os.makedirs(shapefile_support.get_shape_path())
+    if not os.path.exists(get_shape_path()):
+        os.makedirs(get_shape_path())
 
     for file in shapefiles:
         filename = secure_filename(file.filename)
-        target = os.path.join(shapefile_support.get_shape_path(), filename)
+        target = os.path.join(get_shape_path(), filename)
         file.save(target)
         print('Successfully uploaded file \'' + target + '\'')
     persist(shapefile_name, path)
@@ -47,10 +46,10 @@ def shapefile_upload():
 
 
 def persist(shapefile_name, path):
-    shape_names = shapefile_support.get_shape_names(shapefile_name)
+    shape_names = shapefile_support.get_shape_names(path)
     persistent_shapes = []
-    for shape_name in shape_names:
-        shape = Shape(shape_name)
+    for (record_number, shape_name) in shape_names:
+        shape = Shape(record_number, shape_name)
         persistent_shapes.append(shape)
         db_session.add(shape)
     db_session.add(Shapefile(name=shapefile_name, path=path, children=persistent_shapes))

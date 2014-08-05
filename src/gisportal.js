@@ -1252,6 +1252,10 @@ gisportal.fillROIDisplay = function(features, b) {
     var current_area = 0;
     features.forEach(function(feature, i) {
         var geom = feature.geometry;
+        if (geom.CLASS_NAME == 'OpenLayers.Geometry.Point') {
+            return 0;
+        }
+
         var bounds = geom.getBounds();
         bounds.top = parseFloat(b[3]);
         bounds.left = parseFloat(b[0]);
