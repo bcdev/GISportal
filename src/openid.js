@@ -139,7 +139,8 @@ gisportal.openid.persistState = function(state)  {
     return url;
 };
 
-gisportal.openid.logout = function() { gisportal.genericAsync('GET', gisportal.openid.logoutLocation, null, function(data, opts) {
+gisportal.openid.logout = function() {
+    gisportal.genericAsync('GET', gisportal.openid.logoutLocation, null, function(data, opts) {
       console.log(data); 
       if (data == '200')  {
          gisportal.openid.set_userinfo_to_html();

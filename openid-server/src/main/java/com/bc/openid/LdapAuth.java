@@ -104,8 +104,7 @@ public class LdapAuth extends AuthenticationHandler {
             ldapLoginModule.login();
             ldapLoginModule.commit();
         } catch (LoginException e) {
-            e.printStackTrace();
-            throw new AuthenticationException("Wrong combination of username and password.", e);
+            throw new AuthenticationException(username, "Wrong combination of username and password.", e);
         }
     }
 

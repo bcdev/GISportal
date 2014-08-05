@@ -219,7 +219,6 @@ public class AuthenticationService extends HttpServlet {
 
     private void authenticate(String username, String password, HttpServletRequest request) throws ServletException, IOException, AuthenticationException {
         AuthenticationHandler authenticationHandler = Config.getAuthenticationHandler();
-//        authenticationHandler.setLogger(s -> {log(s); return null; });
         authenticationHandler.authenticate(username, password);
         HttpSession httpSession = request.getSession();
         UserModel userModel = authenticationHandler.getUserModel(username);

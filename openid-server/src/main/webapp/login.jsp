@@ -8,7 +8,8 @@
 <body>
 <form name="openid-login-form" action="${destinationUrl}" method="post">
     <c:if test="${redirectionMessage != null}">
-        ${redirectionMessage}
+        <div class="text subtext" style="color: #C8142F">${redirectionMessage}</div>
+        <p>&nbsp;</p>
     </c:if>
     <span class="text">Log in with your BC credentials.</span><br/>
     <span class="text subtext">Hint: use the credentials you are also using for the BC Calvalus service.</span>
