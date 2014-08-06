@@ -10,4 +10,5 @@ BeautifulSoup
 pygeoif
 jpy
 beampy
+pyproj
 gdal #  recommended way: build from sources with configure option '--with-python'
