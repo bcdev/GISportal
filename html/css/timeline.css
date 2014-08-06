@@ -15,7 +15,7 @@ svg {
    filter: alpha(opacity=80);
    opacity: .80;
    /*background-color: #222222;*/
-   background-color: #E55C22;
+   background-color: #C9CFEA;
    bottom: 0;
    -moz-border-radius-topleft: 15px;
    -moz-border-radius-topright: 15px;
@@ -41,9 +41,6 @@ svg {
 .main text {
    font: 10px sans-serif;
    text-anchor: start;
-   fill: lightgray;
-   /*stroke:black;
-   stroke-width:0.5px;*/
 }
 
 .separatorLine {
