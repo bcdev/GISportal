@@ -151,7 +151,7 @@
          self = this;
 
       // Would be very nice to have this a bit cleaner!
-      this._search.element = $('<button class="js-clear-tags clear-tags">Clear search</button><ul class="gisportal-search"><p>Search by variable name</p><input type="text" placeholder="Variable name" /></ul><p>Search by tag</p>');
+      this._search.element = $('<button class="js-clear-tags clear-tags">Clear search</button><p>&nbsp;</p><ul class="gisportal-search"><p>Search by variable name</p><input type="text" placeholder="Variable name" /></ul><p>Search by tag</p>');
       this.createSearch();
       this._menu.list = $('<ul class="ft-menu" />');
 
