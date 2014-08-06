@@ -373,14 +373,10 @@ gisportal.hideAllLayersInSelector = function(force) {
     };
     var filtrify = gisportal.layerSelector.filtrify;
 
-    if (force) {
-        filtrify.trigger(no_matches_query);
-        return 0;
-    }
-
     var textSearch = filtrify._search.term != undefined && filtrify._search.term != '';
-    if (!textSearch && $('.ft-selected li').length == 0) {
+    if (force || (!textSearch && $('.ft-selected li').length == 0)) {
         filtrify.trigger(no_matches_query);
+        $('#gisportal-missingSearchCriteria').show();
         return 0;
     }
 };

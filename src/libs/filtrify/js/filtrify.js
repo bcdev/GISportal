@@ -269,11 +269,11 @@
          if ( event.which === 38 || event.which === 40 ) {
             return false;
          } else {
+            $('#gisportal-missingSearchCriteria').hide();
             this.cleanUpQuery();
             this.resetSearch(field);
             this._search.term = $.trim( event.target.value.toLowerCase() );
             this.search('name', this._search.term );
-
             gisportal.hideAllLayersInSelector(false);
             this.filter();
          }
@@ -349,11 +349,8 @@
       this.addToActive( f );
       this.hideHighlight( f );
       this.resetHighlight( f );
-      //this.resetSearch( f );
 
-      //if ( this.options.close ) {
-         //this.closePanel( f );
-      //};
+      $('#gisportal-missingSearchCriteria').hide();
    };
 
    /**
@@ -504,7 +501,7 @@
    };
 
    Filtrify.prototype.trigger = function ( query ) {
-      for (var field in this._fields) {
+       for (var field in this._fields) {
          this.clearSearch(field);
          this.updateQueryField(field, query);
          this.updateActiveClass(field);
