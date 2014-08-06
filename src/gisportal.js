@@ -29,9 +29,6 @@ gisportal.cache = {};
 gisportal.cache.wmsServers = [];
 gisportal.cache.wfsLayers = [];
 
-// Temporary version of microLayer and layer storage.
-gisportal.layerStore = {}; // NOT IN USE!
-
 gisportal.activeWmsServers = [];
 
 gisportal.microLayers = {};
@@ -370,6 +367,24 @@ gisportal.createMicroLayers = function (serverDescriptor) {
     return layers;
 };
 
+gisportal.hideAllLayersInSelector = function(force) {
+    var no_matches_query = {
+        'provider': ['most_definitively_invalid_provider,yo']
+    };
+    var filtrify = gisportal.layerSelector.filtrify;
+
+    if (force) {
+        filtrify.trigger(no_matches_query);
+        return 0;
+    }
+
+    var textSearch = filtrify._search.term != undefined && filtrify._search.term != '';
+    if (!textSearch && $('.ft-selected li').length == 0) {
+        filtrify.trigger(no_matches_query);
+        return 0;
+    }
+};
+
 /**
  * Create MicroLayers from the getCapabilities request to
  * be used in the layer selector.
@@ -394,6 +409,7 @@ gisportal.createOpLayers = function() {
       $.each(layers, function(i, microLayer) {
          gisportal.layerSelector.addLayer(gisportal.templates.selectionItem(microLayer.meta), { "tags" : microLayer.tags} );
       });
+      gisportal.hideAllLayersInSelector(true);
    }
    gisportal.layerSelector.refresh();
    // Batch add here in future.

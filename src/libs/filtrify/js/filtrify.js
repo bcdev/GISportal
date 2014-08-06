@@ -18,7 +18,7 @@
       close : false,
       query : undefined, // { category : [tags] } }
       callback : undefined // function ( query, match, mismatch ) {}
-   }; 
+   };
 
    function Filtrify( containerID, placeholderID, options ) {
 
@@ -38,12 +38,12 @@
       this._z = 9999;
       this._memory = []; // Used to store the results when selected is toggled
 
-      this._bind = function ( fn, me ) { 
-         return function () { 
-            return fn.apply( me, arguments ); 
-         }; 
+      this._bind = function ( fn, me ) {
+         return function () {
+            return fn.apply( me, arguments );
+         };
       };
-      
+
       this.init();
 
       $('.ft-menu li').multiOpenAccordion({ active: 'false'});
@@ -64,7 +64,7 @@
             $(this).addClass('toggle-on').removeClass('toggle-off');
          }
       });
-      
+
       $('.gisportal-tagMenu').on('click', '.js-selected-tags.toggle-on', function()  {
          if (gisportal.layerSelector.filtrify._memory.length > 0) {
             gisportal.layerSelector.filtrify._container.empty().append(gisportal.layerSelector.filtrify._memory);
@@ -74,9 +74,9 @@
             $(this).addClass('toggle-off').removeClass('toggle-on');
             $('.js-selected-tags').removeClass('ui-state-highlight');
             gisportal.layerSelector.filtrify._memory = [];
-         }   
+         }
       });
-   
+
 
    }
 
@@ -84,18 +84,16 @@
       this.load();
       this.set();
 
-      if ( this.options.query !== undefined ) { 
+      if ( this.options.query !== undefined ) {
          this.trigger( this.options.query );
       }
    };
 
    Filtrify.prototype.load = function () {
-      //console.log('loading');
       var attr, i, name, field, tags, data, t;
 
       this._items.each( this._bind( function( index, element ) {
 
-         //console.log('items.each');
          attr = element.attributes;
          data = {};
 
@@ -131,7 +129,7 @@
                }
             }
          }
-         
+
          /*
          $(element).on('gisportal-toggle-selected', 'a', function() {
             $(this).find(".ui-icon")
@@ -148,31 +146,31 @@
    };
 
    Filtrify.prototype.set = function () {
-      //console.log('set');
       var f = 0, field,
          browser = $.browser,
          self = this;
 
       // Would be very nice to have this a bit cleaner!
-      this._search.element = $('<button class="js-clear-tags clear-tags">Clear Filter</button><ul class="gisportal-search"><p>Filter by variable name</p><input type="text" placeholder="Filter" /></ul><p>Filter by tag</p><button class="js-selected-tags selected-tags toggle-off">Show Selected</button>');
+      this._search.element = $('<button class="js-clear-tags clear-tags">Clear search</button><ul class="gisportal-search"><p>Search by variable name</p><input type="text" placeholder="Variable name" /></ul><p>Search by tag</p>');
       this.createSearch();
       this._menu.list = $('<ul class="ft-menu" />');
-     
+
       $('.gisportal-tagMenu').on('click', '.js-clear-tags', function() {
-         self.trigger({});
+         self._query = {};
+         gisportal.hideAllLayersInSelector(true);
          $('.gisportal-search input').val('');
       });
 
       for ( f; f < this._order.length; f++ ) {
          field = this._order[ this._order.length - f - 1 ];
-            
+
          this._menu[ field ] = {};
          this.build( field );
          this.cache( field );
          this.events( field );
          this.append( field );
          this.query( field );
-         
+
          if($.inArray(field, this.options.blockFieldMenu) !== -1) {
             this._menu[field].item.hide();
          }
@@ -180,16 +178,16 @@
 
       this._holder.html(self._menu.list).prepend(this._search.element);
       $('.js-selected-tags').button();
-      $('.js-clear-tags').button(); 
+      $('.js-clear-tags').button();
    };
 
    Filtrify.prototype.build = function ( f ) {
       var html, t, tag, tags = [];
-         
-      html = '<li class="ft-field" data-name="' + f + '">' + 
-         '<h3 class="ft-label">' + 
-            '<a href="#">' + f + '</a>' + 
-         "</h3>" + 
+
+      html = '<li class="ft-field" data-name="' + f + '">' +
+         '<h3 class="ft-label">' +
+            '<a href="#">' + f + '</a>' +
+         "</h3>" +
          '<div class="ft-panel ft-hidden">' +
             '<ul class="ft-selected" style="display:none;"></ul>' +
             //"<fieldset class='ft-search'><input type='text' placeholder='Search' /></fieldset>" +
@@ -234,7 +232,7 @@
    Filtrify.prototype.events = function ( f ) {
       var self = this;
 
-      
+
       this._menu[f].tags.on( "mouseenter", "li", function(event) {
          self.highlight( f, $(this) );
       });
@@ -242,7 +240,7 @@
       this._menu[f].tags.on( "mouseleave", "li", function() {
          self.clearHighlight( f );
       });
-      
+
       this._menu[f].tags.on( "click", "li", function() {
          self.select( f );
          self.filter();
@@ -259,51 +257,29 @@
 
 
    };
-   
+
    Filtrify.prototype.createSearch = function() {
-      
+
       this._search.results = [];
-      
+
       var searchInput = this._search.element.children('input'),
          field = 'name';
-    
+
       this._search.element.on( "keyup", "input", this._bind(function(event) {
-         if ( event.which === 38 || event.which === 40 ) { 
-            return false; 
-         //} else if ( event.which === 13 ) {
-            //if ( this._menu['provider'].highlight.length ) {
-               //this.select('provider');
-               //this.filter();
-            //};
+         if ( event.which === 38 || event.which === 40 ) {
+            return false;
          } else {
-            
-            //if(typeof this._search.term !== 'undefined' && this._search.term !== null)
-               //this.updateQueryTags( 'name', this._search.term);
-            
+            this.cleanUpQuery();
             this.resetSearch(field);
             this._search.term = $.trim( event.target.value.toLowerCase() );
             this.search('name', this._search.term );
-            
-            //this._fields['name'] = {};
-            //this._fields['name'][event.target.value] = 1;
-            
+
+            gisportal.hideAllLayersInSelector(false);
             this.filter();
-            
          }
-
       }, this) );
 
-      this._search.element.on( "keydown", "input", this._bind(function(event){
-
-         //if( event.which === 40 ) {
-            //this.moveHighlight( f, "down" );
-            //event.preventDefault();
-         //} else if ( event.which === 38 ) {
-            //this.moveHighlight( f, "up" );
-            //event.preventDefault();
-         //};
-
-      }, this) );
+      this._search.element.on( "keydown", "input", this._bind(function(event){}, this) );
 
    };
 
@@ -335,44 +311,37 @@
       //this.clearHighlight( f );
       //this.showResults( f, txt );
       //this.highlight( f, this._menu[f].tags.children(":visible:first") );
-      
+
       for (var tag in this._fields[field]) {
          if(tag.toLowerCase().indexOf(term) >= 0 ) {
             this._search.results.push(tag);
          }
       }
-      
+
       // OPEC: If search results are empty we need to add a unique tag to
       // clear the box.
       if(this._search.results.length === 0) {
          this._search.results.push('zzzzzzzzzz');
       }
-      
+
       for (var i = 0, len = this._search.results.length; i < len; i++) {
          this.updateQueryTags( field, this._search.results[i]);
       }
-      
+
       // self._search.results[i]
    };
 
    Filtrify.prototype.resetSearch = function ( field ) {
-      //this._menu[f].search.find("input").val("");
-      //this._menu[f].tags.children()
-         //.not(this._menu[f].active)
-         //.removeClass("ft-hidden");
-
-      //this.hideMismatch( f );
-      
       for (var i = 0, len = this._search.results.length; i < len; i++) {
          this.updateQueryTags( field, this._search.results[i]);
       }
-      
+
       this._search.results = [];
-      
+
    };
 
    Filtrify.prototype.select = function ( f ) {
-      //console.log('select');
+      this.cleanUpQuery();
       this.updateQueryTags( f, this._menu[f].highlight.text() );
       this.updateActiveClass( f );
       this.removeHighlight( f );
@@ -386,10 +355,10 @@
          //this.closePanel( f );
       //};
    };
-   
+
    /**
     * Adds tags to fields to be used to make up a search query.
-    * 
+    *
     * @param {Object} f - The field to add the tag to.
     * @param {Object} tag - The tag to add to the field.
     */
@@ -405,7 +374,7 @@
 
    /**
     * Adds 'ft-active' class onto fields.
-    * 
+    *
     * @param {Object} f - The field to update.
     */
    Filtrify.prototype.updateActiveClass = function ( f ) {
@@ -417,9 +386,9 @@
    };
 
    /**
-    * Clones and then appends the selected tag onto the selected element of 
+    * Clones and then appends the selected tag onto the selected element of
     * that field.
-    * 
+    *
     * @param {Object} f - The field of whose selected element to use.
     */
    Filtrify.prototype.appendToSelected = function ( f ) {
@@ -436,36 +405,35 @@
    Filtrify.prototype.addToActive = function ( f ) {
       this._menu[f].active = this._menu[f].active.add( this._menu[f].highlight );
    };
-    
+
    /**
     * Unselects the tag from the field.
-    * 
+    *
     * @param {Object} f - The field to unselect from.
     * @param {Object} tag - The tag to unselect.
     */
    Filtrify.prototype.unselect = function ( f, tag ) {
-      console.log('unselect');
       this.updateQueryTags( f, tag );
       this.removeFromSelected( f, tag );
       this.removeFromActive( f, tag );
       this.updateActiveClass( f );
-      //this.resetSearch( f );
+      gisportal.hideAllLayersInSelector(false);
    };
-   
+
    /**
-    * Remove tag from the selected element and unhide the unselected version. 
-    * 
+    * Remove tag from the selected element and unhide the unselected version.
+    *
     * @param {Object} f - The field to remove the tag from.
-    * @param {Object} tag - The tag to remove. 
+    * @param {Object} tag - The tag to remove.
     */
    Filtrify.prototype.removeFromSelected = function ( f, tag ) {
       this._menu[f].selected
          .children()
-         .filter(function() { 
-            return ( this.textContent || this.innerText ) === tag; 
+         .filter(function() {
+            return ( this.textContent || this.innerText ) === tag;
          })
          .remove();
-         
+
       this._menu[f].tags
          .find(':hidden')
          .filter(function() {
@@ -478,13 +446,13 @@
 
    /**
     * Remove from active list.
-    * 
+    *
     * @param {Object} f - The field.
     * @param {Object} tag - The tag.
     */
    Filtrify.prototype.removeFromActive = function ( f, tag ) {
-      this._menu[f].active = this._menu[f].active.filter(function() { 
-         return ( this.textContent || this.innerText ) !== tag; 
+      this._menu[f].active = this._menu[f].active.filter(function() {
+         return ( this.textContent || this.innerText ) !== tag;
       });
    };
 
@@ -505,7 +473,7 @@
       for ( r = this._matrix.length - 1; r >= 0; r-- ) {
          m = true;
          for ( f in this._query ) {
-            c = 0;          
+            c = 0;
             for ( t = this._query[f].length - 1; t >= 0; t-- ) {
                if ( $.inArray( this._query[f][t], this._matrix[r][f] ) !== -1 ) {
                   c = c + 1;
@@ -514,15 +482,13 @@
 
             if ( !this._query[f].length  || c > 0 ) {
                // match!
-            } else { 
-               m = false; 
+            } else {
+               m = false;
             }
 
          }
-         
-         //this.updateFields( r, m );
+
          this.cacheMatch( r, m );
-         //this.showMatch( r, m );
       }
 
       this.rewriteFields();
@@ -531,24 +497,20 @@
 
    };
 
-   Filtrify.prototype.trigger = function ( query ) {
-      var f;
+   Filtrify.prototype.cleanUpQuery = function() {
+      if (this._query['provider'][0] == 'most_definitively_invalid_provider,yo') {
+         this._query['provider'] = [];
+      }
+   };
 
-      // YUCK
-      var a = {};
-      for (var i = 0; i < query.length; i++) { a[query[i].category] = query[i].tags }
-      
-      for ( f in this._fields ) {
-         this.clearSearch( f );
-         this.updateQueryField( f, a );
-         this.updateActiveClass( f );
-         this.updatePanel( f );
+   Filtrify.prototype.trigger = function ( query ) {
+      for (var field in this._fields) {
+         this.clearSearch(field);
+         this.updateQueryField(field, query);
+         this.updateActiveClass(field);
+         this.updatePanel(field);
       }
 
-
-      // YUCK YUCK YUCK, as per #122 and #123
-      console.log("YUCK");
-      
       $('.ft-tags li').show();
       for (var i = 0; i < query.length; i++) {
          var category = query[i].category;
@@ -560,14 +522,14 @@
       $('.ft-selected').show();
       $('.ft-selected li').show().addClass('ui-state-highlight')
                           .parents('.ft-panel').siblings('h3').click();
-      
+
       this.filter();
    };
 
    Filtrify.prototype.updateFields = function ( row, match ) {
       //console.log('updating fields');
       var field, tags, t;
-      
+
       for ( field in this._fields ) {
          if ( row === this._matrix.length - 1 ) {
             if($.inArray(field, this.options.blockFieldMenu) === -1) {
@@ -619,11 +581,11 @@
          this._mismatch.unshift( this._items[row] );
       }
    };
-   
+
    Filtrify.prototype.refreshCache = function($selection) {
       //console.log('refreshCache');
       var self = this;
-      
+
       this._items.each(function(index, element) {
          if($(element).attr('data-id') == $selection.attr('data-id')) {
             //element = $selection[0];
@@ -656,13 +618,13 @@
       for ( t; t < this._query[f].length; t++ ) {
 
          tag = tags.filter( this._bind( function( index ) {
-            return ( tags[index].textContent || tags[index].innerText ) === this._query[f][t]; 
+            return ( tags[index].textContent || tags[index].innerText ) === this._query[f][t];
          }, this ));
 
          this._menu[f].selected.append( tag.clone() );
          this._menu[f].active = this._menu[f].active.add( tag );
          tag.addClass("ft-hidden");
-      };
+      }
    };
 
    Filtrify.prototype.toggleSelected = function ( f ) {
@@ -670,7 +632,7 @@
          this._menu[f].selected.show();
       } else {
          this._menu[f].selected.hide();
-      };
+      }
    };
 
    Filtrify.prototype.callback = function () {
@@ -682,5 +644,5 @@
    $.filtrify = function( containerID, placeholderID, options ) {
       return new Filtrify( containerID, placeholderID, options );
    };
-   
+
 })(jQuery, window, document);

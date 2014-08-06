@@ -44,7 +44,6 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
       block: ['data-id', 'data-title'],
       blockFieldMenu: ['name'],
       callback : function ( query, match, mismatch ) {
-         console.log("whwn is this sh*t ever called!?!??!");
          self.$container.quicksand($(match), {
             // all the parameters have sensible defaults
             // and in most cases can be optional
@@ -52,13 +51,13 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
             adjustWidth: "auto",
             duration: 500,
             easing: "swing",
-            attribute: "id"
+            attribute: "data-id"
          });
-         
+
          setTimeout(function() {
             self.$container.css('width', '100%');
          }, 501);
-       }
+      }
    }
   );
          
@@ -68,10 +67,7 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
    
    $('#' + containerID + ' li').live("click", function(event, data) {
       var layerID = $(this).attr('data-id');
-      var layerName = $(this).attr('data-name');
-      var providerTag = $(this).attr('data-provider');
-      var id = providerTag + ': ' + layerName;
-      
+
       if(!$(this).hasClass('gisportal-selected')) {      
          self.selectLayer(layerID, $(this));
       }
@@ -88,12 +84,6 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
        $(this).parent().children('div').toggle();
        return false;
    });
-   
-   //$('#' + placeholderID + ' .ft-label').live("click", function() {
-      //$(this).find("> .ui-icon")
-          //.toggleClass("ui-icon-triangle-1-e ui-icon-triangle-1-s").end()
-      //.next().toggle();
-   //});
    
    /**
     * Used to grab the correct 'li' for the provided layer id.
@@ -172,31 +162,22 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
     * Deselects a layer
     */
    this.deselectLayer = function(layerID, li) {
-      var self = this;
-      
-      // DEBUG
-      console.log("deselected");
-      var layer = gisportal.getLayerByID(layerID);
-   
-      if(layer) {            
-         console.log("Removing layer..."); // DEBUG
-         layer.unselect();       
-         gisportal.removeLayer(layer);           
-         console.log("Layer removed"); // DEBUG
-         
-         self.toggleLayerSelection(li);
-      }
-      else if(gisportal.layerStore[layerID]) {
-         //layer = gisportal.layerStore[layerID];
-         self.toggleLayerSelection(li);
-      }
-      else
-         // DEBUG
-         console.log("no layer data to use");
-   };
-   
-   this.batchAddLayers = function(layers) {
-      
+       var self = this;
+
+       // DEBUG
+       console.log("deselected");
+       var layer = gisportal.getLayerByID(layerID);
+
+       if (layer) {
+           console.log("Removing layer..."); // DEBUG
+           layer.unselect();
+           gisportal.removeLayer(layer);
+           console.log("Layer removed"); // DEBUG
+           self.toggleLayerSelection(li);
+       } else {
+           // DEBUG
+           console.log("no layer data to use");
+       }
    };
    
    this.toggleLayerSelection = function($selection) {
@@ -232,7 +213,7 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
                easing: "swing",
                attribute: "data-id"
             });
-            
+
             setTimeout(function() {
                self.$container.css('width', '100%');
             }, 501);
@@ -252,6 +233,4 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
    $('#gisportal-layerSelection').find('.gisportal-tagMenu li').click(function() {
        $('#gisportal-layerSelection').find('.gisportal-selectable ul li').css('display:inline-block')
    });
-
-
 };
