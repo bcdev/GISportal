@@ -209,7 +209,7 @@
          </div>
          <h3 id="data-inputs-header" class="ui-control-header ui-helper-reset">
             <span class="ui-icon ui-icon-triangle-1-s"></span>
-            <a href="#">Data</a> 
+            <a href="#">Data Source</a>
          </h3>
          <div id="data-inputs">
             <div class="hidden">
@@ -225,12 +225,9 @@
                <input id="graphcreator-baseurl" title="Base URL of the WCS server" placeholder="WCS URL" type="text" name="graphcreator-path" />
             </div>
             <div>
-               <label for="graphcreator-coverage">Make sure to select the correct layer:</label>
-            </div>
-            <div> 
                <input id="graphcreator-coverage-real" class="hidden" title="Real Name of the Coverage" placeholder="Real Name of the Coverage" type="text" name="graphcreator-coverage-real" />
 					<select id="graphcreator-coverage" name="graphcreator-coverage">
-						<option value="" disabled selected>Name of the Layer</option>
+						<option value="" disabled selected>Data layer</option>
 					</select>	
             </div>
             <div class="hidden js-reference">
@@ -280,14 +277,13 @@
          </h3>
          <div id="advanced-inputs">
             <div>
-               <label for="graphcreator-range">Time Range:</label>
                <select name="graphcreator-range" id="graphcreator-range">
-                  <option selected>Select a Range</option>  
-               <select>
-               <button class="js-newRange">New Range</button>
-               <button class="js-hideRange">Hide Range</button>
-               <button class="js-renameRange">Rename Range</button>
-               <button class="js-deleteRange">Delete Range</button>
+                  <option selected>Select a time range</option>
+               </select>
+               <button class="js-newRange">New range</button>
+               <button class="js-hideRange">Hide range</button>
+               <button class="js-renameRange">Rename range</button>
+               <button class="js-deleteRange">Delete range</button>
             </div>
             
             <div>
