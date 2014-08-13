@@ -300,8 +300,10 @@ gisportal.leftPanel.addLayerToGroup = function(layer, $group) {
  * Remove a layer from its group on the layers panel.
  */
 gisportal.leftPanel.removeLayerFromGroup = function(layer) {
-   if($('#' + layer.id).length)
+   if($('#' + layer.id).length) {
       $('#' + layer.id).remove();
+      gisportal.updateLayerData(layer.id);
+   }
 };
 
 /**
@@ -1085,56 +1087,51 @@ gisportal.rightPanel.setupDataExport = function() {
    var exportLayer = $('#js-export-layer');
    var selectedBbox = $('#js-export-bbox');
    var selectedTime = $('#js-export-time');
+   var selectedFormat = $('#gisportal-dataexport-format').find(':selected')[0].value;
    var submitButton = $('#js-export-submit');
 
-   var url = null;
+   var url = gisportal.middlewarePath + '/download?';
    var urlParams = {
-      service: 'WCS',
-      version: '1.0.0',
-      request: 'GetCoverage',
-      crs: 'OGC:CRS84',
-      format: 'NetCDF3'
+//      service: 'WCS',
+//      version: '1.0.0',
+//      request: 'GetCoverage',
+//      crs: 'OGC:CRS84',
+      format: selectedFormat,
+      layers: [],
+      coverage: []
    };
 
    function updateSubmitButton() {
-       var wkt = $('#graphcreator-bbox').val();
-       var featureVector = new OpenLayers.Format.WKT().read(wkt);
-       var selectedLayer = gisportal.layers[$('#graphcreator-coverage').find('option:selected').val()];
-       if (featureVector !== undefined && selectedLayer !== undefined) {
-          var bounds = featureVector.geometry.getBounds();
-          var bbox = selectedLayer.boundingBox;
-          var bounds2 = new OpenLayers.Bounds(bbox.MinX, bbox.MinY, bbox.MaxX, bbox.MaxY);
-          if (bounds.intersectsBounds(bounds2)) {
-             submitButton.removeAttr("disabled");
-             return 0;
-          }
-       }
-       submitButton.attr("disabled", "disabled");
-   }
-
-   function updateSelectedLayer() {
-       var selectedLayer = gisportal.layers[$('#graphcreator-coverage').find('option:selected').val()];
-       if (selectedLayer === undefined) {
-           exportLayer.text('None');
+       if ($('#js-export-layer').find('option').length > 0) {
+          submitButton.removeAttr("disabled");
        } else {
-           exportLayer.text(selectedLayer.displayTitle);
-           // Not using dot notation, so Closure doesn't change it.
-           urlParams['coverage'] = selectedLayer.urlName;
-           url = selectedLayer.wcsURL;
+          submitButton.attr("disabled", "disabled");
        }
    }
 
-    function updateGeometry() {
-        var wkt = $('#graphcreator-bbox').val();
-        var featureVector = new OpenLayers.Format.WKT().read(wkt);
-        if (featureVector !== undefined) {
-           var bounds = featureVector.geometry.getBounds();
-           selectedBbox.text(bounds.left.toFixed(4) + ', ' + bounds.bottom.toFixed(4) + ', ' + bounds.right.toFixed(4) + ', ' + bounds.top.toFixed(4));
-           urlParams['bbox'] = bounds.left + ',' + bounds.bottom + ',' + bounds.right + ',' + bounds.top;
-           updateSubmitButton();
-           return 0;
-        }
-        selectedBbox.text('None (full coverage)');
+    function updateSelectedLayers() {
+        urlParams['coverage'] = [];
+        urlParams['layers'] = [];
+        $.each($('#js-export-layer').find('option'), function(index) {
+           var layerId = this.value;
+           var layer = gisportal.getLayerByID(layerId);
+           urlParams['coverage'].push(layer.urlName);
+           urlParams['layers'].push(layer.wcsURL);
+        });
+        updateSubmitButton();
+    }
+
+   function updateGeometry() {
+      var wkt = $('#graphcreator-bbox').val();
+      var featureVector = new OpenLayers.Format.WKT().read(wkt);
+      if (featureVector !== undefined) {
+         var bounds = featureVector.geometry.getBounds();
+         selectedBbox.text(bounds.left.toFixed(4) + ', ' + bounds.bottom.toFixed(4) + ', ' + bounds.right.toFixed(4) +
+                           ', ' + bounds.top.toFixed(4));
+         urlParams['bbox'] = bounds.left + ',' + bounds.bottom + ',' + bounds.right + ',' + bounds.top;
+      } else {
+         selectedBbox.text('None (full coverage)');
+      }
    }
 
    function updateTimeRange() {
@@ -1153,21 +1150,20 @@ gisportal.rightPanel.setupDataExport = function() {
    }
 
    // Run once for restoring state; register handler for upcoming changes
-   updateSelectedLayer();
+   updateSelectedLayers([]);
    updateGeometry();
    updateTimeRange();
-
-   $('#graphcreator-coverage').change(function() {
-       updateSelectedLayer();
-   });
 
    $('#graphcreator-bbox').change(function() {
        updateGeometry();
    });
 
+   $('#js-export-layer').change(function() {
+       updateSelectedLayers();
+   });
+
    submitButton.click(function() {
       var request = $.param(urlParams);
-      link.attr('href', url + request);
       window.open(url + request, 'download');
    });
 };

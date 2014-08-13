@@ -294,3 +294,13 @@ def histogram(arr):
 
         numbers.append((bins[i] + (bins[i+1] - bins[i])/2, float(N[i])))  # Get a number halfway between this bin and the next
     return {'Numbers': numbers, 'Bins': bins.tolist()}
+
+
+@portal_wcs.route('/download', methods=['GET'])
+def download():
+    print(request.args)
+    print(request.args.get('coverage[]'))
+    print(request.args.get('layer[]'))
+    print(request.args.get('coverage[]')[0])
+    print(request.args.get('layer[]')[0])
+    return '200'

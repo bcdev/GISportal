@@ -598,8 +598,8 @@
             <div id="gisportal-tab-export" class="gisportal-tab-content ui-corner-top" style="display: none;">
                <h3><a href="#">Data Tools</a></h3>
                <div id="dataTools">
-                  <label for="js-export-layer"><b>Selected layer: </b></label>
-                  <span class="gisportal-list" id="js-export-layer">None</span><br/>
+                  <label for="js-export-layer"><b>Selected layers: </b></label>
+                  <select class="gisportal-list" id="js-export-layer" size="3" onchange="this.selectedIndex=0;"></select><br/>
                   <label for="js-export-bbox"><b>Selected bounding box: </b></label>
                   <span class="gisportal-list" id="js-export-bbox">None (full coverage)</span><br/>
                   <label for="js-export-time"><b>Selected time range: </b></label>
@@ -607,6 +607,12 @@
                   <div class="gisportal-list" id="js-export-format"><b>Selected Format: </b>
                      <select id="gisportal-dataexport-format" title="Format you wish to the data to be returned in">
                         <option value="NetCDF3" title="Returns a netcdf3 file">NetCDF3</option>
+                        <option value="GeoTIFF" title="Returns a GeoTIFF file">GeoTIFF</option>
+                        <option value="ascii" title="Returns an ASCII file">ASCII</option>
+                        <option value="dimap" title="Returns a BEAM DIMAP file">BEAM-DIMAP</option>
+                        <option value="png" title="Returns a PNG file">PNG</option>
+                        <option value="jpg" title="Returns a PNG file">JPG</option>
+                        <option value="TIFF" title="Returns a TIFF file">TIFF</option>
                      </select>
                   </div>
                   <button id="js-export-submit" disabled>Download Data</button>

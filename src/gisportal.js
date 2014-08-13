@@ -1333,6 +1333,18 @@ gisportal.updateLayerData = function(layerID)  {
    var layer = gisportal.getLayerByID(layerID);
    $('#graphcreator-baseurl').val(layer.wcsURL);
    $('#graphcreator-coverage option[value=' + layer.origName + ']').prop('selected', true);
+
+   var isNotYetAdded = $('#js-export-layer').find('option[value="' + layerID + '"]').length === 0;
+   if (isNotYetAdded) {
+      $('#js-export-layer').append('<option value="' + layerID + '" disabled>' + layerID + '</option>');
+      $('#js-export-layer').trigger("change");
+   } else {
+      var checkbox = $('#gisportal-lPanel-operational').find('input[type="checkbox"][value="' + layerID + '"]');
+      if (checkbox.length == 0 || (checkbox.length == 1 && !checkbox[0].checked)) {
+          $('#js-export-layer').find('option[value="' + layerID + '"]').remove();
+          $('#js-export-layer').trigger("change");
+      }
+   }
 };
 
 gisportal.zoomOverall = function()  {

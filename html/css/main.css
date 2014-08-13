@@ -394,7 +394,7 @@ ul li {
 .lPanel .selectedLayer {
    /*background: #333333;*/
    background: #C9CFEA;
-   color: #cccccc;
+   color: #000;
 } 
 
 a.trigger {
@@ -1108,8 +1108,9 @@ div .sensor-accordion {
 /* ===== Data Export ==== */
 
 #gisportal-tab-export select {
-   width: auto;
-   max-width: 100px;
+    width: 100%;
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 .gisportal-list {
