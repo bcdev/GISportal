@@ -1059,6 +1059,7 @@ gisportal.main = function() {
    gisportal.setupShapefileDropdown();
    gisportal.setupWKTBoxAnimation();
    gisportal.setupPlotRequirementsCheck();
+   gisportal.refreshOpLayers();
 
    // Grab the url of any state.
    var stateID = gisportal.utils.getURLParameter('state');

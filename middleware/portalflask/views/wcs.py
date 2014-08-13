@@ -47,11 +47,12 @@ def getWcsData():
       jsonData = jsonify(output=output, type=params['graphType'].value, coverage=params['coverage'].value, error=g.graphError)
    except TypeError as e:
       g.error = "Request aborted, exception encountered: %s" % e
-      error_handler.setError('2-06', None, g.user.id, "views/wcs.py:getWcsData - Type erro, returning 400 to user. Exception %s" % e, request)
+      error_handler.setError('2-06', None, g.user.id, "views/wcs.py:getWcsData - Type error, returning 400 to user. Exception %s" % e, request)
+      current_app.logger.debug('Error: ' + str(e))
       abort(400) # If we fail to jsonify the data return 400
-      
-   current_app.logger.debug('Request complete, Sending results') # DEBUG
-   
+
+   current_app.logger.debug('Request complete, Sending results')
+
    return jsonData
 
 
@@ -270,27 +271,26 @@ def getDataSafe(params, method):
 
 def histogram(arr):
     maskedarr = np.ma.masked_array(arr, [np.isnan(x) for x in arr])
-    bins = request.args.get('bins', None) # TODO move to get params
+    bins = request.args.get('bins', None)  # TODO move to get params
     numbers = []
-    current_app.logger.debug('before bins') # DEBUG
+    current_app.logger.debug('before bins')  # DEBUG
 
     if bins == None or not bins:
         bins = np.linspace(float(np.min(maskedarr)), float(np.max(maskedarr)), 11)  # Create ten evenly spaced bins
         current_app.logger.debug('bins generated') # DEBUG
-        N, bins = np.histogram(maskedarr, bins) # Create the histogram
+        histogram, bins = np.histogram(maskedarr, bins) # Create the histogram
     else:
         values = bins.split(',')
-        for i,v in enumerate(values):
-            values[i] = float(values[i]) # Cast string to float
+        for i, v in enumerate(values):
+            values[i] = float(values[i])  # Cast string to float
         bins = np.array(values)
         current_app.logger.debug('bins converted') # DEBUG
-        N,bins = np.histogram(maskedarr, bins) # Create the histogram
+        histogram, bins = np.histogram(maskedarr, bins) # Create the histogram
 
     current_app.logger.debug('histogram created') # DEBUG
-    for i in range(len(bins)-1): # Iter over the bins
-        if np.isnan(bins[i]) or np.isnan(bins[i+1] or np.isnan(N[i])):
+    for i in range(len(bins)-1):
+        if np.isnan(bins[i]) or np.isnan(bins[i+1] or np.isnan(histogram[i])):
             g.graphError = 'no valid data available to use'
             return
-
-        numbers.append((bins[i] + (bins[i+1] - bins[i])/2, float(N[i])))  # Get a number halfway between this bin and the next
+        numbers.append((bins[i] + (bins[i+1] - bins[i])/2, float(histogram[i])))  # Get a number halfway between this bin and the next
     return {'Numbers': numbers, 'Bins': bins.tolist()}

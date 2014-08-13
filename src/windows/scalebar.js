@@ -229,25 +229,22 @@ function validateScale(layer, newMin, newMax, reset) {
    var max = parseFloat(newMax);
    
    if (isNaN(min)) {
-      alert('Scale limits must be set to valid numbers');
-      // Reset to the old value
+      console.log('Scale limits must be set to valid numbers -- reset to the old value');
       $('#' + layer.id + '-min').val(layer.minScaleVal);
       $('#' + layer.id + '-range-slider').slider("values", 0, layer.minScaleVal);
    } 
    else if (isNaN(max)) {
-      alert('Scale limits must be set to valid numbers');
-      // Reset to the old value
+      console.log('Scale limits must be set to valid numbers -- reset to the old value');
       $('#' + layer.id + '-max').val(layer.maxScaleVal);
       $('#' + layer.id + '-range-slider').slider("values", 1, layer.maxScaleVal);
    } 
    else if (min > max) {
-      alert('Minimum scale value must be less than the maximum');
-      // Reset to the old values
+      console.log('Minimum scale value must be less than the maximum -- reset to the old value');
       $('#' + layer.id + '-min').val(layer.minScaleVal);
       $('#' + layer.id + '-max').val(layer.maxScaleVal);
    } 
    else if (min <= 0 && $('#' + layer.id + '-log').children('[type="checkbox"]').first().is(':checked')) {
-      alert('Cannot use a logarithmic scale with negative or zero values');
+      console.log('Cannot use a logarithmic scale with negative or zero values -- reset to the old value');
       $('#' + layer.id + '-log').children('[type="checkbox"]').attr('checked', false);
       $('#' + layer.id + '-range-slider').slider("values", 0, layer.minScaleVal);
    } 
