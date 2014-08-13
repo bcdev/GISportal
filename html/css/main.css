@@ -394,7 +394,7 @@ ul li {
 .lPanel .selectedLayer {
    /*background: #333333;*/
    background: #C9CFEA;
-   color: #cccccc;
+   color: #000;
 } 
 
 a.trigger {
@@ -522,10 +522,15 @@ a.active.triggerR {
 .lPanel .ui-accordion-content { border: 0 none; }
 
 .gisportal-tab-content select {
-   width: 250px;
+   width: 100%;
    padding: 2px;
    border:#000000 1px solid;
    background-color:#EEEEEE;
+   margin-bottom: 10px;
+}
+
+#graphcreator-range, #timerange, #timerange2 {
+    margin-bottom: 10px;
 }
 
 .gisportal-tab-content fieldset {
@@ -553,6 +558,14 @@ a.active.triggerR {
 #topToolbar .togglePanel  {
    border-bottom-left-radius: 15px;
    border-bottom-right-radius: 15px;
+}
+
+#dataTools {
+    padding: 5px 10px 5px 10px;
+}
+
+#js-export-submit {
+    margin: 10px 0px 10px 10px;
 }
 
 /* ======== walkthrough-menu ======== */

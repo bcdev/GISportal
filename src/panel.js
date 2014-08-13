@@ -1081,7 +1081,6 @@ gisportal.rightPanel.setupGraphingTools = function() {
 
 gisportal.rightPanel.setupDataExport = function() {
 
-   var dataExport = $('#dataTools');
    var exportLayer = $('#js-export-layer');
    var selectedBbox = $('#js-export-bbox');
    var selectedTime = $('#js-export-time');
@@ -1097,19 +1096,12 @@ gisportal.rightPanel.setupDataExport = function() {
    };
 
    function updateSubmitButton() {
-       var wkt = $('#graphcreator-bbox').val();
-       var featureVector = new OpenLayers.Format.WKT().read(wkt);
-       var selectedLayer = gisportal.layers[$('#graphcreator-coverage').find('option:selected').val()];
-       if (featureVector !== undefined && selectedLayer !== undefined) {
-          var bounds = featureVector.geometry.getBounds();
-          var bbox = selectedLayer.boundingBox;
-          var bounds2 = new OpenLayers.Bounds(bbox.MinX, bbox.MinY, bbox.MaxX, bbox.MaxY);
-          if (bounds.intersectsBounds(bounds2)) {
-             submitButton.removeAttr("disabled");
-             return 0;
-          }
-       }
-       submitButton.attr("disabled", "disabled");
+      var selectedLayer = gisportal.layers[$('#graphcreator-coverage').find('option:selected').val()];
+      if (selectedLayer !== undefined) {
+         submitButton.removeAttr("disabled");
+      } else {
+         submitButton.attr("disabled", "disabled");
+      }
    }
 
    function updateSelectedLayer() {
@@ -1167,7 +1159,6 @@ gisportal.rightPanel.setupDataExport = function() {
 
    submitButton.click(function() {
       var request = $.param(urlParams);
-      link.attr('href', url + request);
       window.open(url + request, 'download');
    });
 };

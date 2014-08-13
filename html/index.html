@@ -209,7 +209,7 @@
          </div>
          <h3 id="data-inputs-header" class="ui-control-header ui-helper-reset">
             <span class="ui-icon ui-icon-triangle-1-s"></span>
-            <a href="#">Data Source</a>
+            <a href="#">Data source</a>
          </h3>
          <div id="data-inputs">
             <div class="hidden">
@@ -273,10 +273,10 @@
       <div class="ui-control">
          <h3 id="advanced-inputs-header" class="ui-control-header ui-helper-reset">
             <span class="ui-icon ui-icon-triangle-1-s"></span>
-            <a href="#">Area and Time of Interest</a>
+            <a href="#">Time and region of interest</a>
          </h3>
          <div id="advanced-inputs">
-            <div>
+            <div id="timerange">
                <select name="graphcreator-range" id="graphcreator-range">
                   <option selected>Select a time range</option>
                </select>
@@ -289,7 +289,7 @@
             <div>
                <label for="graphcreator-time">Date:</label>
             </div>
-            <div>
+            <div id="timerange2">
                <input id="graphcreator-time" title="You can use also choose time&#47;date ranges" type="text" placeholder="yyyy-mm-dd" size="10" name="graphcreator-time"/>
                <label> to </label>
                <input id="graphcreator-time2" title="You can use also choose time&#47;date ranges" type="text" placeholder="yyyy-mm-dd" size="10" name="graphcreator-time2"/>
@@ -597,20 +597,25 @@
             </div>
             <div id="gisportal-tab-export" class="gisportal-tab-content ui-corner-top" style="display: none;">
                <h3><a href="#">Data Tools</a></h3>
-               <div id="dataTools">
-                  <label for="js-export-layer"><b>Selected layer: </b></label>
-                  <span class="gisportal-list" id="js-export-layer">None</span><br/>
-                  <label for="js-export-bbox"><b>Selected bounding box: </b></label>
-                  <span class="gisportal-list" id="js-export-bbox">None (full coverage)</span><br/>
-                  <label for="js-export-time"><b>Selected time range: </b></label>
-                  <span class="gisportal-list" id="js-export-time">None (full coverage)</span><br/>
-                  <div class="gisportal-list" id="js-export-format"><b>Selected Format: </b>
-                     <select id="gisportal-dataexport-format" title="Format you wish to the data to be returned in">
-                        <option value="NetCDF3" title="Returns a netcdf3 file">NetCDF3</option>
-                     </select>
-                  </div>
-                  <button id="js-export-submit" disabled>Download Data</button>
-               </div>
+               <table id="dataTools">
+                   <tr>
+                       <td><b>Layer:</b></td>
+                       <td id="js-export-layer">None</td>
+                   </tr>
+                   <tr>
+                       <td><b>Bounding box:</b></td>
+                       <td id="js-export-bbox">None (full coverage)</td>
+                   </tr>
+                   <tr>
+                       <td><b>Time range:</b></td>
+                       <td id="js-export-time">None (full coverage)</td>
+                   </tr>
+                   <tr>
+                       <td><b>Format:</b></td>
+                       <td id="js-export-format">NetCDF 3</td>
+                   </tr>
+               </table>
+               <button id="js-export-submit" disabled>Download Data</button>
             </div>
          </div>
       </div>
