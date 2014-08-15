@@ -272,6 +272,7 @@ gisportal.createRefLayers = function() {
       }
    });
 
+   gisportal.showAllLayersInSelector();
    gisportal.layerSelector.refresh();
 
    // Get and store the number of reference layers
@@ -381,6 +382,12 @@ gisportal.hideAllLayersInSelector = function(force) {
     }
 };
 
+gisportal.showAllLayersInSelector = function() {
+    var filtrify = gisportal.layerSelector.filtrify;
+    filtrify.trigger({});
+    $('#gisportal-missingSearchCriteria').hide();
+};
+
 /**
  * Create MicroLayers from the getCapabilities request to
  * be used in the layer selector.
@@ -405,13 +412,12 @@ gisportal.createOpLayers = function() {
       $.each(layers, function(i, microLayer) {
          gisportal.layerSelector.addLayer(gisportal.templates.selectionItem(microLayer.meta), { "tags" : microLayer.tags} );
       });
-      gisportal.hideAllLayersInSelector(true);
    }
    gisportal.layerSelector.refresh();
-   // Batch add here in future.
 };
 
 gisportal.refreshOpLayers = function() {
+    gisportal.showAllLayersInSelector();
     for (var i = 0; i < gisportal.cache.wmsServers.length; i++) {
         var serverDescriptor = gisportal.cache.wmsServers[i];
         if (isUserAllowedToView(serverDescriptor)) {
@@ -425,7 +431,6 @@ gisportal.refreshOpLayers = function() {
                 gisportal.genericRemoveLayers(serverDescriptor);
                 gisportal.utils.removeFromArray(gisportal.activeWmsServers, serverDescriptor);
             }
-
         }
     }
     gisportal.layerSelector.refresh();
@@ -446,7 +451,7 @@ gisportal.genericRemoveLayers = function(serverDescriptor) {
     $.each(gisportal.microLayers, function(id, microLayer) {
         if (microLayer.serverName === serverDescriptor.serverName) {
             toRemove.push(microLayer.id);
-            gisportal.layerSelector.removeLayer(microLayer.name);
+            gisportal.layerSelector.filtrify._container.find('li[data-id="' + microLayer.id + '"]').remove();
         }
     });
     gisportal.utils.setDifference(gisportal.microLayers, toRemove);

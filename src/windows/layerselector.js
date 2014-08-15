@@ -112,13 +112,6 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
    };
 
    /**
-    * Removes layer from the layerselector
-    */
-   this.removeLayer = function(layerId) {
-       $('#' + this.container + ' [data-id|="' + layerId + '"]').remove();
-   };
-   
-   /**
     * Selects a layer
     * selected should be true to add it to both panel and map
     * options will be passed to the layer once created
@@ -218,7 +211,8 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
                self.$container.css('width', '100%');
             }, 501);
          }
-      });     
+      });
+      gisportal.hideAllLayersInSelector();
    };
 
    this.sortLayers = function() {

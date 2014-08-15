@@ -1,9 +1,23 @@
 #!/usr/bin/env python
 
 servers = {
-   'cci': { 
+   'glass': {
+      'name': 'glass',
+      'url': 'http://glass:8080/thredds/wms/aggregations/daily?',
+      'params': {
+         'SERVICE': 'WMS',
+         'request': 'GetCapabilities',
+         'version': '1.3.0'
+      },
+      'options': {
+         'providerShortTag': 'BC'
+      },
+      'wcsurl': 'http://glass:8080/thredds/wcs/aggregations/daily?',
+      'userGroups': 'bc'
+   },
+   'cci': {
       'name': 'cci',
-      'url': 'http://earthserver.pml.ac.uk/thredds/wms/CCI-v1.0-D?',
+      'url': 'https://rsg.pml.ac.uk/thredds/wms/CCI_ALL-v1.0-DAILY?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -12,8 +26,8 @@ servers = {
       'options': {
          'providerShortTag': 'CCI'
       },
-      'wcsurl': 'http://earthserver.pml.ac.uk/thredds/wcs/CCI-v1.0-D?',
-      'users': 'admins'
+      'wcsurl': 'https://rsg.pml.ac.uk/thredds/wcs/CCI_ALL-v1.0-DAILY?',
+      'userGroups': 'admins'
    },
    'hcmr': { 
       'name': 'hcmr',

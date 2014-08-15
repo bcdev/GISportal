@@ -176,9 +176,8 @@
          }
       }
 
-      if ($(self._menu.list).find('ul').length != 0) {
-         this._holder.html(self._menu.list).prepend(this._search.element);
-      }
+      this._holder.html(self._menu.list).prepend(this._search.element);
+
       $('.js-selected-tags').button();
       $('.js-clear-tags').button();
    };
