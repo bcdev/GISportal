@@ -452,6 +452,7 @@ gisportal.genericRemoveLayers = function(serverDescriptor) {
         if (microLayer.serverName === serverDescriptor.serverName) {
             toRemove.push(microLayer.id);
             gisportal.layerSelector.filtrify._container.find('li[data-id="' + microLayer.id + '"]').remove();
+            gisportal.leftPanel.removeLayerFromGroup(microLayer);
         }
     });
     gisportal.utils.setDifference(gisportal.microLayers, toRemove);
