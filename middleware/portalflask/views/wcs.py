@@ -62,7 +62,9 @@ def get_histogram(params):
     variable_name = params['coverage'].value
     wkt = params['wkt'].value
 
-    product = beampy.ProductIO.readProduct(ncfile_name)
+    reader = beampy.ProductIO.getProductReader('NetCDF-CF')
+    product = reader.readProductNodes(ncfile_name, None)
+    product.setProductReader(reader)
     mask = geometry_support.create_mask(product, wkt)
     data = graph_support.get_band_data_as_array(variable_name, product, mask)
     product.dispose()
@@ -75,7 +77,9 @@ def get_hovmoller(params):
     variable_name = params['graphZAxis'].value
     wkt = params['wkt'].value
 
-    product = beampy.ProductIO.readProduct(ncfile_name)
+    reader = beampy.ProductIO.getProductReader('NetCDF-CF')
+    product = reader.readProductNodes(ncfile_name, None)
+    product.setProductReader(reader)
     mask = geometry_support.create_mask(product, wkt)
     hovmoller = graph_support.get_hovmoller(product, variable_name, mask, params['graphXAxis'].value,
                                             params['graphYAxis'].value)
@@ -91,7 +95,9 @@ def get_timeseries(params):
     wkt = params['wkt'].value
 
     shape = geometry_support.get_shape(wkt)
-    product = beampy.ProductIO.readProduct(ncfile_name)
+    reader = beampy.ProductIO.getProductReader('NetCDF-CF')
+    product = reader.readProductNodes(ncfile_name, None)
+    product.setProductReader(reader)
 
     timeseries = graph_support.get_timeseries(product, variable_name, shape)
     product.dispose()
