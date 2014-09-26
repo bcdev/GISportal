@@ -86,7 +86,8 @@ public class LdapAuth extends AuthenticationHandler {
 
         HashMap<String, Object> options = new HashMap<>();
         options.put("userProvider", ldapUrl(host, port));
-        options.put("authIdentity", "uid={USERNAME},ou=" + userOu + "," + ldapPath);
+        options.put("authIdentity", "cn=" + username + ",ou=" + userOu + "," + ldapPath);
+//        options.put("authIdentity", "uid={USERNAME},ou=" + userOu + "," + ldapPath);
         options.put("useSSL", "false");
         options.put(Context.SECURITY_AUTHENTICATION, "simple");
 

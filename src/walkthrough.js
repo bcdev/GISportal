@@ -138,7 +138,13 @@ gisportal.Walkthrough = function() {
          {
             id : 0,
             content: '<p>DISCLAIMER</p>' +
-                     '<p>Use by you of the data (which includes model outputs and simulations) provided by PML on this site is entirely at your own risk.  This data is provided “as is” without any warranty of any kind, either expressed or implied, including without limitation, any implied warranties as to its merchantability or its suitability for any use.  All implied conditions relating to the quality or suitability of the data and the medium on which it is provided, and all liabilities arising from the supply of the data (including any liability arising in negligence) are excluded to the fullest extent permitted by law.</p>' +
+//                     '<p>Use by you of the data (which includes model outputs and simulations) provided by PML on this site is entirely at your own risk.  This data is provided “as is” without any warranty of any kind, either expressed or implied, including without limitation, any implied warranties as to its merchantability or its suitability for any use.  All implied conditions relating to the quality or suitability of the data and the medium on which it is provided, and all liabilities arising from the supply of the data (including any liability arising in negligence) are excluded to the fullest extent permitted by law.</p>' +
+                     '<p>The main objective of the BC-WAQSS System is to provide products supporting an assessment of the water quality in coastal areas.  The products are tailored especially to the requirements of each individual customer.</p>' +
+                     '<p>The service portfolio consists of 3 different products categories:</p>' +
+                     '<p>• Standard products</p>' +
+                     '<p>• Special products</p>' +
+                     '<p>• Special requests</p>' +
+                     '<p>The service consists of the regular delivery of the specified products from Brockmann Consult to its customers. On the customer site, a validation would be welcomed which intensity depends on the resources and potential of the end users.</p>' +
                      '<p>Acknowledgement</p>' +
                      '<p>In using the data you agree to acknowledge use of the data in the acknowledgement section of any resulting publication.</p>' +
                      '<p>Based on GIS portal by <a href="http://www.pml.ac.uk/">PML</a>.<br>' +

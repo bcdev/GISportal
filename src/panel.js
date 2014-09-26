@@ -982,7 +982,7 @@ gisportal.rightPanel.setupGraphingTools = function() {
         var graphXAxis = null;
         var graphYAxis = null;
 
-        const graphcreatorGalleryElement = $('#graphcreator-gallery');
+        var graphcreatorGalleryElement = $('#graphcreator-gallery');
         if (graphcreatorGalleryElement.find('input[value="hovmollerLon"]').prop("checked")) {
             graphXAxis = 'Lon';
             graphYAxis = 'Time';

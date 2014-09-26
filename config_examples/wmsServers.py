@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 servers = {
-   'glass': {
-      'name': 'glass',
-      'url': 'http://glass:8080/thredds/wms/aggregations/daily?',
+   'waqss_daily': {
+      'name': 'waqss_daily',
+      'url': 'http://opec-portal-test:8888/thredds/wms/waqss/daily??',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -12,8 +12,8 @@ servers = {
       'options': {
          'providerShortTag': 'BC'
       },
-      'wcsurl': 'http://glass:8080/thredds/wcs/aggregations/daily?',
-      'userGroups': 'bc'
+      'wcsurl': 'http://opec-portal-test:8888/thredds/wcs/waqss/daily?',
+#      'userGroups': 'bc'
    },
    'cci': {
       'name': 'cci',

@@ -99,7 +99,7 @@ def permissions(allowed_user_groups):
 
 
 @portal_user.route('/get_shapefile_names', methods=['POST'])
-@check_for_permission(['bc', 'coastcolour'])
+@check_for_permission(['bc', 'coastcolour', 'waqss_users'])
 def get_shapefile_names():
     if not os.path.exists(get_shape_path()):
         return jsonify(shapefiles=[])
@@ -108,7 +108,7 @@ def get_shapefile_names():
 
 
 @portal_user.route('/get_shape_names/<shapefile_name>', methods=['POST'])
-@check_for_permission(['bc', 'coastcolour'])
+@check_for_permission(['bc', 'coastcolour', 'waqss_users'])
 def get_shape_names(shapefile_name):
     shapefile_path = get_shape_path() + shapefile_name
     shape_names = shapefile_support.get_shape_names(shapefile_path)
@@ -116,7 +116,7 @@ def get_shape_names(shapefile_name):
 
 
 @portal_user.route('/get_shapefile_geometry/<shapefile_name>/<shape_name>', methods=['POST'])
-@check_for_permission(['bc', 'coastcolour'])
+@check_for_permission(['bc', 'coastcolour', 'waqss_users'])
 def get_shapefile_geometry(shapefile_name, shape_name):
     shapefile_path = get_shape_path() + shapefile_name
     return jsonify(geometry=shapefile_support.get_shape_geometry(shapefile_path, shape_name), bounds=shapefile_support.get_bounding_box(shapefile_path, shape_name))

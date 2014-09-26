@@ -1,4 +1,61 @@
 layers = {
+    "waqss_daily": {
+        "num_obs": {
+            "interval": "daily",
+            "niceName": "Number of observations",
+            "region": ["N. Atlantic", "Baltic"]
+        },
+        "num_passes": {
+            "interval": "daily",
+            "niceName": "Number of satellite passes",
+            "region": ["N. Atlantic", "Baltic"]
+        },
+        "chl_mean": {
+            "interval": "daily",
+            "niceName": "Mean of Chlorophyll Concentration, OC3 Algorithm",
+            "region": ["N. Atlantic", "Baltic"]
+        },
+        "chl_sigma": {
+            "interval": "daily",
+            "niceName": "Sigma of Chlorophyll Concentration, OC3 Algorithm",
+            "region": ["N. Atlantic", "Baltic"]
+        },
+        "chl_counts": {
+            "interval": "daily",
+            "niceName": "Counts of Chlorophyll Concentration, OC3 Algorithm",
+            "region": ["N. Atlantic", "Baltic"]
+        },
+        "tsm_mean": {
+            "interval": "daily",
+            "niceName": "Mean of Total Suspended Matter",
+            "region": ["N. Atlantic", "Baltic"]
+        },
+        "tsm_sigma": {
+            "interval": "daily",
+            "niceName": "Sigma of Total Suspended Matter",
+            "region": ["N. Atlantic", "Baltic"]
+        },
+        "tsm_counts": {
+            "interval": "daily",
+            "niceName": "Counts  of Total Suspended Matter",
+            "region": ["N. Atlantic", "Baltic"]
+        },
+        "Kd__490_mean": {
+            "interval": "daily",
+            "niceName": "Mean of Diffuse attenuation coefficient at 490 nm, KD2 algorithm",
+            "region": ["N. Atlantic", "Baltic"]
+        },
+        "Kd__490_sigma": {
+            "interval": "daily",
+            "niceName": "Sigma of Diffuse attenuation coefficient at 490 nm, KD2 algorithm",
+            "region": ["N. Atlantic", "Baltic"]
+        },
+        "Kd__490_counts": {
+            "interval": "daily",
+            "niceName": "Counts of Diffuse attenuation coefficient at 490 nm, KD2 algorithm",
+            "region": ["N. Atlantic", "Baltic"]
+        }
+    },
     "DMI": {
         "": {
             "Confidence": "High", 

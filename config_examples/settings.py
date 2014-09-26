@@ -5,9 +5,9 @@ JSON_SORT_KEYS = False
 
 SECRET_KEY = 'p7i0-22@0eheas^kzw3=1qfug_x+5)5)8u4v=2iyiwwx1eh)37'
 
-OPENID_FOLDER = '/home/rsgadmin/cache/portal/openID'
+OPENID_FOLDER = '/home/thomass/projects/OpEcVis_git/GISportal/html/cache/openID'
 DATABASE_URI = 'sqlite:///' + OPENID_FOLDER + '/user_storage.db'
-SHAPEFILE_PATH = '/home/thomass/temp/' #Complete Path to shapefile folder. Needs to begin and end with a /
+SHAPEFILE_PATH = '/home/thomass/temp/' #Complete Path to shapefile folder. Needs to begin and end with a / !important
 
 
 LOG_LEVEL = "DEBUG"
@@ -37,12 +37,12 @@ ACTION_REGISTRY = [
             {'tag': 'label', 'attributes' : {'for' : 'shapefile_button'}},
             {'id': 'shape_chooser'}
         ],
-        'allowedUserGroups' : ['bc', 'coastcolour']
+        'allowedUserGroups' : ['bc', 'waqss_users']
     }
 ]
 
 JAVA_HOME = '/opt/java'
 JDK_HOME = '/opt/java'
 PATH_extension = JAVA_HOME + '/bin'
-LD_LIBRARY_PATH_extension = JDK_HOME + '/jre/lib/amd64/server'
+LD_LIBRARY_PATH_extension = JDK_HOME + '/jre/lib/amd64/server:/opt/gdal-1.11.0/lib'
 BEAM_HOME = '/home/thomass/beam-5.0'

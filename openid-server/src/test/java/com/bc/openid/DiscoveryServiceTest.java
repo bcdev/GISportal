@@ -3,7 +3,6 @@ package com.bc.openid;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
