@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>OpenID Consumer Redirection</title>
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/style.css">
+    <link rel="stylesheet" type="text/css" href="/openid<%=request.getContextPath()%>/style.css">
 </head>
 <body>
 <form name="openid-consumer-redirection" action="${destinationUrl}" method="post">

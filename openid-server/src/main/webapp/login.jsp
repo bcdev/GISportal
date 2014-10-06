@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>OpenID-Provider Login</title>
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/style.css">
+    <link rel="stylesheet" type="text/css" href="/openid<%=request.getContextPath()%>/style.css">
 </head>
 <body>
 <form name="openid-login-form" action="${destinationUrl}" method="post">
@@ -11,8 +11,26 @@
         <div class="text subtext" style="color: #C8142F">${redirectionMessage}</div>
         <p>&nbsp;</p>
     </c:if>
+
+<%@ page import="java.util.Enumeration" %>
+    <%@ page import="java.util.HashMap" %>
+    <%@ page import="java.util.Map" %>
+    <%
+        Map<String, String> allParameters = new HashMap<String, String>();
+        Enumeration a = request.getParameterNames();
+        while (a.hasMoreElements()) {
+            String paramName = a.nextElement().toString();
+            allParameters.put(paramName, request.getParameter(paramName));
+        }
+        pageContext.setAttribute("itemList", allParameters);
+    %>
+
     <span class="text">Log in with your BC credentials.</span><br/>
     <span class="text subtext">Hint: use the credentials you are also using for the BC Calvalus service.</span>
+
+    <c:forEach var="entry" items="${itemList}">
+        <input type="hidden" name="${entry.key}" value="${entry.value}"/>
+    </c:forEach>
 
     <table class="table">
         <tr>

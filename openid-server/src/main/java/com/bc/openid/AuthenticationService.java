@@ -98,8 +98,6 @@ public class AuthenticationService extends HttpServlet {
             String username = paramsMap.get("username");
             try {
                 authenticate(username, paramsMap.get("password"), request);
-                HttpSession session = request.getSession();
-                paramsMap = (Map<String, String>) session.getAttribute("paramsMap");
                 parameterList = new ParameterList(paramsMap);
             } catch (AuthenticationException e) {
                 String redirectionMessage = "Error: " + e.getMessage();
