@@ -29,7 +29,6 @@ gisportal.openid.setup = function(containerID) {
    };
 
    gisportal.openid.onCloseHandler = function () {
-       gisportal.openid.set_userinfo_to_html();
        if (gisportal.openid.is_logged_in()) {
            gisportal.openid.hideLogin();
        } else {
@@ -143,7 +142,6 @@ gisportal.openid.logout = function() {
     gisportal.genericAsync('GET', gisportal.openid.logoutLocation, null, function(data, opts) {
       console.log(data); 
       if (data == '200')  {
-         gisportal.openid.set_userinfo_to_html();
          gisportal.openid.showLogin();
       }
    }, 

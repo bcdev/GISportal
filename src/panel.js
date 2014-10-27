@@ -1300,7 +1300,6 @@ gisportal.topbar.setup = function() {
          }
       });
    $('#infoToggleBtn').button({ label: '', icons: { primary: 'ui-icon-gisportal-info'} });
-   $('#userInfoToggleBtn').button({ label: '', icons: { primary: 'ui-icon-gisportal-user-info'} });
 
    // Add toggle functionality for dialogs
    $('#shareMapToggleBtn').click(function() {
@@ -1308,7 +1307,6 @@ gisportal.topbar.setup = function() {
    });
    addDialogClickHandler('layerPreloader', $('#gisportal-layerSelection'));
    addDialogClickHandler('infoToggleBtn', $('#walkthrough-menu'));
-   addDialogClickHandler('userInfoToggleBtn', $('#user-info-balloon'));
 
      function addDialogClickHandler(idOne, idTwo) {
       $("label[for=" + idOne + "]").click(function(e) {

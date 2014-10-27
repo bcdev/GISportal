@@ -1018,19 +1018,6 @@ gisportal.main = function() {
       dblclick: "collapse"
    });
 
-   // Same is true for user info balloon
-   $('#user-info-balloon').extendedDialog({
-      position: ['right', 'bottom'],
-      width: 245,
-      height: 220,
-      resizable: false,
-      showHelp: false,
-      autoOpen: false,
-      showMinimise: true,
-      dblclick: "collapse",
-      open: gisportal.openid.set_userinfo_to_html
-   });
-
    // Show map info such as latlng
    $('#mapInfo').extendedDialog({
       position: ['center', 'center'],

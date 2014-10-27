@@ -23,13 +23,6 @@ LOG_PATH = ''
 ERROR_LEVEL = "W"
 
 ACTION_REGISTRY = [
-    {   'actionIdentifier' : 'userInfoAction',
-        'actionDescription' : 'display user info',
-        'jQueryCriteria' : [
-            {'tag': 'label', 'attributes' : {'for' : 'userInfoToggleBtn'}}  # --> label[for='userInfoToggleBtn']
-        ],
-        'allowedUserGroups' : ['bc', 'admins']
-    },
     {
         'actionIdentifier' : 'shapefile',
         'actionDescription' : 'use shapefile features',
