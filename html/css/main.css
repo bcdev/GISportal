@@ -178,15 +178,6 @@ ul li {
    text-indent:-32px;
 }
 
-#mapInfoToggleBtn {
-   height:32px;
-   width:32px;
-}
-
-#mapInfoToggleBtn:hover {
-   text-indent:-32px;
-}
-
 #shareMapToggleBtn {
    height:32px;
    width:32px;

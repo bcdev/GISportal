@@ -1286,9 +1286,8 @@ gisportal.topbar.setup = function() {
 
    // Create buttons
    $('#gisportal-toolbar-actions').buttonset();
-   $('#mapInfoToggleBtn').button({ label: '', disabled: 'true', icons: { primary: 'ui-icon-gisportal-globe-info'} });
    $('#shareMapToggleBtn').button({ label: '', icons: { primary: 'ui-icon-gisportal-globe-link'} });
-   $('#layerPreloader').button({ label: '', icons: { primary: 'ui-icon-gisportal-layers'} })
+   $('#layerPreloader').button({ label: '', icons: { primary: 'ui-icon-gisportal-layers'} });
    $('#gisportal-button-3d').button({ label: '', icons: { primary: 'ui-icon-gisportal-globe'}, disabled: 'true' })
       .click(function(e) {
          if(map.globe.is3D) {

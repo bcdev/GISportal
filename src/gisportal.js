@@ -911,7 +911,6 @@ gisportal.checkIfLayerFromState = function(layer) {
  * Any code that should be run when user logs in
  */
 gisportal.login = function() {
-   $('#mapInfoToggleBtn').button("enable");
    gisportal.userManager.updateActions();
    gisportal.refreshOpLayers();
    gisportal.updateShapefiles();
@@ -922,7 +921,6 @@ gisportal.login = function() {
  * Any code that should be run when the user logs out
  */
 gisportal.logout = function() {
-   $('#mapInfoToggleBtn').button("disable").prop("checked", false);
    gisportal.userManager.updateActions();
    gisportal.refreshOpLayers();
    gisportal.updateShapefiles();
