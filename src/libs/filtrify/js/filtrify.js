@@ -202,7 +202,7 @@
 
       for ( t = 0; t < tags.length; t++ ) {
          tag = tags[t];
-         html += '<li class="ui-state-default" data-count="' + this._fields[f][tag] + '" ><span>' + tag + '</span></li>';
+         html += '<li class="ui-state-default"><span>' + tag + '</span></li>';
       }
 
       html += "</ul><div class='ft-mismatch ft-hidden'></div></div></li>";
@@ -558,10 +558,7 @@
          this._menu[field].tags
             .children()
             .each( this._bind( function( index, element ) {
-               var tag = ( element.textContent || element.innerText ),
-                  count = this._fields[field][tag] === undefined ? 0 : this._fields[field][tag];
-
-               element.setAttribute("data-count", count );
+               var tag = ( element.textContent || element.innerText );
             }, this ) );
       }
    };
