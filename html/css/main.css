@@ -95,9 +95,9 @@ ul li {
    overflow: hidden;
    padding: 0 10px 0 10px;
    height: 50px;
-   width: 590px;
+   width: 375px;
    left: 50%;
-   margin-left: -275px;
+   margin-left: -185px;
    position: fixed;
    background: rgba(201, 207, 234, 0.8);
    border:1px solid #666666;
@@ -863,10 +863,6 @@ div .sensor-accordion {
 
 #gisportal-layerSelection .gisportal-selectable > ul > li > div i {
    margin-left: 3px;
-}
-
-.gisportal-quickRegion-remove {
-   margin-top: 5px;
 }
 
 .gisportal-layer p  {

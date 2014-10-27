@@ -408,15 +408,6 @@
             </fieldset>
          </li>
          <li class="divider"></li>
-         <li>
-            <!-- Using fieldsets as no easy CSS alternative -->
-            <fieldset>
-               <legend>Quick Region</legend>
-               <select class="gisportal-quickRegion-select ui-corner-all" id="quickRegion" name="Quick Region">
-               </select>
-            </fieldset>
-         </li>
-         <li class="divider"></li>
          <li id="gisportal-toolbar-actions" class="gisportal-toolbar-buttonpane">
             <input type="checkbox" id="shareMapToggleBtn" /><label class="gisportal-iconBigBtn" for="shareMapToggleBtn" title="Toggle User Panel"></label>
             <input type="checkbox" id="layerPreloader" /><label class="gisportal-iconBigBtn" for="layerPreloader" title="Toggle Layer Selection Panel"></label>
@@ -440,7 +431,7 @@
                   <!--<input type="radio" name="layer-tab" id="gisportal-lpanel-tab-reference" class="gisportal-tab" href="#gisportal-lPanel-reference">-->
                   <!--<label for="gisportal-lpanel-tab-reference">Reference</label>-->
                   <input type="radio" name="layer-tab" id="gisportal-lpanel-tab-options" class="gisportal-tab" href="#lpanel-base-layers">
-                  <label for="gisportal-lpanel-tab-options">Options</label>
+                  <label for="gisportal-lpanel-tab-options">Base Layer</label>
                </li>
                <li id="triggerL-buttonset" class="hidden lPanel-buttonSet ui-corner-top">
                   <button id="triggerL-add-accordion" class="panel-button"></button>
@@ -457,56 +448,9 @@
             <div id="lpanel-base-layers" class="gisportal-tab-content" style="display: none;">
                <div id="baseLayers">
                   <fieldset>
-                     <legend>Base Layer</legend>
-                     <select class="ui-corner-all" id="baseLayer" name="Base Layer">
-                     </select>
+                     <select class="ui-corner-all" id="baseLayer" name="Base Layer"></select>
                   </fieldset>
-                  <!-- Quick Region -->
-                  <fieldset>
-                     <legend>Quick Regions</legend>
-                     <select class="gisportal-quickRegion-select ui-corner-all"></select>
-                     
-                     <div style="clear: both;"> </div>
-                     
-                     <button class="gisportal-quickRegion-remove">Remove selected region</button>
-                     <button class="gisportal-quickRegion-addCurrent">Add Current View</button> 
-                     <div style="clear: both;"> </div>
-                  </fieldset>
-                  
-                  <fieldset>
-
-                     <legend>Edit Regions:</legend>
-                     <div style="clear: both;"> </div>
-                     
-                     <!-- Quick Region Name -->
-                     <label for="gisportal-quickRegion-name">Region Name:</label>
-                     <input type="text" class="gisportal-quickRegion-name" name="gisportal-quickRegion-name"/>
-                     
-                     <div style="clear: both;"> </div>
-                     
-                     <!-- Quick Region Bounds -->
-                     <label for="gisportal-quickRegion-left">Left:</label>
-                     <input type="text" class="gisportal-quickRegion-left" name="gisportal-quickRegion-left"/>
-                     
-                     <div style="clear: both;"> </div>
-                     
-                     <label for="gisportal-quickRegion-bottom">Bottom:</label>
-                     <input type="text" class="gisportal-quickRegion-bottom" name="gisportal-quickRegion-bottom"/>
-                     
-                     <div style="clear: both;"> </div>
-                     
-                     <label for="gisportal-quickRegion-right">Right:</label>
-                     <input type="text" class="gisportal-quickRegion-right" name="gisportal-quickRegion-right"/>
-                     
-                     <div style="clear: both;"> </div>
-                     
-                     <label for="gisportal-quickRegion-top">Top:</label>
-                     <input type="text" class="gisportal-quickRegion-top" name="gisportal-quickRegion-top"/>
-                  </fieldset>  
-                  
-                  <button class="gisportal-quickRegion-reset">Reset</button>
-                  <button class="gisportal-quickRegion-save">Save</button> 
-                  <button class="gisportal-quickRegion-add">Add as new region</button>
+                  <div style="clear: both;" ></div>
                </div>
             </div>
          </div>

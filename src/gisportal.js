@@ -62,21 +62,6 @@ gisportal.walkthrough = null;
 // Predefined map coordinate systems
 gisportal.lonlat = new OpenLayers.Projection("EPSG:4326");
 
-// Quick regions array in the format "Name",W,S,E,N - TODO: Needs to be moved at some point
-gisportal.quickRegion = [
-   ["World View", -150, -90, 150, 90],
-   ["European Seas", -23.44, 20.14, 39.88, 68.82],
-   ["Adriatic", 11.83, 39.00, 20.67, 45.80],
-   ["Baltic", 9.00, 51.08, 30.50, 67.62],
-   ["Biscay", -10, 43.00, 0, 49.00],
-   ["Black Sea", 27.30, 38.50, 42.00, 49.80],
-   ["English Channel", -5.00, 46.67, 4.30, 53.83],
-   ["Eastern Med.", 20.00, 29.35, 36.00, 41.65],
-   ["North Sea", -4.50, 50.20, 8.90, 60.50],
-   ["Western Med.", -6.00, 30.80, 16.50, 48.10],
-   ["Mediterranean", -6.00, 29.35, 36.00, 48.10]
-];
-
 // Provider logos
 gisportal.providers = {
    "CCI" : { "logo": "img/cci.png" },
@@ -673,9 +658,6 @@ gisportal.loadNonLayerDependents = function() {
    // Setup the topbar
    gisportal.topbar.setup();
 
-   // Setup quickRegions | On Both the left panel and the topbar.
-   gisportal.quickRegions.setup();
-
    gisportal.openid.setup('shareOptions');
 
    //--------------------------------------------------------------------------
@@ -789,10 +771,6 @@ gisportal.saveStateTo = function(state) {
    // Get position
    state.map.extent = map.getExtent();
 
-   // Get quick regions
-   state.map.regions = gisportal.quickRegion;
-   state.map.selectedRegion = $('#quickRegion').find('option:selected').val();
-
    // Get timeline zoom
    state.timeline.minDate = gisportal.timeline.xScale.domain()[0];
    state.timeline.maxDate = gisportal.timeline.xScale.domain()[1];
@@ -862,16 +840,6 @@ gisportal.loadState = function(state) {
    // Load position
    if (state.extent)
       map.zoomToExtent(new OpenLayers.Bounds([state.extent.left,state.extent.bottom, state.extent.right, state.extent.top]));
-
-   // Load Quick Regions
-   if (state.regions) {
-      gisportal.quickRegion = state.regions;
-      gisportal.quickRegions.setup();
-   }
-
-   if (state.selectedRegion)  {
-      $('#quickRegion').val(state.selectedRegion);
-   }
 
    if (timeline)  {
       gisportal.timeline.zoomDate(timeline.minDate, timeline.maxDate);

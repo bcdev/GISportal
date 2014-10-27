@@ -114,7 +114,6 @@ def setup_blueprints(app):
    from views.user import portal_user
    from views.state import portal_state
    from views.graph import portal_graph
-   #from views.quickregions import portal_quickRegions
    #from views.roi import portal_roi
    #from views.layergroup import portal_layerGroup
    from views.proxy import portal_proxy

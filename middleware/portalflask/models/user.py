@@ -21,7 +21,6 @@ class User(Base):
 
    states = relationship('State', backref=backref('user', lazy='joined'), lazy='dynamic')
    graphs = relationship('Graph', backref=backref('user', lazy='joined'), lazy='dynamic')
-   quickregions = relationship('QuickRegions', uselist=False, backref=backref('user', lazy='joined'))
    roi = relationship('ROI', backref=backref('user', lazy='joined'), lazy='dynamic')
    layergroups = relationship('LayerGroup', backref=backref('user', lazy='joined'), lazy='dynamic')
    groups = relationship('UserGroup', secondary=association_table)

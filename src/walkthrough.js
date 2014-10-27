@@ -44,23 +44,12 @@ gisportal.Walkthrough = function() {
 		         id : 4,
 		         prev : 3,
 		         next : 5,
-		         content: '<p>Step 4. Now that a date has been selected data for 02 in the English Channel immediately appears on the map. You are able to zoom on the map or go to a specific region.</p>',
-		         binding: '#topToolbar',
-		         commands: [
-		         	"$('#quickRegion')[0].selectedIndex = 7;",
-		         	"setTimeout(function() { $('#quickRegion').change(); }, 500)"
-		        	]
-		      },
-		      {
-		         id : 5,
-		         prev : 4,
-		         next : 6,
 		         content: '<p>Step 5. If you would like to view the data over time, please move over to the data analysis panel (on the right) where you can select a date range and generate graphs of the dataset in which you are interested.</p>',
 		      	commands: [ "gisportal.rightPanel.open(); "]
 		      },
 		      {
-		         id : 6,
-		         prev : 5,
+		         id : 5,
+		         prev : 4,
 		         content: '<p>Step 6. Use the timeline at the bottom to quickly see the dates for which there is data available.</p><p>See \'Overview of the timeline\' for help on how to use it. This guide is now complete, please click on the X at the top right of the box to finish.</p>'
 		      }
    		]

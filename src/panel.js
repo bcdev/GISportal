@@ -100,49 +100,6 @@ gisportal.leftPanel.setup = function() {
        map.setBaseLayer(gisportal.baseLayers[$('#baseLayer').val()]);
    });
 
-   // Create quick region buttons
-   $('.lPanel .gisportal-quickRegion-reset').button({ label: 'Reset' }).click(function() {
-      var id = $('.lPanel .gisportal-quickRegion-select').val();
-
-      $('.lPanel .gisportal-quickRegion-name').val(gisportal.quickRegion[id][0]);
-      $('.lPanel .gisportal-quickRegion-left').val(gisportal.quickRegion[id][1]);
-      $('.lPanel .gisportal-quickRegion-bottom').val(gisportal.quickRegion[id][2]);
-      $('.lPanel .gisportal-quickRegion-right').val(gisportal.quickRegion[id][3]);
-      $('.lPanel .gisportal-quickRegion-top').val(gisportal.quickRegion[id][4]);
-   });
-
-   $('.lPanel .gisportal-quickRegion-save').button({ label: 'Save'}).click(function() {
-      var select = $('.lPanel .gisportal-quickRegion-select'),
-         id = select.val();
-
-      gisportal.quickRegion[id][0] = $('.lPanel .gisportal-quickRegion-name').val();
-      gisportal.quickRegion[id][1] = $('.lPanel .gisportal-quickRegion-left').val();
-      gisportal.quickRegion[id][2] = $('.lPanel .gisportal-quickRegion-bottom').val();
-      gisportal.quickRegion[id][3] = $('.lPanel .gisportal-quickRegion-right').val();
-      gisportal.quickRegion[id][4] = $('.lPanel .gisportal-quickRegion-top').val();
-
-      $(".gisportal-quickRegion-select").each(function() {
-         $(this).find('option').eq(id).html(gisportal.quickRegion[id][0]);
-      });
-   });
-
-   $('.lPanel .gisportal-quickRegion-add').button({ label: 'Add as new region' }).click(function() {
-      gisportal.addQuickRegion($('.lPanel .gisportal-quickRegion-name').val(), {
-         left: $('.lPanel .gisportal-quickRegion-left').val(),
-         bottom: $('.lPanel .gisportal-quickRegion-bottom').val(),
-         right: $('.lPanel .gisportal-quickRegion-right').val(),
-         top: $('.lPanel .gisportal-quickRegion-top').val()
-      });
-   });
-
-   $('.lPanel .gisportal-quickRegion-remove').button({ label: 'Remove selected region' }).click(function() {
-      var select = $('.lPanel .gisportal-quickRegion-select'),
-         id = select.val();
-
-      gisportal.removeQuickRegion(id);
-   });
-
-   $('.lPanel .gisportal-quickRegion-addCurrent').button({ label: 'Add current view' }).click(gisportal.addCurrentView);
 };
 
 /**
