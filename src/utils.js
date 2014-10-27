@@ -250,8 +250,13 @@ gisportal.utils.openPopup = function(width, height, url, onOpenHandler, checkfor
 };
 
 gisportal.utils.removeFromArray = function(array, element) {
-    array.splice($.inArray(element, array), 1);
-}
+    for(var i = array.length; i--;) {
+        if(array[i] === element) {
+            array.splice(i, 1);
+        }
+    }
+    return array;
+};
 
 gisportal.utils.removeFromAssociativeArray = function(array, element) {
     delete array[element];

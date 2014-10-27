@@ -322,7 +322,7 @@ gisportal.layer = function(microlayer, layerData) {
             gisportal.cache.state.map.layers[layer.id].scalebarOpen = this.scalebarOpen;
          }
       }
-   }
+   };
   
    this.unselect = function() {
 		var layer = this; 
@@ -709,18 +709,20 @@ gisportal.addLayer = function(layer, options) {
 };
 
 gisportal.removeLayer = function(layer) {
-   //var layer = gisportal.getLayerByID(id);
-   
    // Remove the layer from the panel
    gisportal.leftPanel.removeLayerFromGroup(layer);
-   
    delete gisportal.selectedLayers[layer.id];
-   delete gisportal.layers[layer.id];
-    
-   var keys = Object.keys(layer.openlayers);
-   for(var i = 0, len = keys.length; i < len; i++) {
-      layer.removeOLLayer(layer.openlayers[keys[i]], keys[i]);
+
+   var layer = gisportal.getLayerByID(layer.id);
+   if (typeof layer != 'undefined') {
+      delete gisportal.layers[layer.id];
+      layer.unselect();
+      var keys = Object.keys(layer.openlayers);
+      for(var i = 0, len = keys.length; i < len; i++) {
+         layer.removeOLLayer(layer.openlayers[keys[i]], keys[i]);
+      }
    }
+
    gisportal.rightPanel.updateCoverageList();
 };
 

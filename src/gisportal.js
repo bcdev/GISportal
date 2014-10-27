@@ -273,6 +273,11 @@ gisportal.createRefLayers = function() {
    });
 
    gisportal.showAllLayersInSelector();
+   if ($('.gisportal-selectable li').length == 0) {
+       $('#gisportal-missingSearchCriteria').hide();
+   } else {
+       $('#gisportal-missingSearchCriteria').show();
+   }
    gisportal.layerSelector.refresh();
 
    // Get and store the number of reference layers
@@ -385,7 +390,6 @@ gisportal.hideAllLayersInSelector = function(force) {
 gisportal.showAllLayersInSelector = function() {
     var filtrify = gisportal.layerSelector.filtrify;
     filtrify.trigger({});
-    $('#gisportal-missingSearchCriteria').hide();
 };
 
 /**
@@ -429,7 +433,7 @@ gisportal.refreshOpLayers = function() {
             // remove
             if ($.inArray(serverDescriptor.serverName, gisportal.activeWmsServers) > -1) {
                 gisportal.genericRemoveLayers(serverDescriptor);
-                gisportal.utils.removeFromArray(gisportal.activeWmsServers, serverDescriptor);
+                gisportal.utils.removeFromArray(gisportal.activeWmsServers, serverDescriptor.serverName);
             }
         }
     }
@@ -452,7 +456,7 @@ gisportal.genericRemoveLayers = function(serverDescriptor) {
         if (microLayer.serverName === serverDescriptor.serverName) {
             toRemove.push(microLayer.id);
             gisportal.layerSelector.filtrify._container.find('li[data-id="' + microLayer.id + '"]').remove();
-            gisportal.leftPanel.removeLayerFromGroup(microLayer);
+            gisportal.removeLayer(microLayer);
         }
     });
     gisportal.utils.setDifference(gisportal.microLayers, toRemove);
