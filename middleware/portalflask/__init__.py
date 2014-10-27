@@ -35,7 +35,7 @@ def create_app(path):
    def before_request():
       g.user = None
       if 'openid' in session:
-         g.user = User.query.filter_by(openid = session['openid']).first()
+         g.user = User.query.filter_by(openid=session['openid']).first()
          
    @app.after_request
    def after_request(response):

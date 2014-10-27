@@ -1,6 +1,7 @@
 package com.bc.openid;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import static org.junit.Assert.*;
 /**
  * Relies on external resources.
  */
+@Ignore
 public class LdapAuthTest {
 
     private AuthenticationHandler auth;

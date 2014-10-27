@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+
+servers = {
+   'waqss_daily': {
+      'name': 'waqss_daily',
+      'url': '<host>/thredds/thredds/wms/waqss/daily?',
+      'params': {
+         'SERVICE': 'WMS',
+         'request': 'GetCapabilities',
+         'version': '1.3.0'
+      },
+      'options': {
+         'providerShortTag': 'WAQSS'
+      },
+      'wcsurl': '<host>/thredds/thredds/wcs/waqss/daily?',
+      'userGroups': ['bc', 'waqss_users']
+   },
+   'waqss_monthly': {
+      'name': 'waqss_monthly',
+      'url': '<host>/thredds/thredds/wms/waqss/monthly?',
+      'params': {
+         'SERVICE': 'WMS',
+         'request': 'GetCapabilities',
+         'version': '1.3.0'
+      },
+      'options': {
+         'providerShortTag': 'WAQSS'
+      },
+      'wcsurl': '<host>/thredds/thredds/wcs/waqss/monthly?',
+      'userGroups': ['bc', 'waqss_users']
+   },
+   'waqss_weekly': {
+      'name': 'waqss_weekly',
+      'url': '<host>/thredds/thredds/wms/waqss/weekly?',
+      'params': {
+         'SERVICE': 'WMS',
+         'request': 'GetCapabilities',
+         'version': '1.3.0'
+      },
+      'options': {
+         'providerShortTag': 'WAQSS'
+      },
+      'wcsurl': '<host>/thredds/thredds/wcs/waqss/weekly?',
+      'userGroups': ['bc', 'waqss_users']
+   },
+   'monthly_pml': { 
+      'name': 'monthly_pml',
+      'url': '<host>/thredds/thredds/wms/waqss/monthly-pml?',
+      'params': {
+         'SERVICE': 'WMS',
+         'request': 'GetCapabilities',
+         'version': '1.3.0'
+      },
+      'options': {
+         'providerShortTag': 'PML'
+      },
+      'wcsurl': '<host>/thredds/thredds/wcs/waqss/monthly-pml?',
+      'userGroups': ['bc', 'waqss_users']
+   }
+}
+

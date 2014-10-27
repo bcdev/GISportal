@@ -27,6 +27,7 @@ def login():
       return redirect(url_for('portal_user.index'))
 
    openid_identity = current_app.config.get('OPENID_RP_URL')
+   print openid_identity
    return oid.try_login(openid_identity, ask_for=['email', 'fullname', 'nickname'], extensions=[GroupExtension()])
 
 

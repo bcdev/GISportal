@@ -26,6 +26,7 @@ class ShapefileSupport():
             return shape_names
 
         if not os.path.exists(shapefile_path):
+            print(shapefile_path + ' does not exist')
             return None
         shapefile = sf.Reader(shapefile_path)
         index = self.get_name_index(shapefile.fields) - 1  # '- 1' because fields count a deletion flag, which is not present in records

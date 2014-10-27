@@ -21,13 +21,13 @@ class PortalTests(unittest.TestCase):
     def setUpClass(cls):
         cls.db = DummyDb()
         cls.shapefile_support = ShapefileSupport(cls.db)
-        cls.simple_shapefile = os.path.join(os.path.dirname(__file__), 'resources/countries.shp')
-        cls.point_shapefile = os.path.join(os.path.dirname(__file__), 'resources/Basemap_test_WGS84_latlon.shp')
-        cls.projected_shapefile = os.path.join(os.path.dirname(__file__), 'resources/schlick_shape.shp')
+        cls.simple_shapefile = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources/countries.shp')
+        cls.point_shapefile = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources/Basemap_test_WGS84_latlon.shp')
+        cls.projected_shapefile = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources/schlick_shape.shp')
         PortalTests.addToDb(cls.db, cls.shapefile_support, cls.simple_shapefile)
         PortalTests.addToDb(cls.db, cls.shapefile_support, cls.point_shapefile)
         PortalTests.addToDb(cls.db, cls.shapefile_support, cls.projected_shapefile)
-        cls.test_product_path = os.path.join(os.path.dirname(__file__), 'resources/test.nc')
+        cls.test_product_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resources/test.nc')
         cls.product = beampy.ProductIO.readProduct(cls.test_product_path)
 
 

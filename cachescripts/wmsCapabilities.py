@@ -26,8 +26,8 @@ GET_CAPABILITES_PARAMS = "SERVICE=WMS&REQUEST=GetCapabilities&VERSION=1.3.0"
 NAMESPACE = '{http://www.opengis.net/wms}'
 XLINKNAMESPACE = '{http://www.w3.org/1999/xlink}'
 
-PRODUCTFILTER = "productFilter.csv"
-LAYERFILTER = "layerFilter.csv"
+PRODUCTFILTER = "../config/productFilter.csv"
+LAYERFILTER = "../config/layerFilter.csv"
 
 dirtyCaches = [] # List of caches that may need recreating
 extraInfo = wmsLayerTags.layers
