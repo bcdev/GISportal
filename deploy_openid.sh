@@ -21,6 +21,7 @@ echo 'deploying openid-server to' ${host}
 echo 'copying webapp...'
 cd target
 scp *.war thomass@${host}:~
+rm ../src/main/resources/com/bc/openid/openid.properties
 cd ..
 echo '...done. Deploying...'
 ssh -t thomass@${host} 'rm -rf /opt/apache-tomcat-6.0.37/webapps/openid-server*'
