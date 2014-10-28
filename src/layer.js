@@ -301,27 +301,26 @@ gisportal.layer = function(microlayer, layerData) {
    };
    
    this.createScalebar = function()  {
-      var layer = this;
-      if (layer.origMinScaleVal !== null)  {
+       var layer = this;
 
-         if (gisportal.cache.state && gisportal.cache.state.map && gisportal.cache.state.map.layers && gisportal.cache.state.map.layers[layer.id])   {
-            this.scalebarOpen = gisportal.cache.state.map.layers[layer.id].scalebarOpen;
-         }
+       if (gisportal.cache.state && gisportal.cache.state.map && gisportal.cache.state.map.layers &&
+           gisportal.cache.state.map.layers[layer.id]) {
+           this.scalebarOpen = gisportal.cache.state.map.layers[layer.id].scalebarOpen;
+       }
 
-         // If false, do not open
-         if (this.scalebarOpen !== 'false')
-         { 
-            gisportal.window.createScalebar(layer.id);  
-         }
-         
-         if (this.scalebarOpen !== null) {
-            this.scalebarOpen = null;
-         }
-         
-         if (gisportal.cache.state && gisportal.cache.state.map && gisportal.cache.state.map.layers && gisportal.cache.state.map.layers[layer.id])   {
-            gisportal.cache.state.map.layers[layer.id].scalebarOpen = this.scalebarOpen;
-         }
-      }
+       // If false, do not open
+       if (this.scalebarOpen !== 'false') {
+           gisportal.window.createScalebar(layer.id);
+       }
+
+       if (this.scalebarOpen !== null) {
+           this.scalebarOpen = null;
+       }
+
+       if (gisportal.cache.state && gisportal.cache.state.map && gisportal.cache.state.map.layers &&
+           gisportal.cache.state.map.layers[layer.id]) {
+           gisportal.cache.state.map.layers[layer.id].scalebarOpen = this.scalebarOpen;
+       }
    };
   
    this.unselect = function() {
@@ -437,7 +436,7 @@ gisportal.layer = function(microlayer, layerData) {
          type: 'GET',
          url: OpenLayers.ProxyHost + layer.wmsURL + encodeURIComponent('item=layerDetails&layerName=' + layer.urlName + '&coverage=' + layer.id + '&request=GetMetadata'),
          dataType: 'json',
-         async: true,
+         async: false,
          success: function(data) {
             if (layer.origMinScaleVal === null) layer.origMinScaleVal = parseFloat(data.scaleRange[0]);
             if (layer.origMaxScaleVal === null) layer.origMaxScaleVal = parseFloat(data.scaleRange[1]);
@@ -445,7 +444,6 @@ gisportal.layer = function(microlayer, layerData) {
             if (layer.maxScaleVal === null) layer.maxScaleVal = layer.origMaxScaleVal;
             
             layer.log = data.log == 'true' ? true : false;
-            layer.createScalebar(); 
          },
          error: function(request, errorType, exception) {
             layer.origMinScaleVal = 0;
@@ -652,6 +650,7 @@ gisportal.layer = function(microlayer, layerData) {
    //--------------------------------------------------------------------------
    
    this.init(microlayer, layerData);
+
    if(this.controlID == 'opLayers') {
       this.getDimensions(layerData); // Get dimensions.
       this.getMetadata();

@@ -37,7 +37,7 @@ gisportal.window.createScalebar = function($trigger) {
 
    // Show the scalebar for a selected layer
    $('#scalebar-' + layer.id).extendedDialog({
-      position: ['center', 'center'],
+      position: ['right-10 bottom-50'],
       width: 310,
       resizable: false,
       autoOpen: false,
@@ -135,12 +135,6 @@ gisportal.window.createScalebar = function($trigger) {
       'height': 256,
       'margin': '5px 0px 0px 10px'
    });
-   //$('#' + layer.id + '-max').parent('div').addClass('scalebar-max');
-   //$('#' + layer.id + '-scale').addClass('scalebar-scale');
-   //$('#' + layer.id + '-log').addClass('scalebar-log');
-   //$('#' + layer.id + '-reset').addClass('scalebar-reset');
-   //$('#' + layer.id + '-min').parent('div').addClass('scalebar-min');
-   
    // Open the dialog box
    $('#scalebar-' + layer.id).extendedDialog('open');
 };
