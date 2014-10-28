@@ -312,7 +312,7 @@ gisportal.graphs.create = function(data, options) {
       
       var graphData = {
          id: 'wcsgraph' + Date.now(),
-         title: data.type + " of " + gisportal.layers[data.coverage].displayTitle,
+         title: data.type + " of " + gisportal.getLayerByID(options.layerId).displayTitle,
          data: [{
             data: d1.sort(gisportal.utils.sortDates),
             lines: { show: true },
@@ -345,21 +345,23 @@ gisportal.graphs.create = function(data, options) {
          }],
          options: basicTimeOptions(data.output.units),
          provider: options.provider,
+         providerUrl: options.providerUrl,
          selectable: true,
          selectSeries: true
       };
       
       createGraph(graphData);
-   }
-   else if(data.type == 'histogram') {
+   } else if(data.type == 'histogram') {
       var num = data.output.histogram.Numbers;
       var barwidth = (Math.abs(num[num.length-1][0] - num[0][0]))/num.length;
    
       var graphData = {
          id: 'wcsgraph' + Date.now(),
-         title: data.type + " of " + gisportal.layers[data.coverage].displayTitle,
+         title: data.type + " of " + gisportal.getLayerByID(options.layerId).displayTitle,
          data: [num],
          options: barOptions(barwidth),
+         provider: options.provider,
+         providerUrl: options.providerUrl,
          selectable: false
       };
       
@@ -370,25 +372,41 @@ gisportal.graphs.create = function(data, options) {
       
       var graphData = {
          id: 'wcsgraph' + Date.now(),
-         title: data.type + " of " + gisportal.layers[data.coverage].displayTitle,
+         title: data.type + " of " + gisportal.getLayerByID(options.layerId).displayTitle,
          type: data.type,
          colour: 'redToBlue',
          data: data.output,
-         options: options
+         options: options,
+         provider: options.provider,
+         providerUrl: options.providerUrl
       };
       
       hovmoller(graphData);                                      
    }
 };
 
-/**
- * 
- * @param {Object} graphOptions
- */
-function createGraph(graphOptions) {
+function append_provider_info(graphOptions, dialog, absolute) {
+    if (absolute) {
+        var style = 'position: absolute; margin-left: 665px; margin-top: 486px';
+    } else {
+        var style = 'float: right;';
+    }
+
+    var html = '<span style="' + style + '">';
+    html += '<span style="font-weight: bold">Data Provider:&nbsp;</span>';
+    if (graphOptions.providerUrl != '') {
+        html += '<a href="' + graphOptions.providerUrl + '" target="_blank">' + graphOptions.provider + '</a>';
+    } else {
+        html += graphOptions.provider;
+    }
+    html += '</span>';
+    dialog.append(html);
+}
+
+function createGraph(graphData) {
    
    // Create the dialog and cache the selector
-   var dialog = gisportal.graphs.createDialogAlt(graphOptions.id, graphOptions.title);
+   var dialog = gisportal.graphs.createDialogAlt(graphData.id, graphData.title);
 
    // TODO: Tidy up css into a class
    dialog.children('.graph').width(600).height(384);
@@ -399,38 +417,22 @@ function createGraph(graphOptions) {
    
    // Set each colour so they don't change
    var i = 0;
-   $.each(graphOptions.data, function(key, val) {
+   $.each(graphData.data, function(key, val) {
       val.color = i;
       ++i;
    });
-   
-   if(graphOptions.selectSeries && graphOptions.selectSeries === true)
-   {
-      // TODO: Tidy up css into a class
+
+   append_provider_info(graphData, dialog, false);
+
+   if(graphData.selectSeries && graphData.selectSeries === true) {
       dialog.append('<div class="choices">Show:</div>');
       var choiceContainer = dialog.children('.choices').css({"left": 620, "top": 20, "position": "absolute"});
-      $.each(graphOptions.data, function(key, val) {
+      $.each(graphData.data, function(key, val) {
         choiceContainer.append('<br/>' +
          '<input type="checkbox" name="' + key + '" ' + (val.label==="median"?'checked="checked"':'') +  'id="id' + key + '">' +
          '<label for="id' + key + '">' + val.label + '</label>');
       });
-      var logoStyles;
-      if (gisportal.providers[graphOptions.provider])
-      {
-         if (gisportal.providers[graphOptions.provider].vertical === 'true')  {
-            logoStyles = "float: right; width: 50px; margin-top: -140px;";
-         }
-         else {
-            logoStyles = "float: right; margin-top: -30px;";
-         }
 
-         if (gisportal.providers[graphOptions.provider].url)  {
-            dialog.append('<a href="' + gisportal.providers[graphOptions.provider].url + '"><img style="' + logoStyles + '" src="' + gisportal.providers[graphOptions.provider].logo  + '"></a>');
-         } else  {
-            dialog.append('<img style="' + logoStyles + '" src="' + gisportal.providers[graphOptions.provider].logo  + '">');
-         }
-      }
-         
       // Update the graph when checkboxes are changed
       choiceContainer.find("input").click(function() {
          graph = drawGraph(container, plotAccordingToChoices());
@@ -444,8 +446,8 @@ function createGraph(graphOptions) {
          
          choiceContainer.find("input:checked").each(function() {
             var key = $(this).attr("name");
-            if(key && graphOptions.data[key])
-               data.push(graphOptions.data[key]);
+            if(key && graphData.data[key])
+               data.push(graphData.data[key]);
          });
          
          return data;
@@ -453,16 +455,16 @@ function createGraph(graphOptions) {
    
       function toCSV()  {
          var csv = 'time,'; // Time should be the first column
-         for (var i = 0; i < graphOptions.data.length; i++) {         
-            csv += graphOptions.data[i].label;
-            csv = i === graphOptions.data.length -1 ? csv += "\n" : csv += ',';
+         for (var i = 0; i < graphData.data.length; i++) {
+            csv += graphData.data[i].label;
+            csv = i === graphData.data.length -1 ? csv += "\n" : csv += ',';
          }   
 
-         for (var i = 0; i < graphOptions.data[0].data.length; i++) {
+         for (var i = 0; i < graphData.data[0].data.length; i++) {
             var line = '';
-            for (var j = 0; j < graphOptions.data.length; j++) {
-               if (j === 0) line += graphOptions.data[j].data[i][0] + ',';
-               line += j === graphOptions.data.length -1 ? graphOptions.data[j].data[i][1]: graphOptions.data[j].data[i][1] + ',';
+            for (var j = 0; j < graphData.data.length; j++) {
+               if (j === 0) line += graphData.data[j].data[i][0] + ',';
+               line += j === graphData.data.length -1 ? graphData.data[j].data[i][1]: graphData.data[j].data[i][1] + ',';
             }
             csv += line + "\n";
          }
@@ -472,31 +474,29 @@ function createGraph(graphOptions) {
 
       dialog.append('<a href="' + toCSV() + '" download="data.csv">Export Data</a>');
    }
-   
    // Initial call
-   graph = drawGraph(container, graphOptions.selectSeries ? plotAccordingToChoices() : graphOptions.data, graphOptions.options);
+   graph = drawGraph(container, graphData.selectSeries ? plotAccordingToChoices() : graphData.data, graphData.options);
    
-   if(graphOptions.draggable && graphOptions.draggable === true) {
+   if(graphData.draggable && graphData.draggable === true) {
       Flotr.EventAdapter.observe(graph.overlay, 'mousedown', initDrag);
    }
    
-   if(graphOptions.selectable && graphOptions.selectable === true) {
+   if(graphData.selectable && graphData.selectable === true) {
       Flotr.EventAdapter.observe(container, 'flotr:select', function(area) {
          // Draw selected area            
-         graph = drawGraph(container, graphOptions.selectSeries ? plotAccordingToChoices() : graphOptions.data, {
+         graph = drawGraph(container, graphData.selectSeries ? plotAccordingToChoices() : graphData.data, {
             xaxis : { min : area.x1, max : area.x2, mode : 'time', labelsAngle : 45 },
             yaxis : { min : area.y1, max : area.y2 }
          });
       });
            
       // When graph is clicked, draw the graph with default area.
-      Flotr.EventAdapter.observe(container, 'flotr:click', function () { graph = drawGraph(container, graphOptions.selectSeries ? plotAccordingToChoices() : graphOptions.data); });
+      Flotr.EventAdapter.observe(container, 'flotr:click', function () { graph = drawGraph(container, graphData.selectSeries ? plotAccordingToChoices() : graphData.data); });
    }
    
-   function drawGraph(container, data, opts)
-   {
-      var optionsClone = Flotr._.extend(Flotr._.clone(graphOptions.options), opts || {});
-      
+   function drawGraph(container, data, opts) {
+      var optionsClone = Flotr._.extend(Flotr._.clone(graphData.options), opts || {});
+      optionsClone['grid'] = {'backgroundImage': {src : 'img/watermark.png', left: 0, top: 0, alpha: 0.5}};
       return Flotr.draw(container, data, optionsClone);
    }
    
@@ -514,7 +514,7 @@ function createGraph(graphOptions) {
          xaxis = graph.axes.x,
          offset = start.x - end.x;
          
-      graph = drawGraph(container, graphOptions.selectSeries ? plotAccordingToChoices() : graphOptions.data, {
+      graph = drawGraph(container, graphData.selectSeries ? plotAccordingToChoices() : graphData.data, {
          xaxis: {
             min: xaxis.min + offset,
             max: xaxis.max + offset
@@ -528,53 +528,6 @@ function createGraph(graphOptions) {
       Flotr.EventAdapter.stopObserving(document, 'mousemove', move);
    }
    
-      // function animate(t) {
-      // data = [];
-      // offset = 2 * Math.PI * (t - start) / 10000;
-//       
-      // // Sample the sane function
-      // for(i = 0; i < 4 * Math.PI; i += 0.2) {
-         // data.push([i, Math.sin(i - offset)]);
-      // }
-//       
-      // graph = Flotr.draw(container, [ data ], { 
-         // yaxis: {
-            // max: 2,
-            // min: -2
-         // }
-      // });
-//       
-//       
-      // // Animate
-      // setTimeout(function () { 
-         // animate((new Date).getTime());
-      // }, 50);
-   // }
-   
-   //console.log("created graph and function");
-   
-   //animate(start);
-   
-   //console.log("animate");
-}
-
-function generateLineData()
-{
-   var d1 = [], d2 = [], d3 = [];
-   
-   // Create Sample Data
-   for(var i = -60; i < 60; i += 0.5) {
-      d1.push([i, Math.sin(i)+3*Math.cos(i)]);
-      d2.push([i, Math.pow(1.1, i)]);
-      d3.push([i, i + Math.random()*10]);
-   }
-   
-   return [d1, d2,
-      {
-         data: d3,
-         lines: { show: true },
-         points: { show: true }
-      }];
 }
 
 function barOptions(barwidth)
@@ -596,8 +549,7 @@ function barOptions(barwidth)
    };
 }
 
-function basicTimeOptions(yaxisTitle)
-{
+function basicTimeOptions(yaxisTitle) {
    return {
       xaxis: {
          mode: 'time',
@@ -614,7 +566,7 @@ function basicTimeOptions(yaxisTitle)
          position: 'se', // Position the legend 'south-east'.
          backgroundColor: '#D2E8FF' // A light blue background color.
       },
-      HtmlText: false,
+      HtmlText: false
    };
 }
 
@@ -675,7 +627,7 @@ gisportal.graphs.createDialog = function(uid, title) {
    return dialog;
 };
 
-function hovmoller(graphData) {  
+function hovmoller(graphData) {
    var trends = graphData.data;
    console.log(trends); 
    // Set some defaults for the basic chart
@@ -874,132 +826,8 @@ function hovmoller(graphData) {
    g.selectAll(".xaxis text").attr("transform", "translate("+width/365/2+",0)");
   
    // Percentage of the range
-   function stopAmount(percentage)  {
-      var x = (zScale.range()[1] - zScale.range()[0]) / 100;
-      return x * percentage;
-   }
-
-   // Percentage of the domain
-   function stopScale(percentage)  {
-      var x = (zScale.domain()[1] - zScale.domain()[0]) / 100;
-      return x * percentage;
-   }
-
-   // Colour from percentage of range
-   function stopColor(percentage) {
-      return colours[Math.round(stopAmount(percentage))];
-   }
-
-   var gradient = svg.append("defs").append("linearGradient")
-      .attr("id", "gradient")
-      .attr("y1", "0%")
-      .attr("y1", "0%")
-      .attr("y2", "100%")
-      .attr("x2", "0%")
-      .attr("spreadMethod", "pad");
-   
-   gradient.append("stop")
-      .attr("offset", "0%")
-      .attr("stop-color",stopColor(0))
-      .attr("stop-opacity", 1);
-
-   gradient.append("stop")
-      .attr("offset", "0.5%")
-      .attr("stop-color",stopColor(0.5))
-      .attr("stop-opacity", 1);
-   
-   gradient.append("stop")
-      .attr("offset", "6.25%")
-      .attr("stop-color",stopColor(6.25))
-      .attr("stop-opacity", 1);
-   
-   gradient.append("stop")
-      .attr("offset", "12.5%")
-      .attr("stop-color", stopColor(12.5))
-      .attr("stop-opacity", 1);
-
-   gradient.append("stop")
-      .attr("offset", "18.75%")
-      .attr("stop-color", stopColor(18.75))
-      .attr("stop-opacity", 1);
-   
-   gradient.append("stop")
-      .attr("offset", "25%")
-      .attr("stop-color", stopColor(25))
-      .attr("stop-opacity", 1);
-   
-   gradient.append("stop")
-      .attr("offset", "31.25%")
-      .attr("stop-color", stopColor(31.25))
-      .attr("stop-opacity", 1);
-   
-   gradient.append("stop")
-      .attr("offset", "37.5%")
-      .attr("stop-color", stopColor(37.5))
-      .attr("stop-opacity", 1);
-
-   gradient.append("stop")
-      .attr("offset", "43.75%")
-      .attr("stop-color", stopColor(43.75))
-      .attr("stop-opacity", 1);
-   
-   gradient.append("stop")
-      .attr("offset", "50%")
-      .attr("stop-color", stopColor(50))
-      .attr("stop-opacity", 1);
-   
-   gradient.append("stop")
-      .attr("offset", "56.25%")
-      .attr("stop-color", stopColor(56.25))
-      .attr("stop-opacity", 1);
-   
-   gradient.append("stop")
-      .attr("offset", "62.5%")
-      .attr("stop-color", stopColor(62.5))
-      .attr("stop-opacity", 1);
-   
-   gradient.append("stop")
-      .attr("offset", "68.75%")
-      .attr("stop-color", stopColor(68.75))
-      .attr("stop-opacity", 1);
-   
-   gradient.append("stop")
-      .attr("offset", "75%")
-      .attr("stop-color", stopColor(75))
-      .attr("stop-opacity", 1);
-
-   gradient.append("stop")
-      .attr("offset", "81.25%")
-      .attr("stop-color", stopColor(81.25))
-      .attr("stop-opacity", 1);
-
-   gradient.append("stop")
-      .attr("offset", "87.5%")
-      .attr("stop-color", stopColor(87.5))
-      .attr("stop-opacity", 1);
-
-   gradient.append("stop")
-      .attr("offset", "93.75%")
-      .attr("stop-color", stopColor(93.75))
-      .attr("stop-opacity", 1);
-      
-   gradient.append("stop")
-      .attr("offset", "99.9%")
-      .attr("stop-color", stopColor(99.9))
-      .attr("stop-opacity", 1);
-
-   gradient.append("stop")
-      .attr("offset", "100%")
-      .attr("stop-color", stopColor(100))
-      .attr("stop-opacity", 1);
-   
-   svg.append("g").attr("class", "legend_group").append("rect").attr("class", "legend")
-      .attr("width", 20)
-      .attr("height", height/1.5)
-      .style("fill", "url(#gradient)")
-      .attr("transform", "translate("+[width + margin.left + 10, height/10]+")");
-   
-   var legend_data = [stopScale(0), stopScale(25), stopScale(50), stopScale(75), stopScale(100)];
+   create_gradient(svg, height, width, margin, zScale);
+   var legend_data = [stopScale(zScale, 0), stopScale(zScale, 25), stopScale(zScale, 50), stopScale(zScale, 75), stopScale(zScale, 100)];
    
    svg.select("g.legend_group").selectAll(".labels")
       .data(legend_data).enter()
@@ -1016,9 +844,9 @@ function hovmoller(graphData) {
       
       graph.remove();
       gisportal.gritter.showNotification('graphData', null);
-
    }
 
+   append_provider_info(graphData, dialog, true);
 
 }
 
@@ -1093,7 +921,14 @@ gisportal.graphs.histogramChart = function() {
          .range([height - margin.top - margin.bottom, 0]);
          
          var svg = d3.select(this).selectAll("svg").data([data]);
-         
+
+         var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+         text.setAttribute('x', '10');
+         text.setAttribute('y', '20');
+         text.setAttribute('fill', '#FF0000');
+         text.textContent = 'nannnnnng';
+         svg.appendChild(text);
+
          var gEnter = svg.enter().append("svg").append("g");
          gEnter.append("g").attr("class", "bars");
          gEnter.append("g").attr("class", "x axis");
@@ -1142,3 +977,130 @@ gisportal.graphs.histogramChart = function() {
    
    return chart;
 };
+
+function create_gradient(svg, height, width, margin, zScale) {
+    var gradient = svg.append("defs").append("linearGradient")
+        .attr("id", "gradient")
+        .attr("y1", "0%")
+        .attr("y1", "0%")
+        .attr("y2", "100%")
+        .attr("x2", "0%")
+        .attr("spreadMethod", "pad");
+
+    gradient.append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", stopColor(zScale, 0))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "0.5%")
+        .attr("stop-color", stopColor(zScale, 0.5))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "6.25%")
+        .attr("stop-color", stopColor(zScale, 6.25))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "12.5%")
+        .attr("stop-color", stopColor(zScale, 12.5))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "18.75%")
+        .attr("stop-color", stopColor(zScale, 18.75))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "25%")
+        .attr("stop-color", stopColor(zScale, 25))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "31.25%")
+        .attr("stop-color", stopColor(zScale, 31.25))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "37.5%")
+        .attr("stop-color", stopColor(zScale, 37.5))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "43.75%")
+        .attr("stop-color", stopColor(zScale, 43.75))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "50%")
+        .attr("stop-color", stopColor(zScale, 50))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "56.25%")
+        .attr("stop-color", stopColor(zScale, 56.25))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "62.5%")
+        .attr("stop-color", stopColor(zScale, 62.5))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "68.75%")
+        .attr("stop-color", stopColor(zScale, 68.75))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "75%")
+        .attr("stop-color", stopColor(zScale, 75))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "81.25%")
+        .attr("stop-color", stopColor(zScale, 81.25))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "87.5%")
+        .attr("stop-color", stopColor(zScale, 87.5))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "93.75%")
+        .attr("stop-color", stopColor(zScale, 93.75))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "99.9%")
+        .attr("stop-color", stopColor(zScale, 99.9))
+        .attr("stop-opacity", 1);
+
+    gradient.append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", stopColor(zScale, 100))
+        .attr("stop-opacity", 1);
+
+    svg.append("g").attr("class", "legend_group").append("rect").attr("class", "legend")
+        .attr("width", 20)
+        .attr("height", height / 1.5)
+        .style("fill", "url(#gradient)")
+        .attr("transform", "translate(" + [width + margin.left + 10, height / 10] + ")");
+}
+
+// Colour from percentage of range
+function stopColor(zScale, percentage) {
+    return colours[Math.round(stopAmount(zScale, percentage))];
+}
+
+function stopAmount(zScale, percentage)  {
+    var x = (zScale.range()[1] - zScale.range()[0]) / 100;
+    return x * percentage;
+}
+
+// Percentage of the domain
+function stopScale(zScale, percentage)  {
+    var x = (zScale.domain()[1] - zScale.domain()[0]) / 100;
+    return x * percentage;
+}

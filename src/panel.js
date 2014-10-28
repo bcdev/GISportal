@@ -1027,8 +1027,11 @@ gisportal.rightPanel.setupGraphingTools = function() {
            console.log('Failed to retrieve stored graph from user');
         };
         var options = {};
-        options.provider = gisportal.layers[graphcreatorCoverageElement.find('option:selected').val()].providerTag;
+        var selectedLayer = gisportal.layers[graphcreatorCoverageElement.find('option:selected').val()];
+        options.provider = selectedLayer.providerTag;
+        options.providerUrl = selectedLayer.providerUrl;
         options.labelCount = $('#graph-settings-labels').val();
+        options.layerId = selectedLayer.id;
         gisportal.graphs.data(graphParams, $('#graphcreator-bbox').val(), options);
     };
 

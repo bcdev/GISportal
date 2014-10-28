@@ -98,9 +98,8 @@ gisportal.loadLayers = function() {
       gritterErrorHandler(data);
    };
 
-   // Get WMS and WFS caches
+   // Get WMS caches
    gisportal.genericAsync('GET', './cache/mastercache.json', null, gisportal.initWMSlayers, errorHandling, 'json', {});
-   gisportal.genericAsync('GET', './cache/wfsMasterCache.json', null, gisportal.initWFSLayers, errorHandling, 'json', {});
 };
 
 gisportal.getFeature = function(layer, olLayer, time) {
@@ -216,58 +215,6 @@ gisportal.createBaseLayers = function() {
    gisportal.numBaseLayers = map.getLayersBy('isBaseLayer', true).length;
 };
 
-/**
- * Create all the reference layers for the map.
- */
-gisportal.createRefLayers = function() {
-   gisportal.leftPanel.addGroupToPanel('refLayerGroup', 'Reference Layers', $('#gisportal-lPanel-reference'));
-
-   $.each(gisportal.cache.wfsLayers, function(i, item) {
-      if(typeof item.url !== 'undefined' && typeof item.serverName !== 'undefined' && typeof item.layers !== 'undefined') {
-         var url = item.url;
-         var serverName = item.serverName;
-         $.each(item.layers, function(i, item) {
-            if(typeof item.name !== 'undefined' && typeof item.options !== 'undefined') {
-               item.productAbstract = "None Provided";
-               //item.tags = {};
-
-               var microLayer = new gisportal.MicroLayer(item.name, item.name,
-                     item.productAbstract, "refLayers", {
-                        'serverName': serverName,
-                        'wfsURL': url,
-                        'providerTag': item.options.providerShortTag,
-                        'tags': item.tags,
-                        'options': item.options,
-                        'times' : item.times
-                     }
-               );
-
-               microLayer = gisportal.checkNameUnique(microLayer);
-               gisportal.microLayers[microLayer.id] = microLayer;
-               gisportal.layerSelector.addLayer(gisportal.templates.selectionItem({
-                     'id': microLayer.id,
-                     'name': microLayer.name,
-                     'provider': item.options.providerShortTag,
-                     'title': microLayer.displayTitle,
-                     'abstract': microLayer.productAbstract
-                  }), {'tags': microLayer.tags
-               });
-            }
-         });
-      }
-   });
-
-   gisportal.showAllLayersInSelector();
-   if ($('.gisportal-selectable li').length == 0) {
-       $('#gisportal-missingSearchCriteria').hide();
-   } else {
-       $('#gisportal-missingSearchCriteria').show();
-   }
-   gisportal.layerSelector.refresh();
-
-   // Get and store the number of reference layers
-   gisportal.numRefLayers = map.getLayersBy('controlID', 'refLayers').length;
-};
 
 function isUserAllowedToView(item) {
     if (typeof item.userGroups !== "undefined") {
@@ -295,6 +242,7 @@ gisportal.createMicroLayers = function (serverDescriptor) {
         }
 
         var providerTag = typeof serverDescriptor.options.providerShortTag !== "undefined" ? serverDescriptor.options.providerShortTag : '';
+        var providerUrl = typeof serverDescriptor.options.providerUrl !== "undefined" ? serverDescriptor.options.providerUrl : '';
         var positive = typeof serverDescriptor.options.positive !== "undefined" ? serverDescriptor.options.positive : 'up';
         var wmsURL = serverDescriptor.wmsURL;
         var wcsURL = serverDescriptor.wcsURL;
@@ -319,6 +267,7 @@ gisportal.createMicroLayers = function (serverDescriptor) {
                                 "sensor": sensorName,
                                 "exBoundingBox": metadata.EX_GeographicBoundingBox,
                                 "providerTag": providerTag,
+                                "providerUrl": providerUrl,
                                 "positive": positive,
                                 "tags": metadata.tags
                             }
@@ -340,6 +289,7 @@ gisportal.createMicroLayers = function (serverDescriptor) {
                                             'id': microLayer.id,
                                             'name': microLayer.name,
                                             'provider': providerTag,
+                                            'providerUrl': providerUrl,
                                             'positive': positive,
                                             'title': microLayer.displayTitle,
                                             'abstract': microLayer.productAbstract,
@@ -567,8 +517,6 @@ gisportal.mapInit = function() {
 
    // Create the base layers and then add them to the map
    gisportal.createBaseLayers();
-   // Create the reference layers and then add them to the map
-   //gisportal.createRefLayers();
 
    // Add a couple of useful map controls
    //var mousePos = new OpenLayers.Control.MousePosition();
@@ -613,14 +561,6 @@ gisportal.initWMSlayers = function(data, opts) {
 
       //var ows = new OpenLayers.Format.OWSContext();
       //var doc = ows.write(map);
-   }
-};
-
-gisportal.initWFSLayers = function(data, opts) {
-   if (data !== null)  {
-      gisportal.cache.wfsLayers = data;
-      // Create WFS layers from the data
-      gisportal.createRefLayers();
    }
 };
 

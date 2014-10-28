@@ -40,6 +40,7 @@ gisportal.MicroLayer = function(name, title, productAbstract, type, opts) {
    this.defaults.exBoundingBox = null; 
    
    this.defaults.providerTag = null;
+   this.defaults.providerUrl = null;
    this.defaults.tags = null;
    this.defaults.options = null;
    this.defaults.times = [];
@@ -148,6 +149,7 @@ gisportal.layer = function(microlayer, layerData) {
       console.log(microlayer, layerData); 
       this.id = microlayer.id;
       this.providerTag = microlayer.providerTag;  
+      this.providerUrl = microlayer.providerUrl;
       this.name = microlayer.name;
       this.displayName = function() { return this.providerTag + ': ' + this.name; };
       this.origName = microlayer.origName; // Required for communication with the server.

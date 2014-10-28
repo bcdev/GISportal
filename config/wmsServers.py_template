@@ -10,7 +10,8 @@ servers = {
          'version': '1.3.0'
       },
       'options': {
-         'providerShortTag': 'Brockmann Consult'
+         'providerShortTag': 'Brockmann Consult',
+         'providerUrl': 'http://www.waqss.de'
       },
       'wcsurl': '<host>/thredds/thredds/wcs/waqss/daily?',
       'userGroups': ['bc', 'waqss_users']
@@ -24,7 +25,8 @@ servers = {
          'version': '1.3.0'
       },
       'options': {
-         'providerShortTag': 'Brockmann Consult'
+         'providerShortTag': 'Brockmann Consult',
+         'providerUrl': 'http://www.waqss.de'
       },
       'wcsurl': '<host>/thredds/thredds/wcs/waqss/monthly?',
       'userGroups': ['bc', 'waqss_users']
@@ -38,7 +40,8 @@ servers = {
          'version': '1.3.0'
       },
       'options': {
-         'providerShortTag': 'Brockmann Consult'
+         'providerShortTag': 'Brockmann Consult',
+         'providerUrl': 'http://www.waqss.de'
       },
       'wcsurl': '<host>/thredds/thredds/wcs/waqss/weekly?',
       'userGroups': ['bc', 'waqss_users']
@@ -52,7 +55,8 @@ servers = {
          'version': '1.3.0'
       },
       'options': {
-         'providerShortTag': 'PML'
+         'providerShortTag': 'PML',
+         'providerUrl': 'http://www.pml.ac.uk/default.aspx'
       },
       'wcsurl': '<host>/thredds/thredds/wcs/waqss/monthly-pml?',
       'userGroups': ['bc', 'waqss_users']
