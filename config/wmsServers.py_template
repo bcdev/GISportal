@@ -10,7 +10,7 @@ servers = {
          'version': '1.3.0'
       },
       'options': {
-         'providerShortTag': 'WAQSS'
+         'providerShortTag': 'Brockmann Consult'
       },
       'wcsurl': '<host>/thredds/thredds/wcs/waqss/daily?',
       'userGroups': ['bc', 'waqss_users']
@@ -24,7 +24,7 @@ servers = {
          'version': '1.3.0'
       },
       'options': {
-         'providerShortTag': 'WAQSS'
+         'providerShortTag': 'Brockmann Consult'
       },
       'wcsurl': '<host>/thredds/thredds/wcs/waqss/monthly?',
       'userGroups': ['bc', 'waqss_users']
@@ -38,7 +38,7 @@ servers = {
          'version': '1.3.0'
       },
       'options': {
-         'providerShortTag': 'WAQSS'
+         'providerShortTag': 'Brockmann Consult'
       },
       'wcsurl': '<host>/thredds/thredds/wcs/waqss/weekly?',
       'userGroups': ['bc', 'waqss_users']
