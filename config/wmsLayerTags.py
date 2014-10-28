@@ -170,12 +170,12 @@ layers = {
             "region": ["N. Atlantic", "Baltic"]
         }
     },
-    "pml_monthly": {
+    "monthly_pml": {
         "Chl": {
             "Ecosystem_Element": "Phytoplankton",
             "interval": "monthly",
             "niceName": "Chlorophyll-a, month mean",
-            "region": "N. Atlantic"
+            "region": ["N. Atlantic"]
         }
     }
 }
