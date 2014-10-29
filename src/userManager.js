@@ -29,6 +29,9 @@ function findCssTargets(jQueryCriteria) {
         if ('id' in criterion) {
             var id = criterion['id'];
             var cssTarget = '#' + id;
+        } else if ('class' in criterion) {
+            var klass = criterion['class'];
+            var cssTarget = '.' + klass;
         } else {
             var tag = criterion['tag'];
             var attributes = criterion['attributes'];
@@ -53,8 +56,6 @@ function onRetrieveActionsSuccess(data, opt) {
     for (var i = 0; i < data.action_registry.length; i++) {
         var action = data.action_registry[i];
         var localAction = new Action();
-        localAction.actionIdentifier = action.actionIdentifier;
-        localAction.actionDescription = action.actionDescription;
         localAction.jQueryCritera = action.jQueryCriteria;
         localAction.allowedUserGroups = action.allowedUserGroups;
         actions.push(localAction)

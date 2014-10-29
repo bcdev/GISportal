@@ -472,7 +472,8 @@ function createGraph(graphData) {
          return(csv);
       }
 
-      dialog.append('<a href="' + toCSV() + '" download="data.csv">Export Data</a>');
+      dialog.append('<span class="dataExportLink"><a href="' + toCSV() + '" download="data.csv">Export Data</a></span>');
+      gisportal.userManager.updateActions()
    }
    // Initial call
    graph = drawGraph(container, graphData.selectSeries ? plotAccordingToChoices() : graphData.data, graphData.options);

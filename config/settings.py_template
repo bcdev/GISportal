@@ -24,13 +24,17 @@ ERROR_LEVEL = "W"
 
 ACTION_REGISTRY = [
     {
-        'actionIdentifier' : 'shapefile',
-        'actionDescription' : 'use shapefile features',
         'jQueryCriteria' : [
             {'tag': 'label', 'attributes' : {'for' : 'shapefile_button'}},
             {'id': 'shape_chooser'}
         ],
-        'allowedUserGroups' : ['bc', 'waqss_users']
+        'allowedUserGroups' : ['bc', 'waqss_users', 'admins']
+    },
+        {
+        'jQueryCriteria' : [
+            {'class': 'dataExportLink'}
+        ],
+        'allowedUserGroups' : ['bc', 'admins']
     }
 ]
 
