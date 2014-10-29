@@ -121,23 +121,15 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
       var options = options || {};
       if(layerID in gisportal.microLayers) {
          if(layerID in gisportal.layers) {
-            // DEBUG
-            console.log("Adding layer...");
             var layer = gisportal.getLayerByID(layerID);
             gisportal.addLayer(layer, options);
             gisportal.checkIfLayerFromState(layer);
-
-            // DEBUG
-            console.log("Added Layer");
          } else {
             var microlayer = gisportal.microLayers[layerID];
             if(microlayer.type == 'opLayers') {
                gisportal.getLayerData(microlayer.serverName + '_' + microlayer.origName + '.json', microlayer,options);
             } else if (microlayer.type == 'refLayers') {
-               // TODO: Deal with wfs layers.
-               // Convert the microlayer. 
-               // COMMENT: might change the way this works in future.
-               var layer = new gisportal.layer(microlayer, {}); 
+               var layer = new gisportal.layer(microlayer, {});
                gisportal.addLayer(layer, options);
                gisportal.checkIfLayerFromState(layer);   
             }
@@ -146,7 +138,6 @@ gisportal.window.layerSelector = function(placeholderID, containerID) {
          self.toggleLayerSelection(li);
       }
       else {
-         // DEBUG
          console.log("no layer data to use");
       }      
    };
