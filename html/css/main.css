@@ -594,6 +594,28 @@ a.active.triggerR {
     text-decoration: none;
 }
 
+.disclaimerHeadline {
+    font-weight: bold;
+    font-size: 11pt;
+    margin-bottom: 10px !important;
+}
+
+.disclaimerText {
+    font-size: 10pt;
+    margin-bottom: 5px !important;
+}
+
+.disclaimerText a {
+    text-decoration: none !important;
+    border-bottom: dashed 1px !important;
+}
+
+.disclaimerText a:hover {
+    text-decoration: none !important;
+    border-bottom: dashed 1px !important;
+}
+
+
 
 /* ======== Metadata ======== */
 

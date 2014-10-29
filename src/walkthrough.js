@@ -1,10 +1,43 @@
 gisportal.Walkthrough = function() {
+
+    var disclaimerText =
+    '<div class="disclaimerHeadline">DISCLAIMER</div>' +
+//                     '<p>Use by you of the data (which includes model outputs and simulations) provided by PML on this site is entirely at your own risk.  This data is provided “as is” without any warranty of any kind, either expressed or implied, including without limitation, any implied warranties as to its merchantability or its suitability for any use.  All implied conditions relating to the quality or suitability of the data and the medium on which it is provided, and all liabilities arising from the supply of the data (including any liability arising in negligence) are excluded to the fullest extent permitted by law.</p>' +
+    '<div class="disclaimerText"">' +
+    'The main objective of the BC WAQSS System is to provide products supporting an assessment of the water quality in coastal areas.  The products are tailored especially to the requirements of each individual customer.' +
+    '</div>' +
+    '<div class="disclaimerText"">' +
+    'The service portfolio consists of 3 different products categories:<br/>' +
+    '&nbsp;&nbsp;&nbsp;• Standard products</br>' +
+    '&nbsp;&nbsp;&nbsp;• Special products</br>' +
+    '&nbsp;&nbsp;&nbsp;• Special requests</br>' +
+    '</div>' +
+    '<div class="disclaimerText">The service consists of the regular delivery of the specified products from Brockmann Consult to its customers. On the customer site, a validation would be welcomed which intensity depends on the resources and potential of the end users.<br/></div>' +
+    '<div class="disclaimerHeadline">ACKNOWLEDGEMENTS</div>' +
+    '<div class="disclaimerText">Model data is derived from the <a href="http://marine-opec.eu/"><b>Operational Ecology project (FP7/2007-2013 grant number 283291)</b></a>. ' +
+    'In using the data you agree to acknowledge use of the data in the acknowledgement section of any resulting publication.</div>' +
+    '<div class="disclaimerText">Based on GIS portal by <a href="http://www.pml.ac.uk/">PML Applications Ltd.</a> ' +
+    'Original code at <a href="https://github.com/pmlrsg/GISportal">GitHub</a>.<br/>' +
+    'Extended and tailored by <a href="http://www.brockmann-consult.de">Brockmann Consult GmbH</a>.<br/>' +
+    'Contact: <a href="mailto:info@brockmann-consult.de>">info@brockmann-consult.de</a>.</div>'
+
+
    var self = this;
    // Each chapter has its own array of steps
    this.chapters = [
-   	{
+   {
+        'id': 'Disclaimer',
+        'name': 'Show the disclaimer',
+        'steps': [
+              {
+                 id: 0,
+                 content: disclaimerText
+              }
+           ]
+   },
+   {
    		'id' : 'portal-introduction',
-   		'name' : 'An introduction to the portal',
+   		'name' : 'An (interactive) introduction to the portal',
    		'steps' : [
 		      {
 		         id : 0,
@@ -53,31 +86,31 @@ gisportal.Walkthrough = function() {
 		         content: '<p>Step 6. Use the timeline at the bottom to quickly see the dates for which there is data available.</p><p>See \'Overview of the timeline\' for help on how to use it. This guide is now complete, please click on the X at the top right of the box to finish.</p>'
 		      }
    		]
-   	},
-   	{
-   		'id' : 'timeline-overview',
-   		'name' : 'An overview of the timeline',
-   		'steps' : [
-		      {
-		         id : 0,
-		         next: 1,
-		         content: '<p>Step 1. At the bottom of the screen is the timeline, this is the main way of dealing with time on the portal.</p>'
-		      },
-		      {
-		         id : 1,
-		         next: 2,
-		         prev: 0,
-		         content: '<p>Step 2. The timeline grows as you select layers, for temporal data it shows each item as a line.</p>'
-		      },
-		      {
-		         id : 2,
-		         next: 3,
-		         prev: 1,
-		         content: '<p>Step 3. You can change the timescale by zooming in or out using a scrollwheel or similar.</p>',
-		         commands: [
-		         	"gisportal.timeline.zoomDate(\"01/01/2000\", \"01/01/2003\");",
-		         	"gisportal.timeline.redraw();"
-		         ]
+   },
+   {
+         'id' : 'timeline-overview',
+   		 'name' : 'An (interactive) overview of the timeline',
+   		 'steps' : [
+		       {
+		          id : 0,
+		          next: 1,
+		          content: '<p>Step 1. At the bottom of the screen is the timeline, this is the main way of dealing with time on the portal.</p>'
+		       },
+		       {
+		          id : 1,
+		          next: 2,
+		          prev: 0,
+		          content: '<p>Step 2. The timeline grows as you select layers, for temporal data it shows each item as a line.</p>'
+		       },
+		       {
+		          id : 2,
+		          next: 3,
+		          prev: 1,
+		          content: '<p>Step 3. You can change the timescale by zooming in or out using a scrollwheel or similar.</p>',
+		          commands: [
+		             "gisportal.timeline.zoomDate(\"01/01/2000\", \"01/01/2003\");",
+		             "gisportal.timeline.redraw();"
+		          ]
 		      },
 		      {
 		         id : 3,
@@ -115,8 +148,8 @@ gisportal.Walkthrough = function() {
 		         	"$('#graphcreator-generate input[type=button]').click();"
 		         ]
 		      }
-   		]
-   	}
+         ]
+   }
    ];
 
 
@@ -126,20 +159,7 @@ gisportal.Walkthrough = function() {
   		'steps' : [ 
          {
             id : 0,
-            content: '<p>DISCLAIMER</p>' +
-//                     '<p>Use by you of the data (which includes model outputs and simulations) provided by PML on this site is entirely at your own risk.  This data is provided “as is” without any warranty of any kind, either expressed or implied, including without limitation, any implied warranties as to its merchantability or its suitability for any use.  All implied conditions relating to the quality or suitability of the data and the medium on which it is provided, and all liabilities arising from the supply of the data (including any liability arising in negligence) are excluded to the fullest extent permitted by law.</p>' +
-                     '<p>The main objective of the BC-WAQSS System is to provide products supporting an assessment of the water quality in coastal areas.  The products are tailored especially to the requirements of each individual customer.</p>' +
-                     '<p>The service portfolio consists of 3 different products categories:</p>' +
-                     '<p>• Standard products</p>' +
-                     '<p>• Special products</p>' +
-                     '<p>• Special requests</p>' +
-                     '<p>The service consists of the regular delivery of the specified products from Brockmann Consult to its customers. On the customer site, a validation would be welcomed which intensity depends on the resources and potential of the end users.</p>' +
-                     '<p>Acknowledgement</p>' +
-                     '<p>In using the data you agree to acknowledge use of the data in the acknowledgement section of any resulting publication.</p>' +
-                     '<p>Based on GIS portal by <a href="http://www.pml.ac.uk/">PML</a>.<br>' +
-                     'Original code at <a href="https://github.com/pmlrsg/GISportal">GitHub</a>.</p>' +
-                     '<p>Extended and tailored by <a href="http://www.brockmann-consult.de">Brockmann Consult GmbH</a></p>' +
-                     '<p>Contact: <a href="mailto:info@brockmann-consult.de>">info@brockmann-consult.de</a></p>'
+            content: disclaimerText
          }
       ] 
    };
