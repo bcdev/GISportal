@@ -19,7 +19,7 @@ gisportal.Walkthrough = function() {
     '<div class="disclaimerText">Based on GIS portal by <a href="http://www.pml.ac.uk/">PML Applications Ltd.</a> ' +
     'Original code at <a href="https://github.com/pmlrsg/GISportal">GitHub</a>.<br/>' +
     'Extended and tailored by <a href="http://www.brockmann-consult.de">Brockmann Consult GmbH</a>.<br/>' +
-    'Contact: <a href="mailto:info@brockmann-consult.de>">info@brockmann-consult.de</a>.</div>'
+    'Contact: <a href="mailto:info@brockmann-consult.de>">info@brockmann-consult.de</a>.</div>';
 
 
    var self = this;
@@ -27,7 +27,7 @@ gisportal.Walkthrough = function() {
    this.chapters = [
    {
         'id': 'Disclaimer',
-        'name': 'Show the disclaimer',
+        'name': 'Disclaimer and License',
         'steps': [
               {
                  id: 0,
