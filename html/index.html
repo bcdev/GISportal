@@ -191,8 +191,8 @@
    }}
    <div id="graphCreator" class="unselectable tt">
       <div class="ui-control">
-         <div>
-            <label for="graphcreator-gallery-label">Gallery:</label>
+         <div style="margin-bottom: 10px">
+            <label for="graphcreator-gallery-label">Plot type</label>
          </div>
          <div id="graphcreator-gallery">
             <input type="radio" name="gallery" value="timeseries" id="timeseries" title="Returns a time series with mean, median, max, min and STD" checked>
@@ -277,29 +277,31 @@
          </h3>
          <div id="advanced-inputs">
             <div id="timerange">
+               <div class="divider">
+                   <hr class="left"/>Time Range<hr class="right" />
+               </div>
+
                <select name="graphcreator-range" id="graphcreator-range">
-                  <option selected>Select a time range</option>
+                   <option selected>Select a range</option>
                </select>
                <button class="js-newRange">New range</button>
-               <button class="js-hideRange">Hide range</button>
-               <button class="js-renameRange">Rename range</button>
                <button class="js-deleteRange">Delete range</button>
             </div>
             
-            <div>
-               <label for="graphcreator-time">Date:</label>
-            </div>
             <div id="timerange2">
+               <label for="graphcreator-time">Range:</label>
                <input id="graphcreator-time" title="You can use also choose time&#47;date ranges" type="text" placeholder="yyyy-mm-dd" size="10" name="graphcreator-time"/>
                <label> to </label>
                <input id="graphcreator-time2" title="You can use also choose time&#47;date ranges" type="text" placeholder="yyyy-mm-dd" size="10" name="graphcreator-time2"/>
                <button class="js-updateRange hidden">Update Range</button>
             </div>
-            <div>
-               <label for="graphcreator-bbox">Geometry (WKT):</label>
-            </div>
-            <div style="position: relative">
-               <textarea rows="1" cols="70" id="graphcreator-bbox" title="WKT formatted geometry" placeholder="WKT" name="graphcreator-bbox" onClick="this.setSelectionRange(0, this.value.length)"></textarea>
+            <div id="geometry">
+               <div class="divider">
+                  <hr class="left"/><label for="graphcreator-bbox">Geometry (WKT):</label><hr class="right" />
+               </div>
+               <div style="position: relative">
+                  <textarea rows="1" cols="70" id="graphcreator-bbox" title="WKT formatted geometry" placeholder="WKT" name="graphcreator-bbox" onClick="this.setSelectionRange(0, this.value.length)"></textarea>
+               </div>
             </div>
          </div>
       </div>
