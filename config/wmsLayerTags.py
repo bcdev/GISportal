@@ -62,7 +62,7 @@ layers = {
             "niceName": "Number of observations, weekly",
             "region": ["N. Atlantic", "Baltic"]
         },
-        "num_passes": {            
+        "num_passes": {
             "interval": "weekly",
             "niceName": "Number of satellite passes, weekly",
             "region": ["N. Atlantic", "Baltic"]
@@ -82,7 +82,7 @@ layers = {
             "niceName": "Counts of Chlorophyll Concentration, OC3 Algorithm, weekly",
             "region": ["N. Atlantic", "Baltic"]
         },
-        "tsm_mean": {        
+        "tsm_mean": {
             "interval": "weekly",
             "niceName": "Mean of Total Suspended Matter, weekly",
             "region": ["N. Atlantic", "Baltic"]
@@ -176,6 +176,111 @@ layers = {
             "interval": "monthly",
             "niceName": "Chlorophyll-a, month mean",
             "region": ["N. Atlantic"]
+        }
+    },
+    "waqss_archive-nos-tsm": {
+        "tsm_rgb": {
+            "interval": "weekly",
+            "niceName": "Total suspended matter",
+            "region": ["N. Atlantic"]
+        }
+    },
+    "waqss_archive-bas-tsm": {
+        "tsm_rgb": {
+            "interval": "weekly",
+            "niceName": "Total suspended matter",
+            "region": ["Baltic"]
+        }
+    },
+    "waqss_archive-est-tsm": {
+        "tsm_rgb": {
+            "interval": "weekly",
+            "niceName": "Total suspended matter",
+            "region": ["Estonia"]
+        }
+    },
+    "waqss_archive-nos-sst": {
+        "sst_rgb": {
+            "interval": "weekly",
+            "niceName": "Sea surface temperature",
+            "region": ["N. Atlantic"]
+        }
+    },
+    "waqss_archive-bas-sst": {
+        "sst_rgb": {
+            "interval": "weekly",
+            "niceName": "Sea surface temperature",
+            "region": ["Baltic"]
+        }
+    },
+    "waqss_archive-est-sst": {
+        "sst_rgb": {
+            "interval": "weekly",
+            "niceName": "Sea surface temperature",
+            "region": ["Estonia"]
+        }
+    },
+    "waqss_archive-nos-chl": {
+        "chl_rgb": {
+            "interval": "weekly",
+            "niceName": "Chlorophyll Concentration",
+            "region": ["N. Atlantic"]
+        }
+    },
+    "waqss_archive-bas-chl": {
+        "chl_rgb": {
+            "interval": "weekly",
+            "niceName": "Chlorophyll Concentration",
+            "region": ["Baltic"]
+        }
+    },
+    "waqss_archive-est-chl": {
+        "chl_rgb": {
+            "interval": "weekly",
+            "niceName": "Chlorophyll Concentration",
+            "region": ["Estonia"]
+        }
+    },
+    "waqss_archive-nos-trn": {
+        "trn_rgb": {
+            "interval": "weekly",
+            "niceName": "Turbidity",
+            "region": ["N. Atlantic"]
+        }
+    },
+    "waqss_archive-bas-trn": {
+        "trn_rgb": {
+            "interval": "weekly",
+            "niceName": "Turbidity",
+            "region": ["Baltic"]
+        }
+    },
+    "waqss_archive-est-trn": {
+        "trn_rgb": {
+            "interval": "weekly",
+            "niceName": "Turbidity",
+            "region": ["Estonia"]
+        }
+    },
+    "waqss_archive-nos-ys": {
+        "ys_rgb": {
+            "interval": "weekly",
+            "niceName": "Yellow Substance",
+            "region": ["N. Atlantic"]
+        }
+    },
+    "waqss_archive-bas-ys": {
+        "ys_rgb": {
+            "interval": "weekly",
+            "niceName": "Yellow Substance",
+            "region": ["Baltic"]
+        }
+    },
+    "waqss_archive-est-ys": {
+        "ys_rgb": {
+            "interval": "weekly",
+            "niceName": "Yellow Substance",
+            "region": ["Estonia"],
         }
     }
 }

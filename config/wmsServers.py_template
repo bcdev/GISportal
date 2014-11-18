@@ -3,7 +3,7 @@
 servers = {
    'waqss_daily': {
       'name': 'waqss_daily',
-      'url': '<host>/thredds/thredds/wms/waqss/daily?',
+      'url': '<host>/thredds/wms/waqss/daily?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -13,12 +13,12 @@ servers = {
          'providerShortTag': 'Brockmann Consult',
          'providerUrl': 'http://www.waqss.de'
       },
-      'wcsurl': '<host>/thredds/thredds/wcs/waqss/daily?',
+      'wcsurl': '<host>/thredds/wcs/waqss/daily?',
       'userGroups': ['bc', 'waqss_users']
    },
    'waqss_monthly': {
       'name': 'waqss_monthly',
-      'url': '<host>/thredds/thredds/wms/waqss/monthly?',
+      'url': '<host>/thredds/wms/waqss/monthly?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -28,12 +28,12 @@ servers = {
          'providerShortTag': 'Brockmann Consult',
          'providerUrl': 'http://www.waqss.de'
       },
-      'wcsurl': '<host>/thredds/thredds/wcs/waqss/monthly?',
+      'wcsurl': '<host>/thredds/wcs/waqss/monthly?',
       'userGroups': ['bc', 'waqss_users']
    },
    'waqss_weekly': {
       'name': 'waqss_weekly',
-      'url': '<host>/thredds/thredds/wms/waqss/weekly?',
+      'url': '<host>/thredds/wms/waqss/weekly?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -43,12 +43,12 @@ servers = {
          'providerShortTag': 'Brockmann Consult',
          'providerUrl': 'http://www.waqss.de'
       },
-      'wcsurl': '<host>/thredds/thredds/wcs/waqss/weekly?',
+      'wcsurl': '<host>/thredds/wcs/waqss/weekly?',
       'userGroups': ['bc', 'waqss_users']
    },
    'monthly_pml': { 
       'name': 'monthly_pml',
-      'url': '<host>/thredds/thredds/wms/waqss/monthly-pml?',
+      'url': '<host>/thredds/wms/waqss/monthly-pml?',
       'params': {
          'SERVICE': 'WMS',
          'request': 'GetCapabilities',
@@ -58,8 +58,218 @@ servers = {
          'providerShortTag': 'PML',
          'providerUrl': 'http://www.pml.ac.uk/default.aspx'
       },
-      'wcsurl': '<host>/thredds/thredds/wcs/waqss/monthly-pml?',
+      'wcsurl': '<host>/thredds/wcs/waqss/monthly-pml?',
       'userGroups': ['bc', 'waqss_users']
-   }
+   },
+   'waqss_archive-nos-tsm': {
+       'name': 'waqss_archive-nos-tsm',
+       'url': '<host>/thredds/wms/waqss/archive-nos-tsm?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-nos-tsm?',
+       },
+   'waqss_archive-bas-tsm': {
+       'name': 'waqss_archive-bas-tsm',
+       'url': '<host>/thredds/wms/waqss/archive-bas-tsm?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-bas-tsm?',
+       },
+   'waqss_archive-est-tsm': {
+       'name': 'waqss_archive-est-tsm',
+       'url': '<host>/thredds/wms/waqss/archive-est-tsm?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-est-tsm?',
+       },   
+   'waqss_archive-nos-sst': {
+       'name': 'waqss_archive-nos-sst',
+       'url': '<host>/thredds/wms/waqss/archive-nos-sst?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-nos-sst?',
+       },
+   'waqss_archive-bas-sst': {
+       'name': 'waqss_archive-bas-sst',
+       'url': '<host>/thredds/wms/waqss/archive-bas-sst?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-bas-sst?',
+       },
+   # 'waqss_archive-est-sst': {
+   #     'name': 'waqss_archive-est-sst',
+   #     'url': '<host>/thredds/wms/waqss/archive-est-sst?',
+   #     'params': {
+   #         'SERVICE': 'WMS',
+   #         'request': 'GetCapabilities',
+   #         'version': '1.3.0'
+   #     },
+   #     'options': {
+   #         'providerShortTag': 'Brockmann Consult',
+   #         'providerUrl': 'http://www.waqss.de'
+   #     },
+   #     'wcsurl': '<host>/thredds/wms/waqss/archive-est-sst?',
+   #     },
+   'waqss_archive-nos-chl': {
+       'name': 'waqss_archive-nos-chl',
+       'url': '<host>/thredds/wms/waqss/archive-nos-chl?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-nos-chl?',
+       },
+   'waqss_archive-bas-chl': {
+       'name': 'waqss_archive-bas-chl',
+       'url': '<host>/thredds/wms/waqss/archive-bas-chl?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-bas-chl?',
+       },
+   'waqss_archive-est-chl': {
+       'name': 'waqss_archive-est-chl',
+       'url': '<host>/thredds/wms/waqss/archive-est-chl?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-est-chl?',
+       },
+   'waqss_archive-nos-trn': {
+       'name': 'waqss_archive-nos-trn',
+       'url': '<host>/thredds/wms/waqss/archive-nos-trn?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-nos-trn?',
+       },
+   'waqss_archive-bas-trn': {
+       'name': 'waqss_archive-bas-trn',
+       'url': '<host>/thredds/wms/waqss/archive-bas-trn?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-bas-trn?',
+       },
+   'waqss_archive-est-trn': {
+       'name': 'waqss_archive-est-trn',
+       'url': '<host>/thredds/wms/waqss/archive-est-trn?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-est-trn?',
+       },
+   'waqss_archive-nos-ys': {
+       'name': 'waqss_archive-nos-ys',
+       'url': '<host>/thredds/wms/waqss/archive-nos-ys?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-nos-ys?',
+       },
+   'waqss_archive-bas-ys': {
+       'name': 'waqss_archive-bas-ys',
+       'url': '<host>/thredds/wms/waqss/archive-bas-ys?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-bas-ys?',
+       },
+   'waqss_archive-est-ys': {
+       'name': 'waqss_archive-est-ys',
+       'url': '<host>/thredds/wms/waqss/archive-est-ys?',
+       'params': {
+           'SERVICE': 'WMS',
+           'request': 'GetCapabilities',
+           'version': '1.3.0'
+       },
+       'options': {
+           'providerShortTag': 'Brockmann Consult',
+           'providerUrl': 'http://www.waqss.de'
+       },
+       'wcsurl': '<host>/thredds/wms/waqss/archive-est-ys?',
+       }
 }
 
