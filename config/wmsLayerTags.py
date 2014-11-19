@@ -176,6 +176,46 @@ layers = {
             "interval": "monthly",
             "niceName": "Chlorophyll-a, month mean",
             "region": ["N. Atlantic"]
+        },
+        "O2": {
+            "interval": "monthly",
+            "niceName": "Dissolved molecula oxygen in sea water, month mean",
+            "region": ["N. Atlantic"]
+        },
+        "DIP": {
+            "interval": "monthly",
+            "niceName": "Phosphate, month mean",
+            "region": ["N. Atlantic"]
+        },
+        "S": {
+            "interval": "monthly",
+            "niceName": "Salinity, month mean",
+            "region": ["N. Atlantic"]
+        },
+        "euphDepth": {
+            "interval": "monthly",
+            "niceName": "Euphotic depth, month mean",
+            "region": ["N. Atlantic"]
+        },
+        "DIN": {
+            "interval": "monthly",
+            "niceName": "Nitrate, month mean",
+            "region": ["N. Atlantic"]
+        },
+        "Zc": {
+            "interval": "monthly",
+            "niceName": "Zooplankton C, month mean",
+            "region": ["N. Atlantic"]
+        },
+        "netPP": {
+            "interval": "monthly",
+            "niceName": "Net Primary Production, month mean",
+            "region": ["N. Atlantic"]
+        },
+        "Pc": {
+            "interval": "monthly",
+            "niceName": "Phytoplankton C, month mean",
+            "region": ["N. Atlantic"]
         }
     },
     "waqss_archive-nos-tsm": {
