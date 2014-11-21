@@ -438,14 +438,6 @@ layers = {
             "source": "MERIS"
         }
     },
-    "waqss_archive-est-tsm": {
-        "tsm_rgb": {
-            "interval": "weekly",
-            "niceName": "Total suspended matter",
-            "region": ["Estonia"],
-            "source": "MERIS"
-        }
-    },
     "waqss_archive-nos-sst": {
         "sst_rgb": {
             "interval": "weekly",
@@ -459,14 +451,6 @@ layers = {
             "interval": "weekly",
             "niceName": "Sea surface temperature",
             "region": ["Baltic"],
-            "source": "MERIS"
-        }
-    },
-    "waqss_archive-est-sst": {
-        "sst_rgb": {
-            "interval": "weekly",
-            "niceName": "Sea surface temperature",
-            "region": ["Estonia"],
             "source": "MERIS"
         }
     },
@@ -486,14 +470,6 @@ layers = {
             "source": "MERIS"
         }
     },
-    "waqss_archive-est-chl": {
-        "chl_rgb": {
-            "interval": "weekly",
-            "niceName": "Chlorophyll Concentration",
-            "region": ["Estonia"],
-            "source": "MERIS"
-        }
-    },
     "waqss_archive-nos-trn": {
         "trn_rgb": {
             "interval": "weekly",
@@ -510,14 +486,6 @@ layers = {
             "source": "MERIS"
         }
     },
-    "waqss_archive-est-trn": {
-        "trn_rgb": {
-            "interval": "weekly",
-            "niceName": "Turbidity",
-            "region": ["Estonia"],
-            "source": "MERIS"
-        }
-    },
     "waqss_archive-nos-ys": {
         "ys_rgb": {
             "interval": "weekly",
@@ -531,14 +499,6 @@ layers = {
             "interval": "weekly",
             "niceName": "Yellow Substance",
             "region": ["Baltic"],
-            "source": "MERIS"
-        }
-    },
-    "waqss_archive-est-ys": {
-        "ys_rgb": {
-            "interval": "weekly",
-            "niceName": "Yellow Substance",
-            "region": ["Estonia"],
             "source": "MERIS"
         }
     }

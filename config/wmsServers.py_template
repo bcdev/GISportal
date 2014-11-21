@@ -74,6 +74,7 @@ servers = {
            'providerUrl': 'http://www.waqss.de'
        },
        'wcsurl': '<host>/thredds/wms/waqss/archive-nos-tsm?',
+       'userGroups': ['bc']
        },
    'waqss_archive-bas-tsm': {
        'name': 'waqss_archive-bas-tsm',
@@ -88,21 +89,8 @@ servers = {
            'providerUrl': 'http://www.waqss.de'
        },
        'wcsurl': '<host>/thredds/wms/waqss/archive-bas-tsm?',
+       'userGroups': ['bc']
        },
-   'waqss_archive-est-tsm': {
-       'name': 'waqss_archive-est-tsm',
-       'url': '<host>/thredds/wms/waqss/archive-est-tsm?',
-       'params': {
-           'SERVICE': 'WMS',
-           'request': 'GetCapabilities',
-           'version': '1.3.0'
-       },
-       'options': {
-           'providerShortTag': 'Brockmann Consult',
-           'providerUrl': 'http://www.waqss.de'
-       },
-       'wcsurl': '<host>/thredds/wms/waqss/archive-est-tsm?',
-       },   
    'waqss_archive-nos-sst': {
        'name': 'waqss_archive-nos-sst',
        'url': '<host>/thredds/wms/waqss/archive-nos-sst?',
@@ -116,6 +104,7 @@ servers = {
            'providerUrl': 'http://www.waqss.de'
        },
        'wcsurl': '<host>/thredds/wms/waqss/archive-nos-sst?',
+       'userGroups': ['bc']
        },
    'waqss_archive-bas-sst': {
        'name': 'waqss_archive-bas-sst',
@@ -130,21 +119,8 @@ servers = {
            'providerUrl': 'http://www.waqss.de'
        },
        'wcsurl': '<host>/thredds/wms/waqss/archive-bas-sst?',
+       'userGroups': ['bc']
        },
-   # 'waqss_archive-est-sst': {
-   #     'name': 'waqss_archive-est-sst',
-   #     'url': '<host>/thredds/wms/waqss/archive-est-sst?',
-   #     'params': {
-   #         'SERVICE': 'WMS',
-   #         'request': 'GetCapabilities',
-   #         'version': '1.3.0'
-   #     },
-   #     'options': {
-   #         'providerShortTag': 'Brockmann Consult',
-   #         'providerUrl': 'http://www.waqss.de'
-   #     },
-   #     'wcsurl': '<host>/thredds/wms/waqss/archive-est-sst?',
-   #     },
    'waqss_archive-nos-chl': {
        'name': 'waqss_archive-nos-chl',
        'url': '<host>/thredds/wms/waqss/archive-nos-chl?',
@@ -158,6 +134,7 @@ servers = {
            'providerUrl': 'http://www.waqss.de'
        },
        'wcsurl': '<host>/thredds/wms/waqss/archive-nos-chl?',
+       'userGroups': ['bc']
        },
    'waqss_archive-bas-chl': {
        'name': 'waqss_archive-bas-chl',
@@ -172,20 +149,7 @@ servers = {
            'providerUrl': 'http://www.waqss.de'
        },
        'wcsurl': '<host>/thredds/wms/waqss/archive-bas-chl?',
-       },
-   'waqss_archive-est-chl': {
-       'name': 'waqss_archive-est-chl',
-       'url': '<host>/thredds/wms/waqss/archive-est-chl?',
-       'params': {
-           'SERVICE': 'WMS',
-           'request': 'GetCapabilities',
-           'version': '1.3.0'
-       },
-       'options': {
-           'providerShortTag': 'Brockmann Consult',
-           'providerUrl': 'http://www.waqss.de'
-       },
-       'wcsurl': '<host>/thredds/wms/waqss/archive-est-chl?',
+       'userGroups': ['bc']
        },
    'waqss_archive-nos-trn': {
        'name': 'waqss_archive-nos-trn',
@@ -200,6 +164,7 @@ servers = {
            'providerUrl': 'http://www.waqss.de'
        },
        'wcsurl': '<host>/thredds/wms/waqss/archive-nos-trn?',
+       'userGroups': ['bc']
        },
    'waqss_archive-bas-trn': {
        'name': 'waqss_archive-bas-trn',
@@ -214,20 +179,7 @@ servers = {
            'providerUrl': 'http://www.waqss.de'
        },
        'wcsurl': '<host>/thredds/wms/waqss/archive-bas-trn?',
-       },
-   'waqss_archive-est-trn': {
-       'name': 'waqss_archive-est-trn',
-       'url': '<host>/thredds/wms/waqss/archive-est-trn?',
-       'params': {
-           'SERVICE': 'WMS',
-           'request': 'GetCapabilities',
-           'version': '1.3.0'
-       },
-       'options': {
-           'providerShortTag': 'Brockmann Consult',
-           'providerUrl': 'http://www.waqss.de'
-       },
-       'wcsurl': '<host>/thredds/wms/waqss/archive-est-trn?',
+       'userGroups': ['bc']
        },
    'waqss_archive-nos-ys': {
        'name': 'waqss_archive-nos-ys',
@@ -242,6 +194,7 @@ servers = {
            'providerUrl': 'http://www.waqss.de'
        },
        'wcsurl': '<host>/thredds/wms/waqss/archive-nos-ys?',
+       'userGroups': ['bc']
        },
    'waqss_archive-bas-ys': {
        'name': 'waqss_archive-bas-ys',
@@ -256,20 +209,7 @@ servers = {
            'providerUrl': 'http://www.waqss.de'
        },
        'wcsurl': '<host>/thredds/wms/waqss/archive-bas-ys?',
-       },
-   'waqss_archive-est-ys': {
-       'name': 'waqss_archive-est-ys',
-       'url': '<host>/thredds/wms/waqss/archive-est-ys?',
-       'params': {
-           'SERVICE': 'WMS',
-           'request': 'GetCapabilities',
-           'version': '1.3.0'
-       },
-       'options': {
-           'providerShortTag': 'Brockmann Consult',
-           'providerUrl': 'http://www.waqss.de'
-       },
-       'wcsurl': '<host>/thredds/wms/waqss/archive-est-ys?',
+       'userGroups': ['bc']
        }
 }
 
