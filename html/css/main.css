@@ -732,31 +732,10 @@ div .sensor-accordion {
 
 /* ======== Login Buttons ======== */
 
-.gisportal-login-with-google {
-   width: 145px;
-   height: 30px;
-   background: url(../img/Red-signin_Long_base_20dp.png);
-}
-
-.gisportal-login-with-google:hover {
-   background: url(../img/Red-signin_Long_hover_20dp.png);
-}
-
-.gisportal-login-with-google:active {
-   background: url(../img/Red-signin_Long_press_20dp.png);
-}
-
-
-.gisportal-login-with-yahoo {
-   width: 161px;
-   height: 22px;
-   background: url(../img/yahoo_signin_btn.png);
-}
-
 .gisportal-login-with-bc {
-   width: 161px;
+   width: 59px;
    height: 22px;
-   background: url(../img/bc_signin_btn.png);
+   background: url(../img/bc_signin_btn2.png);
 }
 
 /* ======== Scalebar ======== */
