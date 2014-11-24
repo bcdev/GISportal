@@ -1,27 +1,39 @@
 gisportal.Walkthrough = function() {
 
     var disclaimerText =
-    '<div class="disclaimerHeadline">DISCLAIMER</div>' +
-//                     '<p>Use by you of the data (which includes model outputs and simulations) provided by PML on this site is entirely at your own risk.  This data is provided “as is” without any warranty of any kind, either expressed or implied, including without limitation, any implied warranties as to its merchantability or its suitability for any use.  All implied conditions relating to the quality or suitability of the data and the medium on which it is provided, and all liabilities arising from the supply of the data (including any liability arising in negligence) are excluded to the fullest extent permitted by law.</p>' +
-    '<div class="disclaimerText"">' +
-    'The main objective of the BC WAQSS System is to provide products supporting an assessment of the water quality in coastal areas.  The products are tailored especially to the requirements of each individual customer.' +
-    '</div>' +
-    '<div class="disclaimerText"">' +
-    'The service portfolio consists of 3 different products categories:<br/>' +
-    '&nbsp;&nbsp;&nbsp;• Standard products</br>' +
-    '&nbsp;&nbsp;&nbsp;• Special products</br>' +
-    '&nbsp;&nbsp;&nbsp;• Special requests</br>' +
-    '</div>' +
-    '<div class="disclaimerText">The service consists of the regular delivery of the specified products from Brockmann Consult to its customers. On the customer site, a validation would be welcomed which intensity depends on the resources and potential of the end users.<br/></div>' +
-    '<div class="disclaimerHeadline">ACKNOWLEDGEMENTS</div>' +
-    '<div class="disclaimerText">Model data is derived from the <a href="http://marine-opec.eu/"><b>Operational Ecology project (FP7/2007-2013 grant number 283291)</b></a>. ' +
-    'In using the data you agree to acknowledge use of the data in the acknowledgement section of any resulting publication.</div>' +
-    '<div class="disclaimerText">Based on GIS portal by <a href="http://www.pml.ac.uk/">PML Applications Ltd.</a> ' +
-    'Original code at <a href="https://github.com/pmlrsg/GISportal">GitHub</a>.<br/>' +
-    'Extended and tailored by <a href="http://www.brockmann-consult.de">Brockmann Consult GmbH</a>.<br/>' +
-    'Contact: <a href="mailto:info@brockmann-consult.de>">info@brockmann-consult.de</a>.</div>';
-
-
+        '<div class="disclaimerHeadline">DISCLAIMER</div>' +
+        '<div class="disclaimerText"">' +
+        'The main objective of the BC WAQSS System is to provide products supporting ' +
+        'an assessment of the water quality in coastal areas.</div>' +
+        '' +
+        '<div class="disclaimerText"">' +
+        'The products provided within this portal are generated and provided by' +
+        'Brockmann Consult GmbH (all satellite derived products) and PML (all models ' +
+        'derived products). The use of the data on this site is entirely at your own ' +
+        'risk.</div>' +
+        '' +
+        '<div class="disclaimerText"">' +
+        'Model Data provided by PML: This data is provided “as is” without any ' +
+        'warranty of any kind, either expressed or implied, including without' +
+        'limitation, any implied warranties as to its merchantability or its ' +
+        'suitability for any use. All implied conditions relating to the quality or' +
+        'suitability of the data and the medium on which it is provided, and all ' +
+        'liabilities arising from the supply of the data (including any liability' +
+        'arising in negligence) are excluded to the fullest extent permitted by law.</div>' +
+        '' +
+        '<div class="disclaimerText">Satellite Data provided by BC: The products are based on the MODIS Aqua ' +
+        'products &copy; NASA and are processed with SeaDAS 7.0.2 and BEAM 5.0.</div>' +
+        '' +
+        '<div class="disclaimerHeadline">ACKNOWLEDGEMENTS</div>' +
+        '<div class="disclaimerText"><a href="http://marine-opec.eu/"><b>Model data is derived from the Operational Ecology (OpEc) project ' +
+        '(FP7/2007-2013 grant number 283291)</a></b>. In using the data you agree to ' +
+        'acknowledge use of the data in the acknowledgement section of any resulting ' +
+        'publication.</div>' +
+        '' +
+        '<div class="disclaimerText">This portal is based on GIS portal by <a href="http://www.pml.ac.uk/">PML Applications Ltd</a>. Original code at ' +
+        '<a href="https://github.com/pmlrsg/GISportal">GitHub</a>; extended and tailored by <a href="http://www.brockmann-consult.de">Brockmann Consult GmbH</a>.' +
+        'Contact: <a href="mailto:waqss@brockmann-consult.de">waqss@brockmann-consult.de</a></div>'
+        
    var self = this;
    // Each chapter has its own array of steps
    this.chapters = [
