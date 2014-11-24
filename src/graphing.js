@@ -481,10 +481,10 @@ function createGraph(graphData) {
    if(graphData.draggable && graphData.draggable === true) {
       Flotr.EventAdapter.observe(graph.overlay, 'mousedown', initDrag);
    }
-   
+
    if(graphData.selectable && graphData.selectable === true) {
       Flotr.EventAdapter.observe(container, 'flotr:select', function(area) {
-         // Draw selected area            
+         // Draw selected area
          graph = drawGraph(container, graphData.selectSeries ? plotAccordingToChoices() : graphData.data, {
             xaxis : { min : area.x1, max : area.x2, mode : 'time', labelsAngle : 45 },
             yaxis : { min : area.y1, max : area.y2 }
@@ -555,7 +555,17 @@ function basicTimeOptions(yaxisTitle) {
       xaxis: {
          mode: 'time',
          labelsAngle: 45,
-         title: 'time'
+         title: 'time',
+         tickFormatter: function(x) {
+             function pad(num, size) {
+                 var s = num+"";
+                 while (s.length < size) s = "0" + s;
+                 return s;
+             }
+
+             var date = new Date(x);
+             return pad(date.getDay(), 2) + '/' + pad(date.getMonth(), 2) + '/' + date.getFullYear();
+         }
       },
       yaxis: {
          title: yaxisTitle
