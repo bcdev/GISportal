@@ -27,7 +27,7 @@ def add_time_dimension(dataset):
         dimensions = var.dimensions
         if 'lat' in dimensions and 'lon' in dimensions and len(dimensions) == 2:
             dimensions = ['time', dimensions[0], dimensions[1]]
-        target_var = target.createVariable(var_name, var.dtype, dimensions)
+        target_var = target.createVariable(var_name, var.dtype, dimensions, zlib=True)
 
         for attribute_name in var.ncattrs():
             attribute_value = var.__getattribute__(attribute_name)
