@@ -95,7 +95,7 @@ ul li {
    overflow: hidden;
    padding: 0 10px 0 10px;
    height: 50px;
-   width: 375px;
+   width: 390px;
    left: 50%;
    margin-left: -185px;
    position: fixed;
@@ -241,6 +241,10 @@ ul li {
    padding:2px;
    width:26px;
    height:24px;
+}
+
+.ui-button-text {
+    color: #333;
 }
 
 .gisportal-iconBigBtn {
@@ -918,6 +922,7 @@ div .sensor-accordion {
 #gisportal-layerSelection .variable-name {
     font-weight: bold;
     padding-right: 10px;
+    color: #333;
 }
 
 /* Class for tiny provider label below variable name in layer selection window */
@@ -1234,6 +1239,7 @@ div.olMapViewport {
 
 .ui-dialog-title  {
    text-transform: capitalize;
+   color: #575F6E;
 }
 
 .ui-dialog .ui-dialog-content { padding: 0 !important;}
