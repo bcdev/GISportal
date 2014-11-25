@@ -85,8 +85,6 @@ gisportal.window.createScalebar = function($trigger) {
    // Event to recalculate the scale if the "Recalculate Scale" button is pressed
    $('#' + layer.id + '-scale').on('click', '[type="button"]', function(e) {                              
       var scaleRange = getScaleRange(layer.minScaleVal, layer.maxScaleVal);
-      $('#' + layer.id + '-range-slider').slider('option', 'min', scaleRange.min);
-      $('#' + layer.id + '-range-slider').slider('option', 'max', scaleRange.max);
       validateScale(layer, layer.minScaleVal , layer.maxScaleVal);
    });
    
@@ -112,29 +110,6 @@ gisportal.window.createScalebar = function($trigger) {
       validateScale(layer, min , null);
    });
    
-   // Get the range for the scalebar
-   var scaleRange = getScaleRange(layer.minScaleVal, layer.maxScaleVal);
-
-   // Setup the jQuery UI slider
-   $('#' + layer.id + '-range-slider').slider({
-      orientation: "vertical",
-      range: true,
-      values: [ layer.minScaleVal, layer.maxScaleVal ],
-      max: scaleRange.max,
-      min: scaleRange.min,
-      step: 0.00000001,
-      change: function(e, ui) {
-         if($(this).slider("values", 0) != layer.minScaleVal || $(this).slider("values", 1) != layer.maxScaleVal) {      
-            validateScale(layer, $(this).slider("values", 0), $(this).slider("values", 1));
-         }
-      }
-   });
-
-   // Some css to keep everything in the right place.
-   $('#' + layer.id + '-range-slider').css({
-      'height': 256,
-      'margin': '5px 0px 0px 10px'
-   });
    // Open the dialog box
    $('#scalebar-' + layer.id).extendedDialog('open');
 };
@@ -225,13 +200,11 @@ function validateScale(layer, newMin, newMax, reset) {
    if (isNaN(min)) {
       console.log('Scale limits must be set to valid numbers -- reset to the old value');
       $('#' + layer.id + '-min').val(layer.minScaleVal);
-      $('#' + layer.id + '-range-slider').slider("values", 0, layer.minScaleVal);
-   } 
+   }
    else if (isNaN(max)) {
       console.log('Scale limits must be set to valid numbers -- reset to the old value');
       $('#' + layer.id + '-max').val(layer.maxScaleVal);
-      $('#' + layer.id + '-range-slider').slider("values", 1, layer.maxScaleVal);
-   } 
+   }
    else if (min > max) {
       console.log('Minimum scale value must be less than the maximum -- reset to the old value');
       $('#' + layer.id + '-min').val(layer.minScaleVal);
@@ -240,27 +213,15 @@ function validateScale(layer, newMin, newMax, reset) {
    else if (min <= 0 && $('#' + layer.id + '-log').children('[type="checkbox"]').first().is(':checked')) {
       console.log('Cannot use a logarithmic scale with negative or zero values -- reset to the old value');
       $('#' + layer.id + '-log').children('[type="checkbox"]').attr('checked', false);
-      $('#' + layer.id + '-range-slider').slider("values", 0, layer.minScaleVal);
-   } 
+   }
    else { 
       $('#' + layer.id + '-min').val(min);
       $('#' + layer.id + '-max').val(max);
-      
-      if(min < $('#' + layer.id + '-range-slider').slider('option', 'min') || 
-         max > $('#' + layer.id + '-range-slider').slider('option', 'max') ||
-         reset === true)
-      {
-         var scaleRange = getScaleRange(min, max);
-         $('#' + layer.id + '-range-slider').slider('option', 'min', scaleRange.min);
-         $('#' + layer.id + '-range-slider').slider('option', 'max', scaleRange.max);
-      }
       
       layer.minScaleVal = min;
       layer.maxScaleVal = max;     
       layer.log = $('#' + layer.id + '-log').children('[type="checkbox"]').first().is(':checked') ? true : false;
       
-      $('#' + layer.id + '-range-slider').slider("values", 0, min);
-      $('#' + layer.id + '-range-slider').slider("values", 1, max);
       updateScalebar(layer);
    }
 }
