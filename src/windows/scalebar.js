@@ -29,6 +29,7 @@ gisportal.window.createScalebar = function($trigger) {
    if(typeof layer.minScaleVal !== 'undefined' && typeof layer.maxScaleVal !== 'undefined') {
       $('#' + layer.id + '-max').val(layer.maxScaleVal);
       $('#' + layer.id + '-min').val(layer.minScaleVal);
+      setLogScaleEnablement(layer, layer.minScaleVal);
    }
    else {
       $('#' + layer.id + '-max').val = '';
@@ -56,7 +57,7 @@ gisportal.window.createScalebar = function($trigger) {
          gisportal.gritter.showNotification('scalebarTutorial', null);
       }
    });
-   
+
    // Event to change the scale to and from log if the checkbox is changed
    $('#' + layer.id + '-log').on('click', ':checkbox', function(e) {          
       // Check to see if the value was changed
@@ -82,12 +83,6 @@ gisportal.window.createScalebar = function($trigger) {
       
    });
    
-   // Event to recalculate the scale if the "Recalculate Scale" button is pressed
-   $('#' + layer.id + '-scale').on('click', '[type="button"]', function(e) {                              
-      var scaleRange = getScaleRange(layer.minScaleVal, layer.maxScaleVal);
-      validateScale(layer, layer.minScaleVal , layer.maxScaleVal);
-   });
-   
    // Event for unclicking the max box
    $('#' + layer.id + '-max').focusout(function(e) {          
       // Check to see if the value was changed
@@ -101,12 +96,13 @@ gisportal.window.createScalebar = function($trigger) {
    
    // Event for unclicking the min box
    $('#' + layer.id + '-min').focusout(function(e) {          
-      // Check to see if the value was changed
-      var min = parseFloat($(this).val());
-      
-      if(min == layer.minScaleVal)
-         return;
-         
+       // Check to see if the value was changed
+       var min = parseFloat($(this).val());
+       setLogScaleEnablement(layer, min);
+       if(min == layer.minScaleVal) {
+           return;
+       }
+
       validateScale(layer, min , null);
    });
    
@@ -231,4 +227,14 @@ function createGetLegendURL(layer, hasBase) {
       return '&COLORSCALERANGE=' + layer.minScaleVal + ',' + layer.maxScaleVal + '&logscale=' + layer.log;
    else
       return layer.wmsURL + 'REQUEST=GetLegendGraphic&LAYER=' + layer.urlName + '&COLORSCALERANGE=' + layer.minScaleVal + ',' + layer.maxScaleVal + '&logscale=' + layer.log;
+}
+
+function setLogScaleEnablement(layer, min) {
+    if (isNaN(min) || min <= 0) {
+        $('#' + layer.id + '-log input').attr('disabled', 'disabled');
+        $('.scalebar-log label').css('color', 'grey');
+    } else {
+        $('#' + layer.id + '-log input').attr('disabled', null);
+        $('.scalebar-log label').css('color', '');
+    }
 }

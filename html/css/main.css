@@ -751,16 +751,16 @@ div .sensor-accordion {
 }
 
 .scalebar div {
-   float: left;
+    margin-top: 5px;
 }
 
 .scalebar div input[type="text"] {
-   /*float: left;*/
    width: 80px;
+   margin-left: 10px;
 }
 
 .scalebar div label {
- margin: 0px 0px 0px 10px;
+    margin-left: 10px;
 }
 
 .scalebar-max {
@@ -772,19 +772,30 @@ div .sensor-accordion {
 }
 
 .scalebar-log {
-   margin: 5px 0px 5px 0px;
+    display: inline-block;
+    margin-top: 15px;
+    margin-left: -103px;
+    margin-bottom: 10px;
 }
 
 .scalebar-log label {
    margin: 0px 0px 0px 0px !important;
 }
 
-.scalebar-reset {
-   margin: 0px 0px 50px 5px;
-}
-
 .scalebar-min {
    margin: 5px 0px 0px 10px;
+}
+
+.scalebar-min-label {
+    margin-top: 176px !important;
+}
+
+.scalebar-auto {
+    margin-left: 30px;
+}
+
+.scalebar-reset input, .scalebar-auto input {
+    width: 87px
 }
 
 /* ======== Layer Selector ======== */

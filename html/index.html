@@ -162,26 +162,24 @@
       <div class="scalebar-max">
          <input id="{{name}}-max" title="The maximum value to be used" type="text" name="{{name}}-max" />
       </div>
-      <div id="{{name}}-scale" class="scalebar-scale">
-         <input type="button" name="{{name}}-scale-button" title="Add 25% to top and bottom of the slider" value="Recalculate Scale" />
-      </div>
-      <div id="{{name}}-log" class="scalebar-log">
-         <input type="checkbox" name="{{name}}-log-checkbox" title="Use Logarithmic Scale" />
-         <label for="{{name}}-logarithmic">Logarithmic Scale</label>
-      </div>
-      <div id="{{name}}-reset" class="scalebar-reset">
-         <input type="button" name="{{name}}-reset-button" title="Reset the scale to the default values" value="Reset Scale" />
-      </div>
-      <div id="{{name}}-auto" class="scalebar-auto">
-         <input type="button" name="{{name}}-auto-button" title="Set the scale automatically" value="Auto Scale" />
-      </div>
-      <div>
+      <div class="scalebar-min-label">
          <label for="{{name}}-min">Minimum Value: </label>
       </div>
       <div class="scalebar-min">
          <input id="{{name}}-min" title="The minimum value to be used" type="text" name="min" />
       </div>
+       <span id="{{name}}-log" class="scalebar-log">
+           <input type="checkbox" name="{{name}}-log-checkbox" title="Use Logarithmic Scale, only allowed for values > 0" />
+           <label for="{{name}}-logarithmic">Log Scale</label>
+       </span>
+       <span id="{{name}}-auto" class="scalebar-auto">
+           <input type="button" name="{{name}}-auto-button" title="Set the scale automatically" value="Auto Scale" />
+       </span>
+       <span id="{{name}}-reset" class="scalebar-reset">
+           <input type="button" name="{{name}}-reset-button" title="Reset the scale to the default values" value="Reset Scale" />
+       </span>
    </div>
+
 </script>
 <!-- Graph Creator Window-->
 <script type="text/html" id="gisportal-template-graphCreatorWindow">
