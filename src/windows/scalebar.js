@@ -73,15 +73,24 @@ gisportal.window.createScalebar = function($trigger) {
    $('#' + layer.id + '-reset').on('click', '[type="button"]', function(e) {                              
       validateScale(layer, layer.origMinScaleVal , layer.origMaxScaleVal, true);
    });
-   
-   // Event to automatically set the scale if the "Auto Scale" button is pressed
-   $('#' + layer.id + '-auto').on('click', '[type="button"]', function(e) {
-      var l = gisportal.layers[layer.id];     
-   	gisportal.genericAsync('GET', OpenLayers.ProxyHost + encodeURIComponent(l.wmsURL + 'item=minmax&layers=' + l.id + '&bbox=-180,-90,180,90&elevation=' + (l.selectedElevation || -1) + '&time='+ new Date(l.selectedDateTime).toISOString() + '&crs=' + gisportal.lonlat.projCode + '&srs=' + gisportal.lonlat.projCode + '&width=50&height=50&request=GetMetadata') , null, function(d) {
-   		validateScale(layer, d.min, d.max, true);
-   	}, null, 'json', {});                          
-      
-   });
+
+    // Event to automatically set the scale if the "Auto Scale" button is pressed
+    $('#' + layer.id + '-auto').on('click', '[type="button"]', function (e) {
+        var l = gisportal.layers[layer.id];
+        gisportal.genericAsync('GET', OpenLayers.ProxyHost +
+                                      encodeURIComponent(l.wmsURL + 'item=minmax&layers=' + l.id +
+                                                         '&bbox=-180,-90,180,90&elevation=' +
+                                                         (l.selectedElevation || -1) + '&time=' +
+                                                         new Date(l.selectedDateTime).toISOString() + '&crs=' +
+                                                         gisportal.lonlat.projCode + '&srs=' +
+                                                         gisportal.lonlat.projCode +
+                                                         '&width=50&height=50&request=GetMetadata'), null, function (d) {
+            validateScale(layer, d.min, d.max, true);
+        }, null, 'json', {});
+        setLogScaleEnablement(layer, layer.minScaleVal);
+
+
+    });
    
    // Event for unclicking the max box
    $('#' + layer.id + '-max').focusout(function(e) {          
