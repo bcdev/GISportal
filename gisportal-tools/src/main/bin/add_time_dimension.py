@@ -60,7 +60,13 @@ def add_time_dimension(dataset):
 
     target.close()
 
-    shutil.move(temp_file, dataset)
+    target_file = dataset
+    if not target_file.endswith('.nc'):
+        target_file = target_file + '.nc'
+        target_file = target_file.replace('.pre', '')
+        os.remove(dataset)
+
+    shutil.move(temp_file, target_file)
 
 if __name__ == 'main':
     # dataset name pattern: /path/to/L3_2013-03-22_2013-03-22.nc
