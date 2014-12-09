@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>OPEC Visualisation Portal Prototype</title>
+<title>WAQSS Portal, Brockmann Consult GmbH</title>
 
 <!-- ============================ Now for the styling ============================ -->
 
@@ -89,7 +89,7 @@
       loader - Show ajax loader (true/false)
       checkbox - Show checkbox (true/false)
       visibility - Is the layer visible
-      displayTitle - The name to show     
+      displayTitle - The name to show
    }}
    <li id="{{name}}" class="gisportal-layer">
       <img src="img/ajax-loader.gif"/>
@@ -99,7 +99,7 @@
          <img src="img/exclamation_small.png"/>
       </a>
       <span class="gisportal-layer-dropdown ui-icon ui-icon-triangle-1-s">dropdown</span>
-      
+
    </li>
 </script>
 <!-- Metadata Window -->
@@ -117,7 +117,7 @@
       lastDate - The last avaliable date for the layer.
       productAbstract - A description of the layer.
    }}
-   <div id="metadata-{{id}}" class="tt" title="Metadata - {{displayTitle}}">          
+   <div id="metadata-{{id}}" class="tt" title="Metadata - {{displayTitle}}">
       <div>
          <label>Source: {{source}}</label>
       </div>
@@ -225,7 +225,7 @@
                <input id="graphcreator-coverage-real" class="hidden" title="Real Name of the Coverage" placeholder="Real Name of the Coverage" type="text" name="graphcreator-coverage-real" />
 					<select id="graphcreator-coverage" name="graphcreator-coverage">
 						<option value="" disabled selected>Data layer</option>
-					</select>	
+					</select>
             </div>
             <div class="hidden js-reference">
                <label for="graphcreator-reference-variable">Select a variable</label>
@@ -284,7 +284,7 @@
                <button class="js-newRange">New range</button>
                <button class="js-deleteRange">Delete range</button>
             </div>
-            
+
             <div id="timerange2">
                <label for="graphcreator-time">Range:</label>
                <input id="graphcreator-time" title="You can use also choose time&#47;date ranges" type="text" placeholder="yyyy-mm-dd" size="10" name="graphcreator-time"/>
@@ -305,7 +305,7 @@
       {{/advanced}}
       <div id="graphcreator-generate">
          <input type="button" title="Generate a graph from a WCS request" name="graphcreator-generate-button" value="Generate Graph" />
-         <img src="img/ajax-loader.gif"/> 
+         <img src="img/ajax-loader.gif"/>
       </div>
    </div>
 </script>
@@ -372,8 +372,8 @@
       <h1>OPEC Portal</h1>
       <!-- Info for screen readers and any bots. Should show up on search results -->
       <span>
-         Welcome to the OPEC (Operational Ecology) Marine Ecosystem Forecasting Portal. The OPEC project will develop 
-         and evaluate ecosystem forecast tools to help assess and manage the risks posed by human activities on the 
+         Welcome to the OPEC (Operational Ecology) Marine Ecosystem Forecasting Portal. The OPEC project will develop
+         and evaluate ecosystem forecast tools to help assess and manage the risks posed by human activities on the
          marine environment, helping to improve the ability to predict the “health” of European marine ecosystems.
       </span>
       <div class="css-check">
@@ -439,7 +439,7 @@
                <li id="triggerL-group-creation" style="display: none; margin-top: 4px;">
                   <input id="triggerL-enter-group-name" title="Group Name" type="text" placeholder="enter group name here" />
                </li>
-            </ul>       
+            </ul>
          </div>
          <div id="gisportal-lPanel-content" class="ui-corner-all">
             <div id="gisportal-lPanel-operational" class="ui-corner-top gisportal-tab-content gisportal-tab-active"></div>
@@ -459,7 +459,7 @@
    <!-- The Right Panels -->
    <a class="trigger triggerR unselectable" href="#">Analysis</a>
    <div class="panel rPanel unselectable">
-      <h3 id="dataLbl">Data Analysis</h3>     
+      <h3 id="dataLbl">Data Analysis</h3>
       <div id="dataAccordion" class="ui-helper-reset">
          <div id="gisportal-triggerR-toolbar" class="panel-toolbar ui-helper-reset">
             <!-- Using fieldsets as no easy CSS alternative -->
@@ -534,7 +534,7 @@
             </div>
             <div id="gisportal-tab-analyses" class="gisportal-tab-content ui-corner-top" style="display: none;">
                <h3>Graphing</h3>
-               <div id="gisportal-graphing">  
+               <div id="gisportal-graphing">
                </div>
             </div>
             <div id="gisportal-tab-export" class="gisportal-tab-content ui-corner-top" style="display: none;">
@@ -580,7 +580,7 @@
    </div>
 
    <!-- ====================================================================== -->
-   
+
    <!-- Map Info Dialog -->
    <div id="mapInfo" title="MapInfo">
       <div>
@@ -593,14 +593,14 @@
 
    <div id="gisportal-layerSelection" class="layer-selection unselectable tt" title="Variable Selection">
        <ul>
-         <li class="gisportal-tagMenu"></li>       
+         <li class="gisportal-tagMenu"></li>
          <li class="gisportal-selectable">
             <span id="gisportal-missingSearchCriteria">No variables match your search criteria.<br>Fill in your search criteria in the panel on the left.</span>
             <ul></ul>
-         </li>       
+         </li>
       </ul>
    </div>
-   
+
    <!-- D3 Timeline -->
    <div id="timeline" class="timelineDiv">
       <div class="togglePanel">
@@ -608,9 +608,9 @@
       </div>
    </div>
    <div id="dThree" title="D3 Test"></div>
-   
+
    <ul id="walkthrough"></ul>
-   
+
    <div id="js-walkthrough-confirm" class="hidden">Would you like this disclaimer to appear the next time you visit?</div>
 
    <a href="/" class="gisportal-logo"><img src="img/waqss_logo.png"></a>
