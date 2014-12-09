@@ -7,7 +7,7 @@ gisportal.Walkthrough = function() {
         'an assessment of the water quality in coastal areas.</div>' +
         '' +
         '<div class="disclaimerText"">' +
-        'The products provided within this portal are generated and provided by' +
+        'The products provided within this portal are generated and provided by ' +
         'Brockmann Consult GmbH (all satellite derived products) and PML (all models ' +
         'derived products). The use of the data on this site is entirely at your own ' +
         'risk.</div>' +
